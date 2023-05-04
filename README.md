@@ -3,7 +3,7 @@ This project aimed at providing Multibranch pipeline functionality within the Ar
 
 ## Concept
 
-
+![alt text](https://github.com/rookout/argo-workflows-multibranch-pipline/blob/main/docs/seeder-pipeline.png?raw=true)
 
 ## Usage
 
