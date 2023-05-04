@@ -5,6 +5,7 @@ This project aimed at providing Multibranch pipeline functionality within the Ar
 
 ![alt text](https://github.com/Rookout/argo-workflows-multibranch-pipeline/blob/main/docs/seeder-pipeline.png?raw=true)
 
+This script will be running within Seeder Workflow, after genrate inside Workflow by ArgoEvents Sensor. You can template the Seeder Workflow with metadata from the webhook and then pass it to the Multi Brnach Workflow.
 ## Usage
 
 The seeder is executed via the command line. The following parameters are required:
