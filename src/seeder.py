@@ -50,9 +50,9 @@ def seed(seeder_workflow_path, dot_workflows_dir, branch=None, event_type=None):
   workflow = Workflow(seeder_workflow_path)
   workflow.inject_templates(dot_workflows_dir + "/template.yaml")
   try:
-    workflow.inject_dag(dot_workflows_dir + "/main.yaml")
-  except FileNotFoundError:
     workflow.inject_dag(dot_workflows_dir + "/" + event_type + branch + ".yaml")
+  except FileNotFoundError:
+    workflow.inject_dag(dot_workflows_dir + "/main.yaml")
   workflow.inject_name(branch)
   workflow.inject_parameters(dot_workflows_dir + "/" + "parameters.yaml")
   workflow.inject_labels()
