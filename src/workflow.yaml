@@ -41,7 +41,11 @@ spec:
       command:
       - sh
       image: alpine
-      source: 'echo "wellcome to {{ workflow.parameters.global }}'
+      source: 'echo "wellcome to {{ workflow.parameters.global }}
+
+        echo "{{ inputs.parameters.message }}"
+
+        '
   - name: exit-hanlder
     script:
       command:
