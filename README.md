@@ -10,7 +10,9 @@ This script will be running within Seeder Workflow, after genrate inside Workflo
 
 The seeder is executed via the command line. The following parameters are required:
 
-```python seeder.py <path to template> <path to .workflows directory> <event type> <branch>``
+```
+python seeder.py <path to template> <path to .workflows directory> <event type> <branch>
+```
 
 <path to template>: Path to the seeder-workflow-template.yaml file.
 <path to .workflows directory>: Path to the directory containing the .yaml DAG files.
