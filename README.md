@@ -26,7 +26,9 @@ This repository includes an examples folder with a `seeder-workflow-template.yam
 
 To generate a new workflow based on the provided example, navigate to the root of the repository and run:
 
-```python seeder.py examples/seeder-workflow-template.yaml examples/.workflows push main```
+```
+python seeder.py examples/seeder-workflow-template.yaml examples/.workflows push main
+```
 
 This will generate a new workflow YAML file (`workflow.yaml`) in the root of the repository, based on the `seeder-workflow-template.yaml` file and the `.yaml` DAG files in the `.workflows` directory.
 
