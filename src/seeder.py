@@ -1,7 +1,6 @@
 from sys import argv
 from os import getenv
-from yaml import safe_load, safe_dump, add_representer
-from yaml.representer import SafeRepresenter
+from yaml import safe_load, safe_dump
 
 class Workflow():
   def __init__(self, wf_path):
