@@ -1,0 +1,14 @@
+- name: local-step1
+  template: local-step
+  arguments:
+    parameters:
+      - name: message
+        value: step-1
+- name: local-step2
+  template: local-step
+  arguments:
+    parameters:
+      - name: message
+        value: step-2
+  dependencies:
+    - local-step1
