@@ -35,8 +35,10 @@ This will generate a new workflow YAML file (`workflow.yaml`) in the root of the
 `main.yaml` is the default pipeline to run if '<event-type>-<branch>.yaml' don't exists.
 
 ## Roadmap
-1. Create a microservice that listen to external webhooks
-2. Ability to submit directly to ArgoWorkflows server
+1. Debug interface
+2. Multiple template.yaml files
+3. Create a microservice that listen to external webhooks
+4. Ability to submit directly to ArgoWorkflows server
 
 ## Contributing
 
