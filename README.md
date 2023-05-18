@@ -1,5 +1,5 @@
-# ArgoWorkflows Multibranch Pipeline
-This project aimed at providing Multibranch pipeline functionality within the Argo stack of CI/CD tools. This project allows users to create distinct pipelines based on Git branches, making workflow organization and maintenance more efficient.
+# Argo Piper
+This project aimed at providing Multibranch pipeline functionality to Argo Workflows. This project allows users to create distinct pipelines based on Git branches, making workflow organization and maintenance more efficient.
 
 ## Concept
 

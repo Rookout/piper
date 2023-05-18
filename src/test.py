@@ -16,7 +16,7 @@ class TestVersioning(unittest.TestCase):
     def test_e2e(self):
         self.maxDiff = None
 
-        self.wf = seed(getcwd() + "/../examples/seeder-workflow-template.yaml", getcwd() + "/../examples/.workflows", branch="test")
+        self.wf = seed(getcwd() + "/../examples/seeder-workflow-template.yaml", getcwd() + "/../examples/.workflows",event_type="merge", branch="test")
 
 
         self.wf.dump()

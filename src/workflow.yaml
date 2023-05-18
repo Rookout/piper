@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: test-
+  labels:
+    branch: test-branch
+    commit: xxxxxxxxxxxxxx
+    repo: somerepo
+    user: gosharo
+spec:
+  activeDeadlineSeconds: 7200
+  archiveLogs: true
+  arguments:
+    parameters:
+    - name: global
+      value: multi-branch-pipeline
+  artifactRepositoryRef:
+    configMap: artifact-repositories
+  entrypoint: entrypoint
+  nodeSelector:
+    node_pool: workflows
+  onExit: exit-handler
+  podGC:
+    strategy: OnPodSuccess
+  serviceAccountName: argo-wf
+  templates:
+  - dag:
+      tasks:
+      - arguments:
+          parameters:
+          - name: param1
+            value: '{{ workflow.labels.repo }}'
+        name: github-status
+        template: exit-handler
+    name: exit-handler
+  - inputs:
+      parameters:
+      - name: message
+    name: local-step
+    script:
+      command:
+      - sh
+      image: alpine
+      source: 'echo "wellcome to {{ workflow.parameters.global }}
+
+        echo "{{ inputs.parameters.message }}"
+
+        '
+  - name: exit-hanlder
+    script:
+      command:
+      - sh
+      image: alpine
+      source: echo "exit"
+  - dag:
+      tasks:
+      - arguments:
+          parameters:
+          - name: message
+            value: step-1
+        name: local-step1
+        template: local-step
+      - arguments:
+          parameters:
+          - name: message
+            value: step-2
+        dependencies:
+        - local-step1
+        name: local-step2
+        template: local-step
+    name: entrypoint
+  tolerations:
+  - effect: NoSchedule
+    key: node_pool
+    operator: Equal
+    value: workflows
+  ttlStrategy:
+    secondsAfterCompletion: 28800
+  volumes:
+  - emptyDir: {}
+    name: shared-volume
