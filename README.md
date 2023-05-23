@@ -1,52 +1,43 @@
-# Argo Piper
-This project aimed at providing Multibranch pipeline functionality to Argo Workflows. This project allows users to create distinct pipelines based on Git branches, making workflow organization and maintenance more efficient.
+# Piper
+Welcome to Piper! Piper is open source project that aimed at providing multibranch pipeline functionality to Argo Workflows, allows users to create distinct Workflows based on Git branches.
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [How to Contribute](#how-to-contribute)
+- [Reporting Issues](#reporting-issues)
+- [Pull Requests](#pull-requests)
+- [Coding Guidelines](#coding-guidelines)
+- [License](#license)
 
 ## Concept
 
-![alt text](https://github.com/Rookout/argo-workflows-multibranch-pipeline/blob/main/docs/seeder-pipeline.png?raw=true)
-
-This script will be running within Seeder Workflow, after genrate inside Workflow by ArgoEvents Sensor. You can template the Seeder Workflow with metadata from the webhook and then pass it to the Multi Brnach Workflow.
+Piper configures a weebhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster.
 ## Usage
 
-The seeder is executed via the command line. The following parameters are required:
+Piper should be deployed in the cluster with Argo Workflows. 
 
 ```
-python seeder.py <path to template> <path to .workflows directory> <event type> <branch>
+helm repo add piper https://piper.rookout.com
+helm install piper piper/piper --namespace workflows
 ```
-
-<path to template>: Path to the seeder-workflow-template.yaml file.
-<path to .workflows directory>: Path to the directory containing the .yaml DAG files.
-<event type>: The type of the event triggering the workflow (e.g., push, pull_request, merge).
-<branch>: The branch destintion branch to merge into.
-
-
-## Examples
-
-This repository includes an examples folder with a `seeder-workflow-template.yaml` file, a `workflow.yaml` file, and a `.workflows` directory with various DAG files.
-
-To generate a new workflow based on the provided example, navigate to the root of the repository and run:
-
-```
-python seeder.py examples/seeder-workflow-template.yaml examples/.workflows push main
-```
-
-This will generate a new workflow YAML file (`workflow.yaml`) in the root of the repository, based on the `seeder-workflow-template.yaml` file and the `.yaml` DAG files in the `.workflows` directory.
-
-`main.yaml` is the default pipeline to run if '<event-type>-<branch>.yaml' don't exists.
 
 ## Roadmap
-1. Debug interface
-2. Multiple template.yaml files
-3. Create a microservice that listen to external webhooks
-4. Ability to submit directly to ArgoWorkflows server
+1. Create Github provider handler.
+2. Create webhook server. 
+3. Implmentation of Workflow creation by the example.
+4. configute trigger for each of the workflows (convenstion over confiugration?).
+5. debug pause injection implmentation feature (will fail the pipeline).
 
-## Contributing
+
+## How to Contribute
 
 If you're interested in contributing to this project, please feel free to submit a pull request. We welcome all contributions and feedback.
+Please checkout our [Contribution guidelines for this project](docs/CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the Apache License. Please see the LICENSE file for details.
+This project is licensed under the Apache License. Please see the [LICENSE](LICENSE) file for details.
 
 
 
