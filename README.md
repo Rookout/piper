@@ -25,9 +25,9 @@ helm install piper piper/piper --namespace workflows
 ## Roadmap
 1. Create Github provider handler.
 2. Create webhook server. 
+3. Create helm chart.
 3. Implmentation of Workflow creation by the example.
-4. configute trigger for each of the workflows (convenstion over confiugration?).
-5. debug pause injection implmentation feature (will fail the pipeline).
+4. debug pause injection implmentation feature (will fail the pipeline).
 
 
 ## How to Contribute
