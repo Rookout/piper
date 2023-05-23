@@ -8,9 +8,3 @@
     source: |
       echo "wellcome to {{ workflow.parameters.global }}
       echo "{{ inputs.parameters.message }}"
-- name: exit-hanlder
-  script:
-    image: alpine
-    command: [ sh ]
-    source: |
-      echo "exit"

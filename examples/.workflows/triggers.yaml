@@ -1,0 +1,3 @@
+- events: ["merge","push"]
+  branches: ["main"]
+  triggers: main.yaml
