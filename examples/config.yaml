@@ -25,12 +25,9 @@ data:
           operator: Equal
           value: workflows
     onExit: # optinal, will be overwritten if specifc in .wokrflows/exit.yaml.
-      - name: exit-handler
-        dag:
-          tasks:
-            - name: github-status
-              template: exit-handler
-              arguments:
-                parameters:
-                  - name: param1
-                    value: "{{ workflow.labels.repo }}"
+      - name: github-status
+        template: exit-handler
+        arguments:
+          parameters:
+            - name: param1
+              value: "{{ workflow.labels.repo }}"
