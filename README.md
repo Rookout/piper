@@ -4,23 +4,26 @@ Welcome to Piper! Piper is open source project that aimed at providing multibran
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [How to Contribute](#how-to-contribute)
 - [Reporting Issues](#reporting-issues)
-- [Pull Requests](#pull-requests)
-- [Coding Guidelines](#coding-guidelines)
+- [How to Contribute](docs/CONTRIBUTING.md#how-to-contribute)
+- [Pull Requests](docs/CONTRIBUTING.md#pull-requests)
+- [Coding Guidelines](docs/CONTRIBUTING.md#coding-guidelines)
 - [License](#license)
 
-## Concept
+## Getting Started
 
 Piper configures a weebhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster.
 ## Usage
 
-Piper should be deployed in the cluster with Argo Workflows. 
+## Reporting Issues
 
-```
-helm repo add piper https://piper.rookout.com
-helm install piper piper/piper --namespace workflows
-```
+If you encounter any issues or bugs while using Piper, please help us improve by reporting them. Follow these steps to report an issue:
+
+1. Go to the (Piper Issues)[https://github.com/Rookout/Piper/issues] page on GitHub.
+2. Click on the "New Issue" button.
+3. Provide a descriptive title and detailed description of the issue, including any relevant error messages or steps to reproduce the problem.
+4. Add appropriate labels to categorize the issue (e.g., bug, enhancement, question).
+5. Submit the issue, and our team will review and address it as soon as possible.
 
 ## Roadmap
 1. Create Github provider handler.
