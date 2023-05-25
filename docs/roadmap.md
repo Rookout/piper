@@ -16,6 +16,6 @@
 5. Run as non-root user.
 
 ## CI
-1. Helm chart - lint, packge, version, publish
+1. Helm chart - lint, packge, version, publish, gh pages.
 2. Application - test, build, version, publish
 3. Admistration - DOC, PR title linter, branch permissions, change log, code coverage, PR template.
