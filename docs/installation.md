@@ -16,6 +16,9 @@ helm install piper piper/piper --namespace workflows
 
 ## Configuration
 
+### Ingress
+
+Piper should listen to webhooks from your git provider. Checkout value.yaml for `ingress`
 ### Git Token
 
 The git token should be passed as secret in the helm chart at `gitProvider.github.token`

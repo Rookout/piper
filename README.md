@@ -4,16 +4,17 @@ Welcome to Piper! Piper is open source project that aimed at providing multibran
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [Usage](docs/usage.md)
 - [Reporting Issues](#reporting-issues)
 - [How to Contribute](docs/CONTRIBUTING.md#how-to-contribute)
 - [Pull Requests](docs/CONTRIBUTING.md#pull-requests)
 - [Coding Guidelines](docs/CONTRIBUTING.md#coding-guidelines)
+- [Roadmap](docs/roadmap.md)
 - [License](#license)
 
 ## Getting Started
 
-Piper configures a weebhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster.
-## Usage
+Piper configures a weebhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster. For farther explantions please check [Usage](docs/usage.md)
 
 ## Reporting Issues
 
@@ -24,13 +25,6 @@ If you encounter any issues or bugs while using Piper, please help us improve by
 3. Provide a descriptive title and detailed description of the issue, including any relevant error messages or steps to reproduce the problem.
 4. Add appropriate labels to categorize the issue (e.g., bug, enhancement, question).
 5. Submit the issue, and our team will review and address it as soon as possible.
-
-## Roadmap
-1. Create Github provider handler.
-2. Create webhook server. 
-3. Create helm chart.
-3. Implmentation of Workflow creation by the example.
-4. debug pause injection implmentation feature (will fail the pipeline).
 
 
 ## How to Contribute
