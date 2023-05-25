@@ -50,3 +50,15 @@ To maintain a consistent codebase and ensure readability, we follow a set of cod
 * Check that the feature documenated.
 * Add new packges only if necessary and already existing one, can't be used.
 * Add tests for new fatures or modification.
+
+## Helm Chat 
+
+To make sure that the documentation is updated use [helm-docs](https://github.com/norwoodj/helm-docs) comment convention. The pipeline will execute `helm-docs` command and update the version of the chart.
+
+Also please make sure to run those commands locally to debug the chart before merging:
+
+```bash
+helm lint
+helm template .  --debug > _lint.yaml
+```
+

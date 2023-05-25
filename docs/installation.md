@@ -28,7 +28,7 @@ The git token should be passed as secret in the helm chart at `gitProvider.githu
 Piper will create a webhook configuration for you, for the whole orgnization or for each repo you configure.
 First configure which git provider you are using `gitProvider.name` (Now only supports github)
 
-For orgnization level configuration provide the following value `gitProvider.organization.name` and `gitProvider.webhook.org` to `true`.
+For orgnization level configuration provide the following value `gitProvider.organization.name` and `gitProvider.webhook.orgLevel` to `true`.
 
 For granular repo configuration provide `gitProvider.organization.name` and `gitProvider.webhook.repoList`. 
 

@@ -1,81 +1,158 @@
-# Default values for management.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Default values for Piper.
+# For more information head to https:/github.com/rookout/piper
 
+# Map of Piper configurations.
+piper:
+  gitProvider:
+    # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
+    name: github
+    # Map of organization configurations.
+    organization: 
+      # -- Name of your Git Organization
+      name: ""
+      # Map of webhook configurations.
+      webhook:
+        # -- Whether config webhook on org level
+        orgLevel: false
+        # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
+        repoList: []
+  # Map of Argo Workflows configurations.
+  argoWorkflows:
+    # Map of Argo Workflows server configurations.
+    server:
+      # -- The DNS address of Argo Workflow server that Piper can address.
+      address: argo-workflows-server.workflows.svc.cluster.local
+      # -- The token for authentication with Argo Workflows server.
+      # -- This will create a secret name piper-argo-token and use the field 'token'
+      token: 
+      # -- The token for authentication with Argo Workflows server.
+      # -- Refrence to existing token with 'token' key.
+      tokenExistingSecret: #piper-argo-token
+    # -- Whether create Workflow CRD to send direct 
+    crdCreation: true
+
+# -- Piper number of replicas
 replicaCount: 1
 
 image:
-  name: rookout
-  repository: piper
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Piper image name
+  name: piper
+  # -- Piper public dockerhub repo
+  repository: rookout
+  # -- Piper image pull policy
+  pullPolicy: Always
+  # -- Piper image tag
   tag: latest
 
+# -- secret to use for image pulling
 imagePullSecrets: []
+
+# -- String to partially override "piper.fullname" template
 nameOverride: ""
+
+# -- String to fully override "piper.fullname" template
 fullnameOverride: ""
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- Annotations to be added to the Piper pods
 podAnnotations: {}
 
+# -- Security Context to set on the pod level
 podSecurityContext: {}
-  # fsGroup: 2000
+  # fsGroup: 5000
+  # runAsUser: 5000
+  # runAsGroup: 5000
 
+# -- Security Context to set on the container level
 securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+  # runAsUser: 5000
 
+service:
+    # -- Sets the type of the Service
+  type: ClusterIP
+  # -- Service port
+  # For TLS mode change the port to 443
+  port: 80
+  #nodePort:
+  # -- Piper service extra labels
+  labels: {}
+  # -- Piper service extra annotations
+  annotations: {}
 
 ingress:
+  # -- Enable Piper ingress support
   enabled: false
+  # -- Piper ingress class name
   className: ""
+  # -- Piper ingress annotations
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  
+  # -- Piper ingress hosts
+  ## Hostnames must be provided if Ingress is enabled.
   hosts:
-    - host: chart-example.local
+    - host: piper.rookout.example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
+  # -- Controller ingress tls
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+# -- Additional environment variables for Piper. A list of name/value maps.
 env: []
 
+# -- Resource limits and requests for the pods.
 resources:
   requests:
     cpu: 200m
-    memory: 500Mi
+    memory: 512Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 85
-  targetMemoryUtilizationPercentage: 85
-
+# -- [Node selector]
 nodeSelector: {}
 
+# -- [Tolerations] for use with node taints
 tolerations: []
 
+# -- Assign custom [affinity] rules to the deployment
 affinity: {}
 
+# -- Deployment and pods extra labels
 extraLabels: {}
 
+autoscaling:
+  # -- Wheter to enable auto-scaling of piper.
+  enabled: false
+  # -- Minimum reoplicas of Piper.
+  minReplicas: 1
+  # -- Maximum reoplicas of Piper.
+  maxReplicas: 5
+  # -- CPU utilization percentage threshold.
+  targetCPUUtilizationPercentage: 85
+  # -- Memory utilization percentage threshold.
+  targetMemoryUtilizationPercentage: 85
+
+# -- Volumes of Piper Pod.
 volumes: []
+
+# -- Volumes to mount to Piper container.
 volumeMounts: []
 
+# -- Specify postStart and preStop lifecycle hooks for Piper container
+lifecycle: {}
