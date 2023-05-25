@@ -23,8 +23,11 @@ spec:
         app: {{ .Chart.Name | trunc 63 | trimSuffix "-" }}
         version: {{ .Values.image.tag | trunc 63 | trimSuffix "-" }}
     spec:
-      {{- with .Values.volumes }}
       volumes:
+      - name: piper-workflows-config
+        configMap:
+          name: piper-workflows-config
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
@@ -36,8 +39,10 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+          - mountPath: /app/config/piper-workflows-config
+            name: piper-workflows-config
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
