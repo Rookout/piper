@@ -1,0 +1,12 @@
+{{- if .Values.piper.workflowsConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: piper-config
+  labels:
+    {{- include "piper.labels" . | nindent 4 }}
+data:
+  {{- with .Values.piper.workflowsConfig }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
