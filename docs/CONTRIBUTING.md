@@ -36,8 +36,8 @@ We welcome and appreciate contributions from the community. If you have develope
 
 ### Pull Request Nameing
 
-## Coding Guidelines
 
+## Coding Guidelines
 
 To maintain a consistent codebase and ensure readability, we follow a set of coding guidelines in Piper. Please adhere to the following guidelines when making changes:
 
@@ -48,4 +48,5 @@ To maintain a consistent codebase and ensure readability, we follow a set of cod
 * Make sure your code is properly formatted and free of syntax errors.
 * Run tests locally.
 * Check that the feature documenated.
-* Add new packges only if necessary and already existing one, can't be used. 
+* Add new packges only if necessary and already existing one, can't be used.
+* Add tests for new fatures or modification.
