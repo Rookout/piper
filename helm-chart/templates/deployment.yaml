@@ -75,8 +75,23 @@ spec:
             failureThreshold: 2
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.env }}
           env:
+          - name: GIT_PROVIDER
+            value: {{ .Values.piper.gitProvider.name | quote }}
+          - name: GIT_ORG_NAME
+            value: {{ .Values.piper.gitProvider.organization.name | quote }}
+          - name: ORG_LEVEL_WEBHOOK
+            value: {{ .Values.piper.gitProvider.webhook.orgLevel | quote }}
+          - name: WEBHOOK_REPO_LIST
+            value: {{ join "," .Values.piper.gitProvider.webhook.repoList | quote }}
+          - name: ARGO_WORKFLOWS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "piper.argoWorkflows.tokenSecretName" . }}
+                key: token
+          - name: ARGO_WORKFLOWS_ADDRESS
+            value: {{ .Values.piper.argoWorkflows.server.address | quote }}
+          {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- with .Values.nodeSelector }}

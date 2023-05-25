@@ -38,7 +38,7 @@ When Piper will be deleted the finilizer should deleted the configured webhooks 
 
 Piper will use REST API to communicate with Argo Workflows server. Please follow this [configuation](https://argoproj.github.io/argo-workflows/rest-api/).
 
-To lint the workflow before submiting it, please configure the internal address of Argo Workflows server (for example, `argo-server.workflows.svc.cluster.local`) in the field: `argoWorkflows.server.address`. Argo will need a [token](https://argoproj.github.io/argo-workflows/access-token/) to authenticate. please provide a refrences to a secret in the field `argoWorkflows.server.token`.
+To lint the workflow before submiting it, please configure the internal address of Argo Workflows server (for example, `argo-server.workflows.svc.cluster.local`) in the field: `argoWorkflows.server.address`. Argo will need a [token](https://argoproj.github.io/argo-workflows/access-token/) to authenticate. please provide the secret in `argoWorkflows.server.token`, Better to pass as a refrences to a secret in the field `argoWorkflows.server.token`.
 
 ### Skip CRD Creation
 

@@ -7,15 +7,16 @@ piper:
     # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
     name: github
     # Map of organization configurations.
-    organization: 
+    organization:
       # -- Name of your Git Organization
       name: ""
-      # Map of webhook configurations.
-      webhook:
-        # -- Whether config webhook on org level
-        orgLevel: false
-        # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
-        repoList: []
+    # Map of webhook configurations.
+    webhook:
+      # -- Whether config webhook on org level
+      orgLevel: false
+      # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
+      repoList: []
+
   # Map of Argo Workflows configurations.
   argoWorkflows:
     # Map of Argo Workflows server configurations.
@@ -23,11 +24,12 @@ piper:
       # -- The DNS address of Argo Workflow server that Piper can address.
       address: argo-workflows-server.workflows.svc.cluster.local
       # -- The token for authentication with Argo Workflows server.
-      # -- This will create a secret name piper-argo-token and use the field 'token'
+      # -- This will create a secret named <RELEASE_NAME>-token and with the key 'token'
       token: 
       # -- The token for authentication with Argo Workflows server.
       # -- Refrence to existing token with 'token' key.
-      tokenExistingSecret: #piper-argo-token
+      # -- can be create with `kubectl create secret generic piper-token --from-literal=token=YOUR_TOKEN`
+      tokenExistingSecret: #piper-token
     # -- Whether create Workflow CRD to send direct 
     crdCreation: true
 
