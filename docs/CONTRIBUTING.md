@@ -30,19 +30,22 @@ We welcome and appreciate contributions from the community. If you have develope
 2. commit your changes and push them to your forked repository.
 3. Go to the Piper repository on GitHub.
 4. Click on the "New Pull Request" button.
-5. Select your branch and provide a descriptive title and detailed description of your changes.
+5. Select your branch and provide a [descriptive title](#pull-request-nameing) and detailed description of your changes.
 6. If your pull request relates to an open issue, reference the issue in the description using the GitHub issue syntax (e.g., Fixes #123).
 7. Submit the pull request, and our team will review your changes. We appreciate your patience during the review process and may provide feedback or request further modifications.
 
+### Pull Request Nameing
 
 ## Coding Guidelines
 
 
 To maintain a consistent codebase and ensure readability, we follow a set of coding guidelines in Piper. Please adhere to the following guidelines when making changes:
 
-* Follow the (Effective Go)[https://go.dev/doc/effective_go] guide for Go code.
+* Follow the [Effective Go](https://go.dev/doc/effective_go) guide for Go code.
+* Follow the [Folder convenstion](https://github.com/golang-standards/project-layout) guide for Go code.
 * Write clear and concise comments to explain the code's functionality.
 * Use meaningful variable and function names.
 * Make sure your code is properly formatted and free of syntax errors.
 * Run tests locally.
-* Check that the feature documanted
+* Check that the feature documenated.
+* Add new packges only if necessary and already existing one, can't be used. 
