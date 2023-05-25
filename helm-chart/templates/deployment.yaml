@@ -91,6 +91,8 @@ spec:
                 key: token
           - name: ARGO_WORKFLOWS_ADDRESS
             value: {{ .Values.piper.argoWorkflows.server.address | quote }}
+          - name: ARGO_WORKFLOWS_CREATE_CRD
+            value: {{ .Values.piper.argoWorkflows.crdCreation | quote }}
           {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

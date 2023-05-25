@@ -30,7 +30,7 @@ piper:
       # -- Refrence to existing token with 'token' key.
       # -- can be create with `kubectl create secret generic piper-token --from-literal=token=YOUR_TOKEN`
       tokenExistingSecret: #piper-token
-    # -- Whether create Workflow CRD to send direct 
+    # -- Whether create Workflow CRD or send direct commands to Argo Workflows server.
     crdCreation: true
 
 # -- Piper number of replicas

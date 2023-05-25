@@ -25,12 +25,12 @@ A Helm chart for Kubernetes
 | ingress.annotations | object | `{}` | Piper ingress annotations |
 | ingress.className | string | `""` | Piper ingress class name |
 | ingress.enabled | bool | `false` | Enable Piper ingress support |
-| ingress.hosts | list | `[{"host":"piper.rookout.example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Piper ingress hosts # Hostnames must be provided if Ingress is enabled. |
+| ingress.hosts | list | `[{"host":"piper.example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | Piper ingress hosts # Hostnames must be provided if Ingress is enabled. |
 | ingress.tls | list | `[]` | Controller ingress tls |
 | lifecycle | object | `{}` | Specify postStart and preStop lifecycle hooks for Piper container |
 | nameOverride | string | `""` | String to partially override "piper.fullname" template |
 | nodeSelector | object | `{}` | [Node selector] |
-| piper.argoWorkflows.crdCreation | bool | `true` | Whether create Workflow CRD to send direct  |
+| piper.argoWorkflows.crdCreation | bool | `true` | Whether create Workflow CRD or send direct commands to Argo Workflows server. |
 | piper.argoWorkflows.server.address | string | `"argo-workflows-server.workflows.svc.cluster.local"` | The DNS address of Argo Workflow server that Piper can address. |
 | piper.argoWorkflows.server.token | string | `nil` | This will create a secret named <RELEASE_NAME>-token and with the key 'token' |
 | piper.argoWorkflows.server.tokenExistingSecret | string | `nil` |  |

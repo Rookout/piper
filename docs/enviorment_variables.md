@@ -18,3 +18,5 @@
 * ARGO_WORKFLOWS_ADDRESS
   The address of Argo Workflows Server.
   
+* ARGO_WORKFLOWS_CREATE_CRD
+  Wheter to directly send Workflows instruction or create a CRD in the Clutser.
