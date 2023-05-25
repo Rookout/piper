@@ -107,7 +107,7 @@ ingress:
   # -- Piper ingress hosts
   ## Hostnames must be provided if Ingress is enabled.
   hosts:
-    - host: piper.rookout.example.local
+    - host: piper.example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
