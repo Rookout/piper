@@ -87,7 +87,7 @@ spec:
             value: {{ .Values.piper.gitProvider.organization.name | quote }}
           - name: GIT_ORG_LEVEL_WEBHOOK
             value: {{ .Values.piper.gitProvider.webhook.orgLevel | quote }}
-          - name: WEBHOOK_REPO_LIST
+          - name: GIT_WEBHOOK_REPO_LIST
             value: {{ join "," .Values.piper.gitProvider.webhook.repoList | quote }}
           - name: ARGO_WORKFLOWS_TOKEN
             valueFrom:

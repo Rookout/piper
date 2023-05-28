@@ -15,7 +15,7 @@ func init() {
 	var err error
 	cfg, err = conf.LoadConfig()
 	if err != nil {
-		log.Fatalf("failed to load the configuration for the piper, error: %v", err)
+		log.Fatalf("failed to load the configuration for Piper, error: %v", err)
 	}
 }
 

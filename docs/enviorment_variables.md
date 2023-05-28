@@ -9,7 +9,7 @@
 * GIT_ORG_LEVEL_WEBHOOK
   Boolean vriable, wheter to config webhook in organization level. default `false`
 
-* WEBHOOK_REPO_LIST
+* GIT_WEBHOOK_REPO_LIST
   Comma seperate list of repositories to configure webhooks to.
 
 * ARGO_WORKFLOWS_TOKEN
