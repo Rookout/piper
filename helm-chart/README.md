@@ -36,7 +36,8 @@ A Helm chart for Piper
 | piper.argoWorkflows.server.tokenExistingSecret | string | `nil` |  |
 | piper.gitProvider.name | string | `"github"` | Name of your git provider (github/gitlab/bitbucket). for now, only github supported. |
 | piper.gitProvider.organization.name | string | `""` | Name of your Git Organization |
-| piper.gitProvider.token | string | `nil` | Token for authentication. |
+| piper.gitProvider.token | string | `nil` | This will create a secret named <RELEASE_NAME>-git-token and with the key 'token' |
+| piper.gitProvider.tokenExistingSecret | string | `nil` |  |
 | piper.gitProvider.webhook.orgLevel | bool | `false` | Whether config webhook on org level |
 | piper.gitProvider.webhook.repoList | list | `[]` | Used of orgLevel=false, to configure webhook for each of the repos provided. |
 | piper.workflowsConfig | object | `{}` |  |
