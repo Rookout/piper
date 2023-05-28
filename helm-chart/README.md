@@ -2,7 +2,7 @@
 
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
-A Helm chart for Kubernetes
+A Helm chart for Piper
 
 ## Values
 
@@ -36,8 +36,10 @@ A Helm chart for Kubernetes
 | piper.argoWorkflows.server.tokenExistingSecret | string | `nil` |  |
 | piper.gitProvider.name | string | `"github"` | Name of your git provider (github/gitlab/bitbucket). for now, only github supported. |
 | piper.gitProvider.organization.name | string | `""` | Name of your Git Organization |
+| piper.gitProvider.token | string | `nil` | Token for authentication. |
 | piper.gitProvider.webhook.orgLevel | bool | `false` | Whether config webhook on org level |
 | piper.gitProvider.webhook.repoList | list | `[]` | Used of orgLevel=false, to configure webhook for each of the repos provided. |
+| piper.workflowsConfig | object | `{}` |  |
 | podAnnotations | object | `{}` | Annotations to be added to the Piper pods |
 | podSecurityContext | object | `{}` | Security Context to set on the pod level |
 | replicaCount | int | `1` | Piper number of replicas |
@@ -48,7 +50,7 @@ A Helm chart for Kubernetes
 | service.port | int | `80` | Service port For TLS mode change the port to 443 |
 | service.type | string | `"ClusterIP"` | Sets the type of the Service |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| serviceAccount.create | bool | `false` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | tolerations | list | `[]` | [Tolerations] for use with node taints |
 | volumeMounts | list | `[]` | Volumes to mount to Piper container. |

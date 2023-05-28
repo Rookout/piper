@@ -83,6 +83,11 @@ spec:
           env:
           - name: GIT_PROVIDER
             value: {{ .Values.piper.gitProvider.name | quote }}
+          - name: GIT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "piper.gitProvider.tokenSecretName" . }}
+                key: token
           - name: GIT_ORG_NAME
             value: {{ .Values.piper.gitProvider.organization.name | quote }}
           - name: GIT_ORG_LEVEL_WEBHOOK

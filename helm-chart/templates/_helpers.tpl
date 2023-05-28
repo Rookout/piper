@@ -9,10 +9,17 @@ Expand the name of the chart.
 Return secret name to be used based on provided values.
 */}}
 {{- define "piper.argoWorkflows.tokenSecretName" -}}
-{{- $fullName := printf "%s-token" .Release.Name -}}
-{{- default $fullName .Values.piper.argoWorkflows.tokenExistingSecret | quote -}}
+{{- $fullName := printf "%s-argo-token" .Release.Name -}}
+{{- default $fullName .Values.piper.argoWorkflows.server.tokenExistingSecret | quote -}}
 {{- end -}}
 
+{{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "piper.gitProvider.tokenSecretName" -}}
+{{- $fullName := printf "%s-git-token" .Release.Name -}}
+{{- default $fullName .Values.piper.gitProvider.tokenExistingSecret | quote -}}
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.

@@ -6,5 +6,5 @@ import (
 )
 
 func Start(cfg *conf.Config) {
-	routes.Run(&cfg)
+	routes.Run(cfg)
 }

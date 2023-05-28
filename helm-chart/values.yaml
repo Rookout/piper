@@ -6,6 +6,13 @@ piper:
   gitProvider:
     # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
     name: github
+    # -- The token for authentication with the Git provider.
+    # -- This will create a secret named <RELEASE_NAME>-git-token and with the key 'token'
+    token:
+    # -- The token for authentication with the Git provider.
+    # -- Refrence to existing token with 'token' key.
+    # -- can be create with `kubectl create secret generic piper-git-token --from-literal=token=YOUR_TOKEN`
+    tokenExistingSecret: #piper-git-token
     # Map of organization configurations.
     organization:
       # -- Name of your Git Organization
@@ -28,8 +35,8 @@ piper:
       token:
       # -- The token for authentication with Argo Workflows server.
       # -- Refrence to existing token with 'token' key.
-      # -- can be create with `kubectl create secret generic piper-token --from-literal=token=YOUR_TOKEN`
-      tokenExistingSecret: #piper-token
+      # -- can be create with `kubectl create secret generic piper-argo-token --from-literal=token=YOUR_TOKEN`
+      tokenExistingSecret: #piper-argo-token
     # -- Whether create Workflow CRD or send direct commands to Argo Workflows server.
     crdCreation: true
   
