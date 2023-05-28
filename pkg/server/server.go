@@ -1,16 +1,10 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/server/routes"
 )
 
-func Start() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+func Start(cfg *conf.Config) {
+	routes.Run(&cfg)
 }

@@ -6,7 +6,7 @@
 * GIT_ORG_NAME
   The organization name.
 
-* ORG_LEVEL_WEBHOOK
+* GIT_ORG_LEVEL_WEBHOOK
   Boolean vriable, wheter to config webhook in organization level. default `false`
 
 * WEBHOOK_REPO_LIST
