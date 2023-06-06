@@ -17,7 +17,7 @@ func init() {
 	if err != nil {
 		log.Fatalf("failed to load the configuration for Piper, error: %v", err)
 	}
-	gitClient = git.NewClient(cfg)
+	//gitClient = git.NewClient(cfg)
 }
 
 func main() {
