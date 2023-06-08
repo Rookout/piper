@@ -5,6 +5,7 @@ import {
 }
 
 type WorkflowConfig struct {
+
 }
 
 func init() {
