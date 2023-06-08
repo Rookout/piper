@@ -1,4 +1,4 @@
 - events: ["merge","push"]
   branches: ["main"]
-  execute: ["main.yaml"]
+  onStart: ["main.yaml"]
   onExit: ["exit.yaml"] # optioanl, will overwrite the default exit-handler from configmap
