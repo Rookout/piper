@@ -10,32 +10,35 @@ import (
 	"github.com/google/go-github/v52/github"
 )
 
-type ClientImpl struct {
+type GithubClientImpl struct {
 	client *github.Client
 	cfg    *conf.Config
 }
 
-func NewGithubClient(cfg *conf.Config) Client {
+func NewGithubClient(cfg *conf.Config) (Client, error) {
 	ctx := context.Background()
 
 	client := github.NewTokenClient(ctx, cfg.GitConfig.Token)
-	ValidatePermissions(ctx, client, cfg)
+	err := ValidatePermissions(ctx, client, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to validate permissions: %v", err)
+	}
 
-	return &ClientImpl{
+	return &GithubClientImpl{
 		client: client,
 		cfg:    cfg,
-	}
+	}, err
 }
 
 func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.Config) error {
 
 	if cfg.GitConfig.OrgLevelWebhook {
-		return nil
+		return nil // Todo implementation of org level permissions check
 	} else {
 		for _, repo := range strings.Split(cfg.GitConfig.RepoList, ",") {
 			_, _, err := client.Repositories.Get(ctx, cfg.GitConfig.OrgName, repo)
 			if err != nil {
-				panic(err)
+				return err // TODO implementation of repo level permissions check
 			}
 		}
 	}
@@ -43,7 +46,7 @@ func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.C
 	return nil
 }
 
-func (c ClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
+func (c GithubClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
 	var files []string
 	ctx := context.Background()
 
@@ -64,7 +67,7 @@ func (c ClientImpl) ListFiles(repo string, branch string, path string) ([]string
 	return files, nil
 }
 
-func (c ClientImpl) GetFile(repo string, branch string, path string) (*CommitFile, error) {
+func (c GithubClientImpl) GetFile(repo string, branch string, path string) (*CommitFile, error) {
 	var commitFile CommitFile
 
 	ctx := context.Background()
@@ -88,7 +91,7 @@ func (c ClientImpl) GetFile(repo string, branch string, path string) (*CommitFil
 	return &commitFile, nil
 }
 
-func (c ClientImpl) SetWebhook() error {
+func (c GithubClientImpl) SetWebhook() error {
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
@@ -129,7 +132,12 @@ func (c ClientImpl) SetWebhook() error {
 	return nil
 }
 
-func (c ClientImpl) UnsetWebhook() error {
+func (c GithubClientImpl) UnsetWebhook() error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c GithubClientImpl) ParseWebhookPayload(payload string) (*WebhookPayload, error) {
 	//TODO implement me
 	panic("implement me")
 }

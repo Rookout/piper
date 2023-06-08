@@ -3,11 +3,17 @@ package conf
 import (
 	"fmt"
 
+	"github.com/rookout/piper/pkg/git"
+
 	"github.com/kelseyhightower/envconfig"
 )
 
 type Config struct {
 	GitConfig
+}
+
+type Clients struct {
+	Git git.Client
 }
 
 func (cfg *Config) Load() error {

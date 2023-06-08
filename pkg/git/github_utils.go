@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-github/v52/github"
 )
 
-func isOrgWebhookEnabled(ctx context.Context, c *ClientImpl) bool {
+func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) bool {
 	hooks, resp, err := c.client.Organizations.ListHooks(ctx, c.cfg.GitConfig.OrgName, &github.ListOptions{})
 	if err != nil {
 		return false
@@ -25,7 +25,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *ClientImpl) bool {
 	return false
 }
 
-func isRepoWebhookEnabled(ctx context.Context, c *ClientImpl, repo string) bool {
+func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string) bool {
 	hooks, resp, err := c.client.Repositories.ListHooks(ctx, c.cfg.GitConfig.OrgName, repo, &github.ListOptions{})
 	if err != nil {
 		return false

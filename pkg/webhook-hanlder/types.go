@@ -7,7 +7,7 @@ import (
 type Trigger struct {
 	events   []string `json:"events"`
 	branches []string `json:"branches"`
-	execute  []string `json:"execute"`
+	onStart  []string `json:"execute"`
 	onExit   []string `json:"on_exit"`
 }
 

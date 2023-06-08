@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func addWebhookRoutes(cfg *conf.Config, rg *gin.RouterGroup) {
+func AddWebhookRoutes(cfg *conf.Config, clients *conf.Clients, rg *gin.RouterGroup) {
 	webhook := rg.Group("/webhook")
 
 	webhook.POST("", func(c *gin.Context) {
