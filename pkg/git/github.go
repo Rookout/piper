@@ -7,7 +7,7 @@ import (
 
 	"github.com/rookout/piper/pkg/conf"
 
-	github "github.com/google/go-github/v52/github"
+	"github.com/google/go-github/v52/github"
 )
 
 type ClientImpl struct {
