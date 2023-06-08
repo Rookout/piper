@@ -3,7 +3,7 @@ package git
 import (
 	"context"
 
-	"github.com/google/go-github/github"
+	github "github.com/google/go-github/v52/github"
 )
 
 func isOrgWebhookEnabled(ctx context.Context, c *ClientImpl) bool {
