@@ -3,6 +3,7 @@ package git
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/rookout/piper/pkg/conf"
@@ -137,7 +138,44 @@ func (c GithubClientImpl) UnsetWebhook() error {
 	panic("implement me")
 }
 
-func (c GithubClientImpl) ParseWebhookPayload(payload string) (*WebhookPayload, error) {
-	//TODO implement me
-	panic("implement me")
+func (c GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
+
+	var webhookPayload *WebhookPayload
+
+	payload, err := github.ValidatePayload(request, secret)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := github.ParseWebHook(github.WebHookType(request), payload)
+	if err != nil {
+		return nil, err
+	}
+
+	switch e := event.(type) {
+	case *github.PushEvent:
+		webhookPayload = &WebhookPayload{
+			Event:     e.GetAction(),
+			Repo:      e.GetRepo().GetFullName(),
+			Branch:    strings.TrimPrefix(e.GetRef(), "refs/heads/"),
+			Commit:    e.GetHeadCommit().GetSHA(),
+			User:      e.GetSender().GetName(),
+			UserEmail: e.GetSender().GetEmail(),
+		}
+	case *github.PullRequestEvent:
+		webhookPayload = &WebhookPayload{
+			Event:            e.GetAction(),
+			Repo:             e.GetRepo().GetFullName(),
+			Branch:           e.GetPullRequest().GetHead().GetRef(),
+			Commit:           e.GetPullRequest().GetHead().GetSHA(),
+			User:             e.GetSender().GetName(),
+			UserEmail:        e.GetSender().GetEmail(),
+			PullRequestTitle: e.GetPullRequest().GetTitle(),
+			PullRequestURL:   e.GetPullRequest().GetURL(),
+			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
+		}
+	}
+
+	return webhookPayload, nil
+
 }
