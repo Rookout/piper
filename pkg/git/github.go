@@ -14,6 +14,7 @@ import (
 type GithubClientImpl struct {
 	client *github.Client
 	cfg    *conf.Config
+	hooks  []github.Hook
 }
 
 func NewGithubClient(cfg *conf.Config) (Client, error) {
@@ -96,9 +97,9 @@ func (c GithubClientImpl) SetWebhook() error {
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
-			"url":          "@123",
+			"url":          c.cfg.GitConfig.WebhookURL,
 			"content_type": "json",
-			//"secret":       "123", // TODO webhook secret
+			"secret":       c.cfg.GitConfig.WebhookSecret, // TODO webhook from k8s secret
 
 		},
 		Events: []string{"push", "pull_request"},
@@ -110,9 +111,11 @@ func (c GithubClientImpl) SetWebhook() error {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode != 200 {
+			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
+
+			c.hooks = append(c.hooks, *hook)
 		}
 		return nil
 	} else {
@@ -123,10 +126,12 @@ func (c GithubClientImpl) SetWebhook() error {
 					return err
 				}
 
-				if resp.StatusCode != 200 {
+				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
 			}
+
+			c.hooks = append(c.hooks, *hook)
 		}
 	}
 
@@ -134,8 +139,37 @@ func (c GithubClientImpl) SetWebhook() error {
 }
 
 func (c GithubClientImpl) UnsetWebhook() error {
-	//TODO implement me
-	panic("implement me")
+	ctx := context.Background()
+
+	for _, hook := range c.hooks {
+		if c.cfg.GitConfig.OrgLevelWebhook {
+
+			resp, err := c.client.Organizations.DeleteHook(ctx, c.cfg.GitConfig.OrgName, *hook.ID)
+
+			if err != nil {
+				return err
+			}
+
+			if resp.StatusCode != 204 {
+				return fmt.Errorf("failed to delete org level webhhok, API call returned %d", resp.StatusCode)
+			}
+
+		} else {
+			for _, repo := range strings.Split(c.cfg.GitConfig.RepoList, ",") {
+				resp, err := c.client.Repositories.DeleteHook(ctx, c.cfg.GitConfig.OrgName, repo, *hook.ID)
+
+				if err != nil {
+					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", repo, resp.StatusCode, err)
+				}
+
+				if resp.StatusCode != 204 {
+					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d", repo, resp.StatusCode)
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func (c GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {

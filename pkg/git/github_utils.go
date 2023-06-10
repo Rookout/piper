@@ -18,7 +18,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) bool {
 		return false
 	}
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "piper" {
+		if hook.GetActive() && hook.GetName() == "piper" && hook.GetURL() == c.cfg.GitConfig.WebhookURL {
 			return true
 		}
 	}
@@ -38,7 +38,7 @@ func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string)
 	}
 
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "piper" {
+		if hook.GetActive() && hook.GetName() == "piper" && hook.GetURL() == c.cfg.GitConfig.WebhookURL {
 			return true
 		}
 	}
