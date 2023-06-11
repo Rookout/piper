@@ -14,7 +14,7 @@ import (
 type GithubClientImpl struct {
 	client *github.Client
 	cfg    *conf.Config
-	hooks  []github.Hook
+	hooks  []*github.Hook
 }
 
 func NewGithubClient(cfg *conf.Config) (Client, error) {
@@ -29,26 +29,36 @@ func NewGithubClient(cfg *conf.Config) (Client, error) {
 	return &GithubClientImpl{
 		client: client,
 		cfg:    cfg,
+		hooks:  []*github.Hook{},
 	}, err
 }
 
 func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.Config) error {
 
-	if cfg.GitConfig.OrgLevelWebhook {
-		return nil // Todo implementation of org level permissions check
-	} else {
-		for _, repo := range strings.Split(cfg.GitConfig.RepoList, ",") {
-			_, _, err := client.Repositories.Get(ctx, cfg.GitConfig.OrgName, repo)
-			if err != nil {
-				return err // TODO implementation of repo level permissions check
-			}
-		}
-	}
-
 	return nil
+
+	//if err != nil {
+	//	return err // TODO implementation of repo level permissions check
+	//}
+	//
+	//if resp.StatusCode != http.StatusOK {
+	//	return fmt.Errorf("failed to validate permissions: %v", resp.Status)
+	//}
+	//
+	//for _, scope := range auth.Scopes {
+	//	if cfg.GitConfig.OrgLevelWebhook && scope == github.ScopeAdminOrgHook {
+	//		return nil
+	//	}
+	//
+	//	if !cfg.GitConfig.OrgLevelWebhook && (scope == github.ScopeWriteRepoHook || scope == github.ScopeAdminRepoHook) {
+	//		return nil
+	//	}
+	//}
+	//return fmt.Errorf("failed to validate permissions, missing scope. Scopes is: %v", auth.Scopes)
+
 }
 
-func (c GithubClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
+func (c *GithubClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
 	var files []string
 	ctx := context.Background()
 
@@ -69,7 +79,7 @@ func (c GithubClientImpl) ListFiles(repo string, branch string, path string) ([]
 	return files, nil
 }
 
-func (c GithubClientImpl) GetFile(repo string, branch string, path string) (*CommitFile, error) {
+func (c *GithubClientImpl) GetFile(repo string, branch string, path string) (*CommitFile, error) {
 	var commitFile CommitFile
 
 	ctx := context.Background()
@@ -93,7 +103,7 @@ func (c GithubClientImpl) GetFile(repo string, branch string, path string) (*Com
 	return &commitFile, nil
 }
 
-func (c GithubClientImpl) SetWebhook() error {
+func (c *GithubClientImpl) SetWebhook() error {
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
@@ -106,21 +116,25 @@ func (c GithubClientImpl) SetWebhook() error {
 		Active: github.Bool(true),
 	}
 	if c.cfg.GitConfig.OrgLevelWebhook {
-		if !isOrgWebhookEnabled(ctx, &c) {
-			_, resp, err := c.client.Organizations.CreateHook(ctx, c.cfg.GitConfig.OrgName, hook)
+		respHook, ok := isOrgWebhookEnabled(ctx, c)
+		if !ok {
+			retHook, resp, err := c.client.Organizations.CreateHook(ctx, c.cfg.GitConfig.OrgName, hook)
 			if err != nil {
 				return err
 			}
 			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
-
-			c.hooks = append(c.hooks, *hook)
+			c.hooks = append(c.hooks, retHook)
+		} else {
+			c.hooks = append(c.hooks, respHook)
 		}
+
 		return nil
 	} else {
 		for _, repo := range strings.Split(c.cfg.GitConfig.RepoList, ",") {
-			if !isRepoWebhookEnabled(ctx, &c, repo) {
+			respHook, ok := isRepoWebhookEnabled(ctx, c, repo)
+			if !ok {
 				_, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitConfig.OrgName, repo, hook)
 				if err != nil {
 					return err
@@ -129,16 +143,16 @@ func (c GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
+				c.hooks = append(c.hooks, hook)
 			}
-
-			c.hooks = append(c.hooks, *hook)
+			c.hooks = append(c.hooks, respHook)
 		}
 	}
 
 	return nil
 }
 
-func (c GithubClientImpl) UnsetWebhook() error {
+func (c *GithubClientImpl) UnsetWebhook() error {
 	ctx := context.Background()
 
 	for _, hook := range c.hooks {
@@ -172,7 +186,7 @@ func (c GithubClientImpl) UnsetWebhook() error {
 	return nil
 }
 
-func (c GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
+func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
 
 	var webhookPayload *WebhookPayload
 

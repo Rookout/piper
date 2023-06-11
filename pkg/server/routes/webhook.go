@@ -14,12 +14,7 @@ func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.Router
 	webhook := rg.Group("/webhook")
 
 	webhook.POST("", func(c *gin.Context) {
-		var json struct {
-			Value string `json:"value" binding:"required"`
-		}
 
-		if c.BindJSON(&json) == nil {
-			c.JSON(http.StatusOK, gin.H{"status": "ok", "json": json.Value})
-		}
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 }

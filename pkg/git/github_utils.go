@@ -6,42 +6,44 @@ import (
 	"github.com/google/go-github/v52/github"
 )
 
-func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) bool {
+func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook, bool) {
+	emptyHook := github.Hook{}
 	hooks, resp, err := c.client.Organizations.ListHooks(ctx, c.cfg.GitConfig.OrgName, &github.ListOptions{})
 	if err != nil {
-		return false
+		return &emptyHook, false
 	}
 	if resp.StatusCode != 200 {
-		return false
+		return &emptyHook, false
 	}
 	if hooks == nil || len(hooks) == 0 {
-		return false
+		return &emptyHook, false
 	}
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "piper" && hook.GetURL() == c.cfg.GitConfig.WebhookURL {
-			return true
+		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitConfig.WebhookURL {
+			return hook, true
 		}
 	}
-	return false
+	return &emptyHook, false
 }
 
-func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string) bool {
+func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string) (*github.Hook, bool) {
+	emptyHook := github.Hook{}
 	hooks, resp, err := c.client.Repositories.ListHooks(ctx, c.cfg.GitConfig.OrgName, repo, &github.ListOptions{})
 	if err != nil {
-		return false
+		return &emptyHook, false
 	}
 	if resp.StatusCode != 200 {
-		return false
+		return &emptyHook, false
 	}
 	if hooks == nil || len(hooks) == 0 {
-		return false
+		return &emptyHook, false
 	}
 
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "piper" && hook.GetURL() == c.cfg.GitConfig.WebhookURL {
-			return true
+		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitConfig.WebhookURL {
+			return hook, true
 		}
 	}
 
-	return false
+	return &emptyHook, false
 }

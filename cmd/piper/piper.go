@@ -20,5 +20,15 @@ func main() {
 		Git: git.NewGitProviderClient(cfg),
 	}
 
+	err = clients.Git.SetWebhook()
+	if err != nil {
+		panic(err)
+	}
+
+	//err = clients.Git.UnsetWebhook()
+	//if err != nil {
+	//	panic(err)
+	//}
+
 	server.Start(cfg, &clients)
 }
