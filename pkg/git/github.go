@@ -49,7 +49,7 @@ func (c *GithubClientImpl) ListFiles(repo string, branch string, path string) ([
 		return nil, nil
 	}
 	for _, file := range directoryContent {
-		files = append(files, file.GetPath())
+		files = append(files, file.GetName())
 	}
 	return files, nil
 }
@@ -69,16 +69,19 @@ func (c *GithubClientImpl) GetFile(repo string, branch string, path string) (*Co
 	if fileContent == nil {
 		return &commitFile, nil
 	}
-	*commitFile.Path = fileContent.GetPath()
-	*commitFile.Content, err = fileContent.GetContent()
+	filePath := fileContent.GetPath()
+	commitFile.Path = &filePath
+	fileContentString, err := fileContent.GetContent()
 	if err != nil {
 		return &commitFile, err
 	}
+	commitFile.Content = &fileContentString
 
 	return &commitFile, nil
 }
 
 func (c *GithubClientImpl) SetWebhook() error {
+	// TODO: validate secret
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
@@ -161,6 +164,16 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 	return nil
 }
 
+func (c *GithubClientImpl) GetWebhook(hookID int64) (*github.Hook, error) {
+	for _, hook := range c.hooks {
+		if *hook.ID == hookID {
+			return hook, nil
+		}
+	}
+
+	return &github.Hook{}, nil
+}
+
 func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
 
 	var webhookPayload *WebhookPayload
@@ -176,10 +189,15 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 	}
 
 	switch e := event.(type) {
+	case *github.PingEvent:
+		webhookPayload = &WebhookPayload{
+			Event: "ping",
+			Repo:  e.GetRepo().GetFullName(),
+		}
 	case *github.PushEvent:
 		webhookPayload = &WebhookPayload{
 			Event:     e.GetAction(),
-			Repo:      e.GetRepo().GetFullName(),
+			Repo:      e.GetRepo().GetName(),
 			Branch:    strings.TrimPrefix(e.GetRef(), "refs/heads/"),
 			Commit:    e.GetHeadCommit().GetSHA(),
 			User:      e.GetSender().GetName(),
@@ -188,7 +206,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 	case *github.PullRequestEvent:
 		webhookPayload = &WebhookPayload{
 			Event:            e.GetAction(),
-			Repo:             e.GetRepo().GetFullName(),
+			Repo:             e.GetRepo().GetName(),
 			Branch:           e.GetPullRequest().GetHead().GetRef(),
 			Commit:           e.GetPullRequest().GetHead().GetSHA(),
 			User:             e.GetSender().GetName(),

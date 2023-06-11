@@ -1,9 +1,5 @@
 package webhook_hanlder
 
-import (
-	"github.com/rookout/piper/pkg/conf"
-)
-
 type Trigger struct {
 	events   []string `json:"events"`
 	branches []string `json:"branches"`
@@ -12,6 +8,6 @@ type Trigger struct {
 }
 
 type WebhookHandler interface {
-	RegisterTriggers(cfg *conf.Config, repo string, branch string) error
-	ExecuteMatchingTriggers(event string, branch string) error
+	RegisterTriggers() error
+	ExecuteMatchingTriggers() error
 }

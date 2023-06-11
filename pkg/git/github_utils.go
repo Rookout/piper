@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/rookout/piper/pkg/utils"
+
 	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/conf"
 )
@@ -75,22 +77,6 @@ func GetScopes(ctx context.Context, client *github.Client) ([]string, error) {
 
 }
 
-func ValidateListAInListB(listA, listB []string) bool {
-	for _, element := range listA {
-		found := false
-		for _, b := range listB {
-			if element == b {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-	return true
-}
-
 func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.Config) error {
 
 	orgScopes := []string{"admin:org_hook"}
@@ -107,16 +93,16 @@ func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.C
 	}
 
 	if cfg.GitConfig.OrgLevelWebhook {
-		if ValidateListAInListB(orgScopes, scopes) {
+		if utils.ValidateListAInListB(orgScopes, scopes) {
 			return nil
 		}
 		return fmt.Errorf("permissions error: %v is not a valid scope for the org level permissions", scopes)
 	}
 
-	if ValidateListAInListB(repoAdminScopes, scopes) {
+	if utils.ValidateListAInListB(repoAdminScopes, scopes) {
 		return nil
 	}
-	if ValidateListAInListB(repoGranularScopes, scopes) {
+	if utils.ValidateListAInListB(repoGranularScopes, scopes) {
 		return nil
 	}
 
