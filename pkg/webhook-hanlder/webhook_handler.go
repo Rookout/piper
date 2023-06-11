@@ -47,9 +47,18 @@ func (wh *WebhookHandlerImpl) RegisterTriggers() error {
 	return nil
 }
 
-func (wh *WebhookHandlerImpl) ExecuteMatchingTriggers(event string, branch string) error {
-	//TODO implement me
-	panic("implement me")
+func (wh *WebhookHandlerImpl) ExecuteMatchingTriggers() error {
+	triggered := false
+	for _, trigger := range *wh.Triggers {
+		if utils.IsElementExists(trigger.branches, wh.Payload.Branch) && utils.IsElementExists(trigger.events, wh.Payload.Event) {
+			log.Printf("Trigger %s for branch %s triggered", wh.Payload.Event, wh.Payload.Branch)
+			triggered = true
+		}
+	}
+	if !triggered {
+		return fmt.Errorf("no matching trigger found for %s in branch %s", wh.Payload.Event, wh.Payload.Branch)
+	}
+	return nil
 }
 
 func IsFileExists(wh *WebhookHandlerImpl, path string, file string) bool {

@@ -44,6 +44,15 @@ func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.Router
 			log.Printf("successfully registered triggers for repo: %s branch: %s", wh.Payload.Repo, wh.Payload.Branch)
 		}
 
+		err = wh.ExecuteMatchingTriggers()
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.Fatalf("failed to execute matching triggers, error: %v", err)
+			return
+		} else {
+			log.Printf("successfully executed matching triggers for repo: %s branch: %s", wh.Payload.Repo, wh.Payload.Branch)
+		}
+
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 }
