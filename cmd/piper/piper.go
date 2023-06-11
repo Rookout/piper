@@ -3,9 +3,10 @@ package main
 import (
 	"log"
 
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/clients"
 
 	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/git"
 	"github.com/rookout/piper/pkg/server"
 )
 
@@ -15,9 +16,9 @@ func main() {
 		log.Fatalf("failed to load the configuration for Piper, error: %v", err)
 	}
 
-	clients := &conf.Clients{
+	clients := clients.Clients{
 		Git: git.NewGitProviderClient(cfg),
 	}
 
-	server.Start(cfg, clients)
+	server.Start(cfg, &clients)
 }
