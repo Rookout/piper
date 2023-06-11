@@ -33,31 +33,6 @@ func NewGithubClient(cfg *conf.Config) (Client, error) {
 	}, err
 }
 
-func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.Config) error {
-
-	return nil
-
-	//if err != nil {
-	//	return err // TODO implementation of repo level permissions check
-	//}
-	//
-	//if resp.StatusCode != http.StatusOK {
-	//	return fmt.Errorf("failed to validate permissions: %v", resp.Status)
-	//}
-	//
-	//for _, scope := range auth.Scopes {
-	//	if cfg.GitConfig.OrgLevelWebhook && scope == github.ScopeAdminOrgHook {
-	//		return nil
-	//	}
-	//
-	//	if !cfg.GitConfig.OrgLevelWebhook && (scope == github.ScopeWriteRepoHook || scope == github.ScopeAdminRepoHook) {
-	//		return nil
-	//	}
-	//}
-	//return fmt.Errorf("failed to validate permissions, missing scope. Scopes is: %v", auth.Scopes)
-
-}
-
 func (c *GithubClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
 	var files []string
 	ctx := context.Background()
