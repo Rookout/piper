@@ -12,13 +12,6 @@ import (
 	"github.com/rookout/piper/pkg/utils"
 )
 
-type Trigger struct {
-	Events   *[]string `yaml:"events"`
-	Branches *[]string `yaml:"branches"`
-	OnStart  *[]string `yaml:"onStart"`
-	OnExit   *[]string `yaml:"onExit"`
-}
-
 type WebhookHandlerImpl struct {
 	cfg      *conf.Config
 	clients  *clients.Clients
