@@ -4,12 +4,20 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/rookout/piper/pkg/git"
+	"gopkg.in/yaml.v3"
 
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/git"
 	"github.com/rookout/piper/pkg/utils"
 )
+
+type Trigger struct {
+	Events   *[]string `yaml:"events"`
+	Branches *[]string `yaml:"branches"`
+	OnStart  *[]string `yaml:"onStart"`
+	OnExit   *[]string `yaml:"onExit"`
+}
 
 type WebhookHandlerImpl struct {
 	cfg      *conf.Config
@@ -44,13 +52,18 @@ func (wh *WebhookHandlerImpl) RegisterTriggers() error {
 	}
 
 	log.Printf("triggers content is: \n %s \n", *triggers.Content)
+
+	err = yaml.Unmarshal([]byte(*triggers.Content), wh.Triggers)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal triggers content: %v", err)
+	}
 	return nil
 }
 
 func (wh *WebhookHandlerImpl) ExecuteMatchingTriggers() error {
 	triggered := false
 	for _, trigger := range *wh.Triggers {
-		if utils.IsElementExists(trigger.branches, wh.Payload.Branch) && utils.IsElementExists(trigger.events, wh.Payload.Event) {
+		if utils.IsElementExists(*trigger.Branches, wh.Payload.Branch) && utils.IsElementExists(*trigger.Events, wh.Payload.Event) {
 			log.Printf("Trigger %s for branch %s triggered", wh.Payload.Event, wh.Payload.Branch)
 			triggered = true
 		}
