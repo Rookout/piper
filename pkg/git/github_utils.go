@@ -61,7 +61,7 @@ func GetScopes(ctx context.Context, client *github.Client) ([]string, error) {
 		fmt.Println("Error creating request:", err)
 		return nil, err
 	}
-	resp, err := client.Do(context.Background(), req, nil)
+	resp, err := client.Do(ctx, req, nil)
 	if err != nil {
 		fmt.Println("Error making request:", err)
 		return nil, err
