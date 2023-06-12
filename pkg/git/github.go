@@ -164,16 +164,6 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 	return nil
 }
 
-func (c *GithubClientImpl) GetWebhook(hookID int64) (*github.Hook, error) {
-	for _, hook := range c.hooks {
-		if *hook.ID == hookID {
-			return hook, nil
-		}
-	}
-
-	return &github.Hook{}, nil
-}
-
 func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
 
 	var webhookPayload *WebhookPayload

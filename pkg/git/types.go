@@ -2,8 +2,6 @@ package git
 
 import (
 	"net/http"
-
-	"github.com/google/go-github/v52/github"
 )
 
 type CommitFile struct {
@@ -28,6 +26,5 @@ type Client interface {
 	GetFile(repo string, branch string, path string) (*CommitFile, error)
 	SetWebhook() error
 	UnsetWebhook() error
-	GetWebhook(hookID int64) (*github.Hook, error)
 	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
 }
