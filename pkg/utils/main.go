@@ -2,10 +2,13 @@ package utils
 
 import "strconv"
 
-func ValidateListAInListB(listA, listB []string) bool {
-	for _, element := range listA {
+func ListContains(subList, list []string) bool {
+	if len(subList) > len(list) {
+		return false
+	}
+	for _, element := range subList {
 		found := false
-		for _, b := range listB {
+		for _, b := range list {
 			if element == b {
 				found = true
 				break

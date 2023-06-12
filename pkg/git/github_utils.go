@@ -93,16 +93,16 @@ func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.C
 	}
 
 	if cfg.GitConfig.OrgLevelWebhook {
-		if utils.ValidateListAInListB(orgScopes, scopes) {
+		if utils.ListContains(orgScopes, scopes) {
 			return nil
 		}
 		return fmt.Errorf("permissions error: %v is not a valid scope for the org level permissions", scopes)
 	}
 
-	if utils.ValidateListAInListB(repoAdminScopes, scopes) {
+	if utils.ListContains(repoAdminScopes, scopes) {
 		return nil
 	}
-	if utils.ValidateListAInListB(repoGranularScopes, scopes) {
+	if utils.ListContains(repoGranularScopes, scopes) {
 		return nil
 	}
 
