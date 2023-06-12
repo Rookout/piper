@@ -189,9 +189,9 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Event:     "push",
 			Repo:      e.GetRepo().GetName(),
 			Branch:    strings.TrimPrefix(e.GetRef(), "refs/heads/"),
-			Commit:    e.GetHeadCommit().GetSHA(),
-			User:      e.GetSender().GetName(),
-			UserEmail: e.GetSender().GetEmail(),
+			Commit:    e.GetHeadCommit().GetID(),
+			User:      e.GetSender().GetLogin(),
+			UserEmail: e.GetHeadCommit().GetAuthor().GetEmail(),
 		}
 	case *github.PullRequestEvent:
 		webhookPayload = &WebhookPayload{

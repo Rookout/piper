@@ -63,7 +63,7 @@ func (wh *WebhookHandlerImpl) RegisterTriggers() error {
 func (wh *WebhookHandlerImpl) ExecuteMatchingTriggers() error {
 	triggered := false
 	for _, trigger := range *wh.Triggers {
-		if utils.IsElementExists(*trigger.Branches, wh.Payload.Branch) && utils.IsElementExists(*trigger.Events, wh.Payload.Event) {
+		if utils.IsElementMatch(wh.Payload.Branch, *trigger.Branches) && utils.IsElementMatch(wh.Payload.Event, *trigger.Events) {
 			log.Printf("Trigger %s for branch %s triggered", wh.Payload.Event, wh.Payload.Branch)
 			triggered = true
 		}

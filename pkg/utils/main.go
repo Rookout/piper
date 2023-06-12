@@ -1,7 +1,5 @@
 package utils
 
-import "strconv"
-
 func ListContains(subList, list []string) bool {
 	if len(subList) > len(list) {
 		return false
@@ -30,10 +28,10 @@ func IsElementExists(list []string, element string) bool {
 	return false
 }
 
-func StringToInt64(str string) (int64, error) {
-	num, err := strconv.ParseInt(str, 10, 64)
-	if err != nil {
-		return 0, err
+func IsElementMatch(element string, elements []string) bool {
+	if IsElementExists(elements, "*") {
+		return true
 	}
-	return num, nil
+
+	return IsElementExists(elements, element)
 }
