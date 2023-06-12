@@ -8,6 +8,10 @@ type WorkflowConfig struct {
 
 }
 
-type Workflow interface {
+func init() {
+
+}
+
+func workflow_config() {
 
 }
