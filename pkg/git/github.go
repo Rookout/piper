@@ -3,6 +3,7 @@ package git
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -33,12 +34,11 @@ func NewGithubClient(cfg *conf.Config) (Client, error) {
 	}, err
 }
 
-func (c *GithubClientImpl) ListFiles(repo string, branch string, path string) ([]string, error) {
+func (c *GithubClientImpl) ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error) {
 	var files []string
-	ctx := context.Background()
 
 	opt := &github.RepositoryContentGetOptions{Ref: branch}
-	_, directoryContent, resp, err := c.client.Repositories.GetContents(ctx, c.cfg.GitConfig.OrgName, repo, path, opt)
+	_, directoryContent, resp, err := c.client.Repositories.GetContents(*ctx, c.cfg.GitConfig.OrgName, repo, path, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -54,14 +54,17 @@ func (c *GithubClientImpl) ListFiles(repo string, branch string, path string) ([
 	return files, nil
 }
 
-func (c *GithubClientImpl) GetFile(repo string, branch string, path string) (*CommitFile, error) {
+func (c *GithubClientImpl) GetFile(ctx *context.Context, repo string, branch string, path string) (*CommitFile, error) {
 	var commitFile CommitFile
 
-	ctx := context.Background()
 	opt := &github.RepositoryContentGetOptions{Ref: branch}
-	fileContent, _, resp, err := c.client.Repositories.GetContents(ctx, c.cfg.GitConfig.OrgName, repo, path, opt)
+	fileContent, _, resp, err := c.client.Repositories.GetContents(*ctx, c.cfg.GitConfig.OrgName, repo, path, opt)
 	if err != nil {
 		return &commitFile, err
+	}
+	if resp.StatusCode == 404 {
+		log.Printf("File %s not found in repo %s branch %s", path, repo, branch)
+		return nil, nil
 	}
 	if resp.StatusCode != 200 {
 		return &commitFile, err
@@ -80,6 +83,22 @@ func (c *GithubClientImpl) GetFile(repo string, branch string, path string) (*Co
 	return &commitFile, nil
 }
 
+func (c *GithubClientImpl) GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*CommitFile, error) {
+	var commitFiles []*CommitFile
+	for _, path := range paths {
+		file, err := c.GetFile(ctx, repo, branch, path)
+		if err != nil {
+			return nil, err
+		}
+		if file == nil {
+			log.Printf("file %s not found in repo %s branch %s", path, repo, branch)
+			continue
+		}
+		commitFiles = append(commitFiles, file)
+	}
+	return commitFiles, nil
+}
+
 func (c *GithubClientImpl) SetWebhook() error {
 	// TODO: validate secret
 	ctx := context.Background()
@@ -96,7 +115,11 @@ func (c *GithubClientImpl) SetWebhook() error {
 	if c.cfg.GitConfig.OrgLevelWebhook {
 		respHook, ok := isOrgWebhookEnabled(ctx, c)
 		if !ok {
-			retHook, resp, err := c.client.Organizations.CreateHook(ctx, c.cfg.GitConfig.OrgName, hook)
+			retHook, resp, err := c.client.Organizations.CreateHook(
+				ctx,
+				c.cfg.GitConfig.OrgName,
+				hook,
+			)
 			if err != nil {
 				return err
 			}
@@ -105,7 +128,23 @@ func (c *GithubClientImpl) SetWebhook() error {
 			}
 			c.hooks = append(c.hooks, retHook)
 		} else {
-			c.hooks = append(c.hooks, respHook)
+			updatedHook, resp, err := c.client.Organizations.EditHook(
+				ctx,
+				c.cfg.GitConfig.OrgName,
+				respHook.GetID(),
+				hook,
+			)
+			if err != nil {
+				return err
+			}
+			if resp.StatusCode != http.StatusOK {
+				return fmt.Errorf(
+					"failed to update org level webhhok for %s, API returned %d",
+					c.cfg.GitConfig.OrgName,
+					resp.StatusCode,
+				)
+			}
+			c.hooks = append(c.hooks, updatedHook)
 		}
 
 		return nil
@@ -122,8 +161,17 @@ func (c *GithubClientImpl) SetWebhook() error {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
 				c.hooks = append(c.hooks, hook)
+			} else {
+				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitConfig.OrgName, repo, respHook.GetID(), hook)
+				if err != nil {
+					return err
+				}
+				if resp.StatusCode != http.StatusOK {
+					return fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
+				}
+
+				c.hooks = append(c.hooks, updatedHook)
 			}
-			c.hooks = append(c.hooks, respHook)
 		}
 	}
 

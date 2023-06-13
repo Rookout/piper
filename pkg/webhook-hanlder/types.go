@@ -1,5 +1,16 @@
 package webhook_hanlder
 
+import (
+	"context"
+	"github.com/rookout/piper/pkg/git"
+)
+
+type WorkflowsBatch struct {
+	OnStart    []*git.CommitFile
+	OnExit     []*git.CommitFile
+	Parameters *git.CommitFile
+}
+
 type Trigger struct {
 	Events   *[]string `yaml:"events"`
 	Branches *[]string `yaml:"branches"`
@@ -8,6 +19,6 @@ type Trigger struct {
 }
 
 type WebhookHandler interface {
-	RegisterTriggers() error
-	ExecuteMatchingTriggers() error
+	RegisterTriggers(ctx *context.Context) error
+	PrepareBatchForMatchingTriggers(ctx *context.Context) ([]*WorkflowsBatch, error)
 }

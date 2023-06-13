@@ -17,7 +17,7 @@ func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.Router
 	webhook := rg.Group("/webhook")
 
 	webhook.POST("", func(c *gin.Context) {
-
+		ctx := c.Copy().Request.Context()
 		webhookPayload, err := clients.Git.HandlePayload(c.Request, []byte(cfg.GitConfig.WebhookSecret))
 		if err != nil {
 			log.Println(err)
@@ -37,22 +37,11 @@ func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.Router
 			return
 		}
 
-		err = wh.RegisterTriggers()
+		err = webhook_hanlder.HandleWebhook(&ctx, wh)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			log.Printf("failed to register triggers, error: %v", err)
+			log.Printf("failed to handle webhook, error: %v", err)
 			return
-		} else {
-			log.Printf("successfully registered triggers for repo: %s branch: %s", wh.Payload.Repo, wh.Payload.Branch)
-		}
-
-		err = wh.ExecuteMatchingTriggers()
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			log.Printf("failed to execute matching triggers, error: %v", err)
-			return
-		} else {
-			log.Printf("successfully executed matching triggers for repo: %s branch: %s", wh.Payload.Repo, wh.Payload.Branch)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

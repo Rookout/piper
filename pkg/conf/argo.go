@@ -9,7 +9,9 @@ import (
 type ArgoConfig struct {
 	ArgoToken   string `envconfig:"ARGO_WORKFLOWS_TOKEN" required:"true"`
 	ArgoAddress string `envconfig:"ARGO_WORKFLOWS_ADDRESS" required:"true"`
-	CreateCRD   bool   `envconfig:"GIT_WEBHOOK_REPO_LIST" default:"true"`
+	CreateCRD   bool   `envconfig:"ARGO_WORKFLOWS__CREATE_CRD" default:"true"`
+	Namespace   string `envconfig:"ARGO_WORKFLOWS_NAMESPACE" default:"default"`
+	KubeConfig  string `envconfig:"KUBE_CONFIG" default:""`
 }
 
 func (cfg *GitConfig) ArgoConfLoad() error {

@@ -1,6 +1,7 @@
 package git
 
 import (
+	"context"
 	"net/http"
 )
 
@@ -22,8 +23,9 @@ type WebhookPayload struct {
 }
 
 type Client interface {
-	ListFiles(repo string, branch string, path string) ([]string, error)
-	GetFile(repo string, branch string, path string) (*CommitFile, error)
+	ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error)
+	GetFile(ctx *context.Context, repo string, branch string, path string) (*CommitFile, error)
+	GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*CommitFile, error)
 	SetWebhook() error
 	UnsetWebhook() error
 	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)

@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+)
+
 func ListContains(subList, list []string) bool {
 	if len(subList) > len(list) {
 		return false
@@ -34,4 +39,21 @@ func IsElementMatch(element string, elements []string) bool {
 	}
 
 	return IsElementExists(elements, element)
+}
+
+func GetClientConfig(kubeConfig string) (*rest.Config, error) {
+	if kubeConfig != "" {
+		return clientcmd.BuildConfigFromFlags("", kubeConfig)
+	}
+	return rest.InClusterConfig()
+}
+
+func AddPrefixToList(list []string, prefix string) []string {
+	result := make([]string, len(list))
+
+	for i, item := range list {
+		result[i] = prefix + item
+	}
+
+	return result
 }
