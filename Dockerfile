@@ -26,6 +26,8 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
 
 FROM alpine:3.16 as piper-release
 
+ENV GIN_MODE=release
+
 USER 1001
 
 COPY --chown=1001 --from=builder /piper/piper /bin
