@@ -42,20 +42,20 @@ We welcome and appreciate contributions from the community. If you have develope
 To maintain a consistent codebase and ensure readability, we follow a set of coding guidelines in Piper. Please adhere to the following guidelines when making changes:
 
 * Follow the [Effective Go](https://go.dev/doc/effective_go) guide for Go code.
-* Follow the [Folder convenstion](https://github.com/golang-standards/project-layout) guide for Go code.
+* Follow the [Folder convention](https://github.com/golang-standards/project-layout) guide for Go code.
 * Write clear and concise comments to explain the code's functionality.
 * Use meaningful variable and function names.
 * Make sure your code is properly formatted and free of syntax errors.
 * Run tests locally.
-* Check that the feature documenated.
-* Add new packges only if necessary and already existing one, can't be used.
-* Add tests for new fatures or modification.
+* Check that the feature documented.
+* Add new packages only if necessary and already existing one, can't be used.
+* Add tests for new features or modification.
 
 ## Helm Chart 
 
 To make sure that the documentation is updated use [helm-docs](https://github.com/norwoodj/helm-docs) comment convention. The pipeline will execute `helm-docs` command and update the version of the chart.
 
-Also please make sure to run those commands locally to debug the chart before merging:
+Also, please make sure to run those commands locally to debug the chart before merging:
 
 ```bash
 helm lint

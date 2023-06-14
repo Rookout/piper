@@ -6,6 +6,7 @@
 - [ ] Implementation of Workflow creation by the example.
 - [ ] Argo Workflows Server linter and submitter.
 - [ ] Workflow status management service.
+- [ ] Graceful shutdown
 
 ### Future Piper Features
 - [ ] debug pause injection implementation feature (will fail the pipeline).
