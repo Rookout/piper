@@ -1,0 +1,80 @@
+# Default values for Piper.
+# For more information head to https:/github.com/rookout/piper
+
+# Map of Piper configurations.
+piper:
+  gitProvider:
+    # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
+    name: github
+    # -- The token for authentication with the Git provider.
+    # -- This will create a secret named <RELEASE_NAME>-git-token and with the key 'token'
+    token: ""
+    # -- The token for authentication with the Git provider.
+    # -- Reference to existing token with 'token' key.
+    # -- can be created with `kubectl create secret generic piper-git-token --from-literal=token=YOUR_TOKEN`
+    tokenExistingSecret: #piper-git-token
+    # Map of organization configurations.
+    organization:
+      # -- Name of your Git Organization
+      name: ""
+    # Map of webhook configurations.
+    webhook:
+      # -- Whether config webhook on org level
+      orgLevel: false
+      # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
+      repoList: [""]
+
+  # Map of Argo Workflows configurations.
+  argoWorkflows:
+    # Map of Argo Workflows server configurations.
+    server:
+      # -- The DNS address of Argo Workflow server that Piper can address.
+      address: argo-workflows-server.workflows.svc.cluster.local
+      # -- The token for authentication with Argo Workflows server.
+      # -- This will create a secret named <RELEASE_NAME>-token and with the key 'token'
+      token: "noting"
+      # -- The token for authentication with Argo Workflows server.
+      # -- Reference to existing token with 'token' key.
+      # -- can be created with `kubectl create secret generic piper-argo-token --from-literal=token=YOUR_TOKEN`
+      tokenExistingSecret: #piper-argo-token
+    # -- Whether create Workflow CRD or send direct commands to Argo Workflows server.
+    crdCreation: true
+
+  workflowsConfig:
+     default: |
+       spec:
+         volumes:
+         - name: shared-volume
+           emptyDir: {}
+         serviceAccountName: argo-wf
+         activeDeadlineSeconds: 7200 # (seconds) == 2 hours
+         ttlStrategy:
+           secondsAfterCompletion: 28800 # (seconds) == 8 hours
+         podGC:
+           strategy: OnPodSuccess
+         archiveLogs: true
+         artifactRepositoryRef:
+           configMap: artifact-repositories
+         nodeSelector:
+           node_pool: workflows
+         tolerations:
+           - effect: NoSchedule
+             key: node_pool
+             operator: Equal
+             value: workflows
+       onExit: # optinal, will be overwritten if specifc in .wokrflows/exit.yaml.
+         - name: github-status
+           template: exit-handler
+           arguments:
+             parameters:
+               - name: param1
+               value: "{{ workflow.labels.repo }}"
+image:
+  # -- Piper image name
+  name: piper
+  # -- Piper public dockerhub repo
+  repository: localhost:5001
+  # -- Piper image pull policy
+  pullPolicy: Always
+  # -- Piper image tag
+  tag: latest

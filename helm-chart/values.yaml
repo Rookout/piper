@@ -79,7 +79,7 @@ image:
   # -- Piper public dockerhub repo
   repository: rookout
   # -- Piper image pull policy
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # -- Piper image tag
   tag: latest
 
