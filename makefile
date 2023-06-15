@@ -12,11 +12,6 @@ init-kind:
 .PHONY: deploy
 deploy: local-build init-kind
 	docker push localhost:5001/piper:latest
-	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
- 	kubectl wait --namespace ingress-nginx \
-				 --for=condition=ready pod \
-				 --selector=app.kubernetes.io/component=controller \
-				 --timeout=90s
 	helm upgrade --install piper ./helm-chart -f values.dev.yaml
 
 .PHONY: clean
