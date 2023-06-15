@@ -19,7 +19,7 @@ deploy: local-build init-kind
 	helm upgrade --install piper ./helm-chart -f values.dev.yaml
 
 .PHONY: restart
-restart: local-build init-kind
+restart:
 	kubectl rollout restart deployment piper
 
 .PHONY: clean
