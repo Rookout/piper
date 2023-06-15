@@ -9,7 +9,7 @@ type Trigger struct {
 	Events    *[]string `yaml:"events"`
 	Branches  *[]string `yaml:"branches"`
 	OnStart   *[]string `yaml:"onStart"`
-	Templates *[]string `yaml:"parameters"`
+	Templates *[]string `yaml:"templates"`
 	OnExit    *[]string `yaml:"onExit"`
 }
 
