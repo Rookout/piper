@@ -73,8 +73,9 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				return nil, err
 			}
 
+			onExitFiles := make([]*git.CommitFile, 0)
 			if *trigger.OnExit != nil {
-				onExitFiles, err := wh.clients.Git.GetFiles(
+				onExitFiles, err = wh.clients.Git.GetFiles(
 					ctx,
 					wh.Payload.Repo,
 					wh.Payload.Branch,
@@ -88,8 +89,9 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				}
 			}
 
+			templatesFiles := make([]*git.CommitFile, 0)
 			if *trigger.Templates != nil {
-				templatesFiles, err := wh.clients.Git.GetFiles(
+				templatesFiles, err = wh.clients.Git.GetFiles(
 					ctx,
 					wh.Payload.Repo,
 					wh.Payload.Branch,
