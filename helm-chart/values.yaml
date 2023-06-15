@@ -123,19 +123,20 @@ serviceAccount:
 podAnnotations: {}
 
 # -- Security Context to set on the pod level
-podSecurityContext: {}
-  # fsGroup: 5000
-  # runAsUser: 5000
-  # runAsGroup: 5000
+podSecurityContext:
+   fsGroup: 1001
+   runAsUser: 1001
+   runAsGroup: 1001
 
 # -- Security Context to set on the container level
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 5000
+securityContext:
+  runAsUser: 1001
+  capabilities:
+    drop:
+     - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+
 
 service:
     # -- Sets the type of the Service

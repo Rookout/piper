@@ -40,8 +40,9 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           volumeMounts:
-          - mountPath: /app/config/piper-workflows-config
+          - mountPath: /piper-config
             name: piper-workflows-config
+            readOnly: true
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

@@ -2,8 +2,8 @@ package conf
 
 import (
 	"fmt"
-
 	"github.com/kelseyhightower/envconfig"
+	"github.com/rookout/piper/pkg/utils"
 )
 
 type ArgoConfig struct {
@@ -14,11 +14,19 @@ type ArgoConfig struct {
 	KubeConfig  string `envconfig:"KUBE_CONFIG" default:""`
 }
 
-func (cfg *GitConfig) ArgoConfLoad() error {
+func (cfg *ArgoConfig) ArgoConfLoad() error {
 	err := envconfig.Process("", cfg)
 	if err != nil {
-		return fmt.Errorf("failed to load the Git provider configuration, error: %v", err)
+		return fmt.Errorf("failed to load the Argo configuration, error: %v", err)
 	}
 
 	return nil
+}
+
+func (cfg *ArgoConfig) ArgoSpecLoad() (map[string][]byte, error) {
+	files, err := utils.GetFilesData("/piper-config/..data")
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }

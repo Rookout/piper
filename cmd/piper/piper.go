@@ -1,17 +1,16 @@
 package main
 
 import (
-	rookout "github.com/Rookout/GoSDK"
-	"github.com/rookout/piper/pkg/utils"
-	workflow_handler "github.com/rookout/piper/pkg/workflow-handler"
 	"log"
 
-	"github.com/rookout/piper/pkg/server"
-
 	"github.com/rookout/piper/pkg/clients"
-
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/server"
+	"github.com/rookout/piper/pkg/utils"
+	workflowHandler "github.com/rookout/piper/pkg/workflow-handler"
+
+	rookout "github.com/Rookout/GoSDK"
 )
 
 func main() {
@@ -29,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load the Git client for Piper, error: %v", err)
 	}
-	workflows, err := workflow_handler.NewWorkflowsClient(cfg)
+	workflows, err := workflowHandler.NewWorkflowsClient(cfg)
 	if err != nil {
 		log.Fatalf("failed to load the Argo Workflows client for Piper, error: %v", err)
 	}
@@ -43,7 +42,7 @@ func main() {
 		panic(err)
 	}
 
-	//err = clients.Git.UnsetWebhook()
+	//err = common.Git.UnsetWebhook()
 	//if err != nil {
 	//	panic(err)
 	//}

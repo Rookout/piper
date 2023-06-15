@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rookout/piper/pkg/clients"
+	"github.com/rookout/piper/pkg/common"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git"
 	"github.com/rookout/piper/pkg/utils"
@@ -52,9 +53,9 @@ func (wh *WebhookHandlerImpl) RegisterTriggers(ctx *context.Context) error {
 	return nil
 }
 
-func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Context) ([]*WorkflowsBatch, error) {
+func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Context) ([]*common.WorkflowsBatch, error) {
 	triggered := false
-	var workflowBatches []*WorkflowsBatch
+	var workflowBatches []*common.WorkflowsBatch
 	for _, trigger := range *wh.Triggers {
 		if utils.IsElementMatch(wh.Payload.Branch, *trigger.Branches) && utils.IsElementMatch(wh.Payload.Event, *trigger.Events) {
 			log.Printf("Trigger %s for branch %s triggered. onStart: %s onExist: %s", wh.Payload.Event, wh.Payload.Branch, *trigger.OnStart, *trigger.OnExit)
@@ -85,6 +86,19 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				return nil, err
 			}
 
+			templatesFiles, err := wh.clients.Git.GetFiles(
+				ctx,
+				wh.Payload.Repo,
+				wh.Payload.Branch,
+				utils.AddPrefixToList(*trigger.Templates, ".workflows/"),
+			)
+			if len(templatesFiles) == 0 {
+				log.Printf("parameters: %s files not found", *trigger.Templates)
+			}
+			if err != nil {
+				return nil, err
+			}
+
 			parameters, err := wh.clients.Git.GetFile(
 				ctx,
 				wh.Payload.Repo,
@@ -97,9 +111,10 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 			if parameters == nil {
 				log.Printf("parameters.yaml not found in repo: %s branch %s", wh.Payload.Repo, wh.Payload.Branch)
 			}
-			workflowBatches = append(workflowBatches, &WorkflowsBatch{
+			workflowBatches = append(workflowBatches, &common.WorkflowsBatch{
 				OnStart:    onStartFiles,
 				OnExit:     onExitFiles,
+				Templates:  templatesFiles,
 				Parameters: parameters,
 			})
 		}
@@ -128,26 +143,25 @@ func IsFileExists(ctx *context.Context, wh *WebhookHandlerImpl, path string, fil
 	return false
 }
 
-func HandleWebhook(ctx *context.Context, wh *WebhookHandlerImpl) error {
+func HandleWebhook(ctx *context.Context, wh *WebhookHandlerImpl) ([]*common.WorkflowsBatch, error) {
 	err := wh.RegisterTriggers(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to register triggers, error: %v", err)
+		return nil, fmt.Errorf("failed to register triggers, error: %v", err)
 	} else {
 		log.Printf("successfully registered triggers for repo: %s branch: %s", wh.Payload.Repo, wh.Payload.Branch)
 	}
 
 	workflowsBatches, err := wh.PrepareBatchForMatchingTriggers(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to prepare matching triggers, error: %v", err)
+		return nil, fmt.Errorf("failed to prepare matching triggers, error: %v", err)
 	}
 
 	if len(workflowsBatches) == 0 {
 		log.Printf("no workflows to execute")
-		return fmt.Errorf("no workflows to execute for repo: %s branch: %s",
+		return nil, fmt.Errorf("no workflows to execute for repo: %s branch: %s",
 			wh.Payload.Repo,
 			wh.Payload.Branch,
 		)
 	}
-
-	return nil
+	return workflowsBatches, nil
 }
