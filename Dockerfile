@@ -22,7 +22,7 @@ COPY . .
 
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build go mod tidy
 
-RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build  go build -gcflags='all=-dwarflocationlists=true' -tags=alpine -buildvcs=false  -trimpath ./cmd/piper
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build  go build -gcflags='all=-N -l' -tags=alpine -buildvcs=false  -trimpath ./cmd/piper
 
 
 FROM alpine:3.16 as piper-release
