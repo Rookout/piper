@@ -21,8 +21,8 @@
 - [ ] gh pages for docs.
 
 ## CI
-- [ ] Dockerfile 
-- [ ] Local deployment using kind
+- [x] Dockerfile 
+- [x] Local deployment using kind
 - [ ] Multi arch build
 - [ ] Helm chart - lint, package, version, publish to artifact hub.
 - [ ] Application - test, build, version, publish.
