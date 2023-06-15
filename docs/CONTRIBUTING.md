@@ -58,8 +58,7 @@ To make sure that the documentation is updated use [helm-docs](https://github.co
 Also, please make sure to run those commands locally to debug the chart before merging:
 
 ```bash
-helm lint
-helm template .  --debug > _lint.yaml
+make helm
 ```
 
 ### Local deployment

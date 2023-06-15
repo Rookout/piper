@@ -22,3 +22,9 @@ deploy: local-build init-kind
 clean:
 	docker stop kind-registry && docker rm kind-registry
 	kind delete cluster --name piper
+
+.PHONY: helm
+helm:
+	helm lint
+	helm template .  --debug > _lint.yaml
+	helm-docs
