@@ -10,13 +10,17 @@ local-build:
 
 .PHONY: init-kind
 init-kind:
-	@if [ "$( kind get clusters | grep piper)" = "" ]; then sh ./scripts/init-kind.sh; else echo "Kind piper exists, switching context"; fi
+	@if [ "$(kind get clusters | grep piper)" = "" ]; then sh ./scripts/init-kind.sh; else echo "Kind piper exists, switching context"; fi
 	kubectl config set-context kind-piper
 
 .PHONY: deploy
 deploy: local-build init-kind
 	docker push localhost:5001/piper:latest
 	helm upgrade --install piper ./helm-chart -f values.dev.yaml
+
+.PHONY: restart
+restart: local-build init-kind
+	kubectl rollout restart deployment piper
 
 .PHONY: clean
 clean:
