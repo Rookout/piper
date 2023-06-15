@@ -61,7 +61,7 @@ spec:
               path: /healthz
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 180
+            initialDelaySeconds: 10
             timeoutSeconds: 1
             periodSeconds: 4
             successThreshold: 1
@@ -71,7 +71,7 @@ spec:
               path: /healthz
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 180
+            initialDelaySeconds: 10
             timeoutSeconds: 1
             periodSeconds: 4
             successThreshold: 1
