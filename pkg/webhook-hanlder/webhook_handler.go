@@ -73,30 +73,34 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				return nil, err
 			}
 
-			onExitFiles, err := wh.clients.Git.GetFiles(
-				ctx,
-				wh.Payload.Repo,
-				wh.Payload.Branch,
-				utils.AddPrefixToList(*trigger.OnStart, ".workflows/"),
-			)
-			if len(onExitFiles) == 0 {
-				log.Printf("onExist: %s files not found", *trigger.OnExit)
-			}
-			if err != nil {
-				return nil, err
+			if *trigger.OnExit != nil {
+				onExitFiles, err := wh.clients.Git.GetFiles(
+					ctx,
+					wh.Payload.Repo,
+					wh.Payload.Branch,
+					utils.AddPrefixToList(*trigger.OnExit, ".workflows/"),
+				)
+				if len(onExitFiles) == 0 {
+					log.Printf("onExist: %s files not found", *trigger.OnExit)
+				}
+				if err != nil {
+					return nil, err
+				}
 			}
 
-			templatesFiles, err := wh.clients.Git.GetFiles(
-				ctx,
-				wh.Payload.Repo,
-				wh.Payload.Branch,
-				utils.AddPrefixToList(*trigger.Templates, ".workflows/"),
-			)
-			if len(templatesFiles) == 0 {
-				log.Printf("parameters: %s files not found", *trigger.Templates)
-			}
-			if err != nil {
-				return nil, err
+			if *trigger.Templates != nil {
+				templatesFiles, err := wh.clients.Git.GetFiles(
+					ctx,
+					wh.Payload.Repo,
+					wh.Payload.Branch,
+					utils.AddPrefixToList(*trigger.Templates, ".workflows/"),
+				)
+				if len(templatesFiles) == 0 {
+					log.Printf("parameters: %s files not found", *trigger.Templates)
+				}
+				if err != nil {
+					return nil, err
+				}
 			}
 
 			parameters, err := wh.clients.Git.GetFile(
