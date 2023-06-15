@@ -80,3 +80,7 @@ Deployment:
      * deploy nginx reverse proxy in the kind cluster
      * deploy Piper with the local helm chart
 5. validate using `curl localhost/piper/healthz`.
+
+### Debugging
+
+For debugging the best practice is to use Rookout. To enable this function pass a Rookout token in the chart `rookout.token` or as existing secret `rookout.existingSecret`

@@ -3,6 +3,7 @@ package utils
 import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"strings"
 )
 
 func ListContains(subList, list []string) bool {
@@ -56,4 +57,20 @@ func AddPrefixToList(list []string, prefix string) []string {
 	}
 
 	return result
+}
+
+func StringToMap(str string) map[string]string {
+	pairs := strings.Split(str, ",")
+	m := make(map[string]string)
+
+	for _, pair := range pairs {
+		keyValue := strings.Split(pair, ":")
+		if len(keyValue) == 2 {
+			key := strings.TrimSpace(keyValue[0])
+			value := strings.TrimSpace(keyValue[1])
+			m[key] = value
+		}
+	}
+
+	return m
 }

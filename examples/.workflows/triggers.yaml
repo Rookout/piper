@@ -2,7 +2,4 @@
   branches: ["main"]
   onStart: ["main.yaml"]
   onExit: ["exit.yaml"]
-- events: ["merge","push"]
-  branches: ["main"]
-  onStart: ["main.yaml"]
-  onExit: ["exit.yaml"]
+  templates: ["templates.yaml"]

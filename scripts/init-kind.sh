@@ -74,11 +74,11 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
+sleep 30
+
 # 6. Deploy of nginx ingress controller to the cluster
-if [ "$( kubectl get pods -n ingress-nginx | grep ingress-nginx-controller | awk '{print $3}')" != "Running" ]; then
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
-  kubectl wait --namespace ingress-nginx \
-         --for=condition=ready pod \
-         --selector=app.kubernetes.io/component=controller \
-         --timeout=90s
-fi
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
+kubectl wait --namespace ingress-nginx \
+       --for=condition=ready pod \
+       --selector=app.kubernetes.io/component=controller \
+       --timeout=90s

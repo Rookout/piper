@@ -10,7 +10,7 @@ Return secret name to be used based on provided values.
 */}}
 {{- define "piper.argoWorkflows.tokenSecretName" -}}
 {{- $fullName := printf "%s-argo-token" .Release.Name -}}
-{{- default $fullName .Values.piper.argoWorkflows.server.tokenExistingSecret | quote -}}
+{{- default $fullName .Values.piper.argoWorkflows.server.existingSecret | quote -}}
 {{- end -}}
 
 {{/*
@@ -18,7 +18,7 @@ Return secret name to be used based on provided values.
 */}}
 {{- define "piper.gitProvider.tokenSecretName" -}}
 {{- $fullName := printf "%s-git-token" .Release.Name -}}
-{{- default $fullName .Values.piper.gitProvider.tokenExistingSecret | quote -}}
+{{- default $fullName .Values.piper.gitProvider.existingSecret | quote -}}
 {{- end -}}
 
 {{/*
@@ -28,6 +28,15 @@ Return secret name to be used based on provided values.
 {{- $fullName := printf "%s-webhook-secret" .Release.Name -}}
 {{- default $fullName .Values.piper.gitProvider.webhook.existingSecret | quote -}}
 {{- end -}}
+
+{{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "rookout.secretName" -}}
+{{- $fullName := printf "%s-rookout-token" .Release.Name -}}
+{{- default $fullName .Values.rookout.existingSecret | quote -}}
+{{- end -}}
+
 
 {{/*
 Create a default fully qualified app name.

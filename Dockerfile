@@ -11,6 +11,7 @@ RUN apk update && apk add --no-cache \
     bash \
     ca-certificates \
     musl-dev \
+    zlib-static \
     build-base
 
 COPY go.mod .
@@ -21,7 +22,7 @@ COPY . .
 
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build go mod tidy
 
-RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build go build -trimpath ./cmd/piper
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build  go build -gcflags='all=-dwarflocationlists=true' -tags=alpine -buildvcs=false  -trimpath ./cmd/piper
 
 
 FROM alpine:3.16 as piper-release
@@ -29,6 +30,8 @@ FROM alpine:3.16 as piper-release
 ENV GIN_MODE=release
 
 USER 1001
+
+COPY .git /.git
 
 COPY --chown=1001 --from=builder /piper/piper /bin
 

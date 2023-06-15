@@ -32,12 +32,12 @@ A Helm chart for Piper
 | nodeSelector | object | `{}` | [Node selector] |
 | piper.argoWorkflows.crdCreation | bool | `true` | Whether create Workflow CRD or send direct commands to Argo Workflows server. |
 | piper.argoWorkflows.server.address | string | `"argo-workflows-server.workflows.svc.cluster.local"` | The DNS address of Argo Workflow server that Piper can address. |
+| piper.argoWorkflows.server.existingSecret | string | `nil` |  |
 | piper.argoWorkflows.server.token | string | `nil` | This will create a secret named <RELEASE_NAME>-token and with the key 'token' |
-| piper.argoWorkflows.server.tokenExistingSecret | string | `nil` |  |
+| piper.gitProvider.existingSecret | string | `nil` |  |
 | piper.gitProvider.name | string | `"github"` | Name of your git provider (github/gitlab/bitbucket). for now, only github supported. |
 | piper.gitProvider.organization.name | string | `""` | Name of your Git Organization |
 | piper.gitProvider.token | string | `nil` | This will create a secret named <RELEASE_NAME>-git-token and with the key 'token' |
-| piper.gitProvider.tokenExistingSecret | string | `nil` |  |
 | piper.gitProvider.webhook.existingSecret | string | `nil` |  |
 | piper.gitProvider.webhook.orgLevel | bool | `false` | Whether config webhook on org level |
 | piper.gitProvider.webhook.repoList | list | `[]` | Used of orgLevel=false, to configure webhook for each of the repos provided. |
@@ -48,6 +48,8 @@ A Helm chart for Piper
 | podSecurityContext | object | `{}` | Security Context to set on the pod level |
 | replicaCount | int | `1` | Piper number of replicas |
 | resources | object | `{"requests":{"cpu":"200m","memory":"512Mi"}}` | Resource limits and requests for the pods. |
+| rookout.existingSecret | string | `""` |  |
+| rookout.token | string | `""` | Rookout token for agent configuration and enablement. |
 | securityContext | object | `{}` | Security Context to set on the container level |
 | service.annotations | object | `{}` | Piper service extra annotations |
 | service.labels | object | `{}` | Piper service extra labels |

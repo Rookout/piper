@@ -1,6 +1,8 @@
 package main
 
 import (
+	rookout "github.com/Rookout/GoSDK"
+	"github.com/rookout/piper/pkg/utils"
 	workflow_handler "github.com/rookout/piper/pkg/workflow-handler"
 	"log"
 
@@ -17,6 +19,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load the configuration for Piper, error: %v", err)
 	}
+
+	if cfg.RookoutConfig.Token != "" {
+		labels := utils.StringToMap(cfg.RookoutConfig.Labels)
+		rookout.Start(rookout.RookOptions{Token: cfg.RookoutConfig.Token, Labels: labels})
+	}
+
 	git, err := git.NewGitProviderClient(cfg)
 	if err != nil {
 		log.Fatalf("failed to load the Git client for Piper, error: %v", err)

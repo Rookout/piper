@@ -12,7 +12,7 @@ piper:
     # -- The token for authentication with the Git provider.
     # -- Reference to existing token with 'token' key.
     # -- can be created with `kubectl create secret generic piper-git-token --from-literal=token=YOUR_TOKEN`
-    tokenExistingSecret: #piper-git-token
+    existingSecret: #piper-git-token
     # Map of organization configurations.
     organization:
       # -- Name of your Git Organization
@@ -46,7 +46,7 @@ piper:
       # -- The token for authentication with Argo Workflows server.
       # -- Reference to existing token with 'token' key.
       # -- can be created with `kubectl create secret generic piper-argo-token --from-literal=token=YOUR_TOKEN`
-      tokenExistingSecret: #piper-argo-token
+      existingSecret: #piper-argo-token
     # -- Whether create Workflow CRD or send direct commands to Argo Workflows server.
     crdCreation: true
   
@@ -79,6 +79,14 @@ piper:
     #         parameters:
     #           - name: param1
     #             value: "{{ workflow.labels.repo }}"
+
+rookout:
+  # -- Rookout token for agent configuration and enablement.
+  token: ""
+  # -- The token for Rookout.
+  # -- Reference to existing token with 'token' key.
+  # -- can be created with `kubectl create secret generic piper-rookout-token --from-literal=token=YOUR_TOKEN`
+  existingSecret: ""
 
 # -- Piper number of replicas
 replicaCount: 1

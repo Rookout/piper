@@ -9,6 +9,7 @@ import (
 type Config struct {
 	GitConfig
 	ArgoConfig
+	RookoutConfig
 }
 
 func (cfg *Config) Load() error {

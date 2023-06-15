@@ -79,6 +79,13 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+          {{- if or .Values.rookout.token .Values.rookout.existingSecret }}
+          - name: ROOKOUT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "rookout.secretName" . }}
+                key: token
+          {{- end }}
           - name: GIT_PROVIDER
             value: {{ .Values.piper.gitProvider.name | quote }}
           - name: GIT_TOKEN
@@ -109,7 +116,7 @@ spec:
           - name: ARGO_WORKFLOWS_CREATE_CRD
             value: {{ .Values.piper.argoWorkflows.crdCreation | quote }}
           {{- with .Values.env }}
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
