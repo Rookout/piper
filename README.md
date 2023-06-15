@@ -16,13 +16,13 @@ Welcome to Piper! Piper is open source project that aimed at providing multibran
 
 ## Getting Started
 
-Piper configures a weebhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster. For farther explantions please check [Usage](docs/usage.md)
+Piper configures a webhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster. For farther explantions please check [Usage](docs/usage.md)
 
 ## Reporting Issues
 
 If you encounter any issues or bugs while using Piper, please help us improve by reporting them. Follow these steps to report an issue:
 
-1. Go to the (Piper Issues)[https://github.com/Rookout/Piper/issues] page on GitHub.
+1. Go to the [Piper Issues](https://github.com/Rookout/Piper/issues) page on GitHub.
 2. Click on the "New Issue" button.
 3. Provide a descriptive title and detailed description of the issue, including any relevant error messages or steps to reproduce the problem.
 4. Add appropriate labels to categorize the issue (e.g., bug, enhancement, question).
@@ -32,7 +32,7 @@ If you encounter any issues or bugs while using Piper, please help us improve by
 ## How to Contribute
 
 If you're interested in contributing to this project, please feel free to submit a pull request. We welcome all contributions and feedback.
-Please checkout our [Contribution guidelines for this project](docs/CONTRIBUTING.md)
+Please check out our [Contribution guidelines for this project](docs/CONTRIBUTING.md)
 
 ## License
 
