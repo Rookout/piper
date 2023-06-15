@@ -2,7 +2,7 @@ SHELL=/bin/sh
 
 .PHONY: ngrok
 ngrok:
-	ngrok http 8080
+	ngrok http 80
 
 .PHONY: local-build
 local-build:
