@@ -18,7 +18,7 @@ A Helm chart for Piper
 | extraLabels | object | `{}` | Deployment and pods extra labels |
 | fullnameOverride | string | `""` | String to fully override "piper.fullname" template |
 | image.name | string | `"piper"` | Piper image name |
-| image.pullPolicy | string | `"Always"` | Piper image pull policy |
+| image.pullPolicy | string | `"IfNotPresent"` | Piper image pull policy |
 | image.repository | string | `"rookout"` | Piper public dockerhub repo |
 | image.tag | string | `"latest"` | Piper image tag |
 | imagePullSecrets | list | `[]` | secret to use for image pulling |
@@ -38,8 +38,11 @@ A Helm chart for Piper
 | piper.gitProvider.organization.name | string | `""` | Name of your Git Organization |
 | piper.gitProvider.token | string | `nil` | This will create a secret named <RELEASE_NAME>-git-token and with the key 'token' |
 | piper.gitProvider.tokenExistingSecret | string | `nil` |  |
+| piper.gitProvider.webhook.existingSecret | string | `nil` |  |
 | piper.gitProvider.webhook.orgLevel | bool | `false` | Whether config webhook on org level |
 | piper.gitProvider.webhook.repoList | list | `[]` | Used of orgLevel=false, to configure webhook for each of the repos provided. |
+| piper.gitProvider.webhook.secret | string | `""` | This will create a secret named <RELEASE_NAME>-webhook-secret and with the key 'secret' |
+| piper.gitProvider.webhook.url | string | `""` | The url in which piper listens for webhook, the path should be /webhook |
 | piper.workflowsConfig | object | `{}` |  |
 | podAnnotations | object | `{}` | Annotations to be added to the Piper pods |
 | podSecurityContext | object | `{}` | Security Context to set on the pod level |

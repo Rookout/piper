@@ -19,6 +19,16 @@ piper:
       name: ""
     # Map of webhook configurations.
     webhook:
+      # -- The secret that will be used for webhook authentication
+      # -- If not provided, will be generated
+      # -- This will create a secret named <RELEASE_NAME>-webhook-secret and with the key 'secret'
+      secret: ""
+      # -- The secret for webhook encryption
+      # -- Reference to existing token with 'secret' key.
+      # -- can be created with `kubectl create secret generic piper-webhook-secret --from-literal=secret=YOUR_TOKEN`
+      existingSecret: #piper-webhook-secret
+      # -- The url in which piper listens for webhook, the path should be /webhook
+      url: "" #https://piper.example.local/webhook
       # -- Whether config webhook on org level
       orgLevel: false
       # -- Used of orgLevel=false, to configure webhook for each of the repos provided.

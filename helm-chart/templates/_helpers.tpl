@@ -22,6 +22,14 @@ Return secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "piper.gitProvider.webhook.secretName" -}}
+{{- $fullName := printf "%s-webhook-secret" .Release.Name -}}
+{{- default $fullName .Values.piper.gitProvider.webhook.existingSecret | quote -}}
+{{- end -}}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
