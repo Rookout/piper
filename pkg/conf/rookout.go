@@ -12,10 +12,10 @@ type RookoutConfig struct {
 	RemoteOrigin string `envconfig:"ROOKOUT_REMOTE_ORIGIN" default:"https://github.com/Rookout/piper.git"`
 }
 
-func (cfg *GitConfig) RookoutConfLoad() error {
+func (cfg *RookoutConfig) RookoutConfLoad() error {
 	err := envconfig.Process("", cfg)
 	if err != nil {
-		return fmt.Errorf("failed to load the Git provider configuration, error: %v", err)
+		return fmt.Errorf("failed to load the Rookout configuration, error: %v", err)
 	}
 
 	return nil

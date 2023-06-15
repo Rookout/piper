@@ -2,7 +2,6 @@ package conf
 
 import (
 	"fmt"
-
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -10,6 +9,7 @@ type Config struct {
 	GitConfig
 	ArgoConfig
 	RookoutConfig
+	WorkflowConfig
 }
 
 func (cfg *Config) Load() error {

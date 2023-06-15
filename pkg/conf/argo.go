@@ -3,7 +3,6 @@ package conf
 import (
 	"fmt"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/rookout/piper/pkg/utils"
 )
 
 type ArgoConfig struct {
@@ -21,12 +20,4 @@ func (cfg *ArgoConfig) ArgoConfLoad() error {
 	}
 
 	return nil
-}
-
-func (cfg *ArgoConfig) ArgoSpecLoad() (map[string][]byte, error) {
-	files, err := utils.GetFilesData("/piper-config/..data")
-	if err != nil {
-		return nil, err
-	}
-	return files, nil
 }

@@ -24,6 +24,11 @@ func main() {
 		rookout.Start(rookout.RookOptions{Token: cfg.RookoutConfig.Token, Labels: labels})
 	}
 
+	err = cfg.WorkflowConfig.WorkflowsSpecLoad()
+	if err != nil {
+		log.Fatalf("Failed to load workflow spec configuration, error: %v", err)
+	}
+
 	git, err := git.NewGitProviderClient(cfg)
 	if err != nil {
 		log.Fatalf("failed to load the Git client for Piper, error: %v", err)
@@ -32,6 +37,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load the Argo Workflows client for Piper, error: %v", err)
 	}
+
 	clients := &clients.Clients{
 		Git:       git,
 		Workflows: workflows,
