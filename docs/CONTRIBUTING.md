@@ -67,8 +67,14 @@ To make it easy to develop locally, please run the following
 
 Prerequisites :
 1. install ngrok
+```bash
+brew install ngrok
+```
 2. install docker
 3. install kind
+```bash
+brew install kind
+```
 
 Deployment:
 1. make sure docker are running. 
