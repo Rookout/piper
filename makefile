@@ -1,5 +1,9 @@
 SHELL=/bin/sh
 
+.PHONY: ngrok
+ngrok:
+	ngrok http 8080
+
 .PHONY: local-build
 local-build:
 	docker build -t localhost:5001/piper:latest .

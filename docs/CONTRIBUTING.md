@@ -34,7 +34,7 @@ We welcome and appreciate contributions from the community. If you have develope
 6. If your pull request relates to an open issue, reference the issue in the description using the GitHub issue syntax (e.g., Fixes #123).
 7. Submit the pull request, and our team will review your changes. We appreciate your patience during the review process and may provide feedback or request further modifications.
 
-### Pull Request Nameing
+### Pull Request Naming
 
 
 ## Coding Guidelines
@@ -62,3 +62,22 @@ helm lint
 helm template .  --debug > _lint.yaml
 ```
 
+### Local deployment
+
+To make it easy to develop locally, please run the following
+
+Prerequisites :
+1. install ngrok
+2. install docker
+3. install kind
+
+Deployment:
+1. make sure docker are running. 
+2. create tunnel with ngrok using `make ngrok`, save the `Forwarding` address.
+3. create `values.dev.yaml` file that contains subset of chart's `value.yaml` file. check [example of values file](../examples/template.values.dev.yaml)
+4. use `make deploy`. it will do the following:
+     * deploy a local registry as container
+     * deploy a kind cluster as container with configuration
+     * deploy nginx reverse proxy in the kind cluster
+     * deploy Piper with the local helm chart
+5. validate using `curl localhost/piper/healthz`.
