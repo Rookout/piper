@@ -6,7 +6,7 @@ server:
     create: true
   extraArgs:
     - server
-    - --auth-mode=client
+    - --auth-mode=server
   ingress:
     enabled: true
     annotations:
