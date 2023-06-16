@@ -157,7 +157,7 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 		return err
 	}
 
-	err := wfc.Submit(ctx, workflow)
+	err = wfc.Submit(ctx, workflow)
 	if err != nil {
 		return fmt.Errorf("failed to submit workflow, error: %v", err)
 	}
