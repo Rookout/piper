@@ -112,6 +112,8 @@ spec:
               secretKeyRef:
                 name: {{ template "piper.argoWorkflows.tokenSecretName" . }}
                 key: token
+          - name: ARGO_WORKFLOWS_NAMESPACE
+            value: {{ .Values.piper.argoWorkflows.server.namespace | default .Release.Namespace | quote }}
           - name: ARGO_WORKFLOWS_ADDRESS
             value: {{ .Values.piper.argoWorkflows.server.address | quote }}
           - name: ARGO_WORKFLOWS_CREATE_CRD

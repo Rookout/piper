@@ -33,6 +33,7 @@ A Helm chart for Piper
 | piper.argoWorkflows.crdCreation | bool | `true` | Whether create Workflow CRD or send direct commands to Argo Workflows server. |
 | piper.argoWorkflows.server.address | string | `"argo-workflows-server.workflows.svc.cluster.local"` | The DNS address of Argo Workflow server that Piper can address. |
 | piper.argoWorkflows.server.existingSecret | string | `nil` |  |
+| piper.argoWorkflows.server.namespace | string | `""` | The namespace in which the Workflow CRD will be created. |
 | piper.argoWorkflows.server.token | string | `nil` | This will create a secret named <RELEASE_NAME>-token and with the key 'token' |
 | piper.gitProvider.existingSecret | string | `nil` |  |
 | piper.gitProvider.name | string | `"github"` | Name of your git provider (github/gitlab/bitbucket). for now, only github supported. |
@@ -45,18 +46,18 @@ A Helm chart for Piper
 | piper.gitProvider.webhook.url | string | `""` | The url in which piper listens for webhook, the path should be /webhook |
 | piper.workflowsConfig | object | `{}` |  |
 | podAnnotations | object | `{}` | Annotations to be added to the Piper pods |
-| podSecurityContext | object | `{}` | Security Context to set on the pod level |
+| podSecurityContext | object | `{"fsGroup":1001,"runAsGroup":1001,"runAsUser":1001}` | Security Context to set on the pod level |
 | replicaCount | int | `1` | Piper number of replicas |
 | resources | object | `{"requests":{"cpu":"200m","memory":"512Mi"}}` | Resource limits and requests for the pods. |
 | rookout.existingSecret | string | `""` |  |
 | rookout.token | string | `""` | Rookout token for agent configuration and enablement. |
-| securityContext | object | `{}` | Security Context to set on the container level |
+| securityContext | object | `{"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"runAsUser":1001}` | Security Context to set on the container level |
 | service.annotations | object | `{}` | Piper service extra annotations |
 | service.labels | object | `{}` | Piper service extra labels |
 | service.port | int | `80` | Service port For TLS mode change the port to 443 |
 | service.type | string | `"ClusterIP"` | Sets the type of the Service |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.create | bool | `false` | Specifies whether a service account should be created |
+| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | tolerations | list | `[]` | [Tolerations] for use with node taints |
 | volumeMounts | list | `[]` | Volumes to mount to Piper container. |
