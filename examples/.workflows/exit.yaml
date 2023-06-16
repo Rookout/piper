@@ -1,0 +1,6 @@
+- name: github-status
+  template: exit-handler
+  arguments:
+    parameters:
+      - name: param1
+        value: "{{ workflow.labels.repo }}"

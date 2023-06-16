@@ -1,0 +1,216 @@
+# Default values for Piper.
+# For more information head to https:/github.com/rookout/piper
+
+# Map of Piper configurations.
+piper:
+  gitProvider:
+    # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
+    name: github
+    # -- The token for authentication with the Git provider.
+    # -- This will create a secret named <RELEASE_NAME>-git-token and with the key 'token'
+    token:
+    # -- The token for authentication with the Git provider.
+    # -- Reference to existing token with 'token' key.
+    # -- can be created with `kubectl create secret generic piper-git-token --from-literal=token=YOUR_TOKEN`
+    existingSecret: #piper-git-token
+    # Map of organization configurations.
+    organization:
+      # -- Name of your Git Organization
+      name: ""
+    # Map of webhook configurations.
+    webhook:
+      # -- The secret that will be used for webhook authentication
+      # -- If not provided, will be generated
+      # -- This will create a secret named <RELEASE_NAME>-webhook-secret and with the key 'secret'
+      secret: ""
+      # -- The secret for webhook encryption
+      # -- Reference to existing token with 'secret' key.
+      # -- can be created with `kubectl create secret generic piper-webhook-secret --from-literal=secret=YOUR_TOKEN`
+      existingSecret: #piper-webhook-secret
+      # -- The url in which piper listens for webhook, the path should be /webhook
+      url: "" #https://piper.example.local/webhook
+      # -- Whether config webhook on org level
+      orgLevel: false
+      # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
+      repoList: []
+
+  # Map of Argo Workflows configurations.
+  argoWorkflows:
+    # Map of Argo Workflows server configurations.
+    server:
+      # -- The DNS address of Argo Workflow server that Piper can address.
+      address: argo-workflows-server.workflows.svc.cluster.local
+      # -- The token for authentication with Argo Workflows server.
+      # -- This will create a secret named <RELEASE_NAME>-token and with the key 'token'
+      token:
+      # -- The token for authentication with Argo Workflows server.
+      # -- Reference to existing token with 'token' key.
+      # -- can be created with `kubectl create secret generic piper-argo-token --from-literal=token=YOUR_TOKEN`
+      existingSecret: #piper-argo-token
+    # -- Whether create Workflow CRD or send direct commands to Argo Workflows server.
+    crdCreation: true
+  
+  workflowsConfig: {}
+    # default: |
+    #   spec:
+    #     volumes:
+    #     - name: shared-volume
+    #       emptyDir: {}
+    #     serviceAccountName: argo-wf
+    #     activeDeadlineSeconds: 7200 # (seconds) == 2 hours
+    #     ttlStrategy:
+    #       secondsAfterCompletion: 28800 # (seconds) == 8 hours
+    #     podGC:
+    #       strategy: OnPodSuccess
+    #     archiveLogs: true
+    #     artifactRepositoryRef:
+    #       configMap: artifact-repositories
+    #     nodeSelector:
+    #       node_pool: workflows
+    #     tolerations:
+    #       - effect: NoSchedule
+    #         key: node_pool
+    #         operator: Equal
+    #         value: workflows
+    #   onExit: # optinal, will be overwritten if specifc in .wokrflows/exit.yaml.
+    #     - name: github-status
+    #       template: exit-handler
+    #       arguments:
+    #         parameters:
+    #           - name: param1
+    #             value: "{{ workflow.labels.repo }}"
+
+rookout:
+  # -- Rookout token for agent configuration and enablement.
+  token: ""
+  # -- The token for Rookout.
+  # -- Reference to existing token with 'token' key.
+  # -- can be created with `kubectl create secret generic piper-rookout-token --from-literal=token=YOUR_TOKEN`
+  existingSecret: ""
+
+# -- Piper number of replicas
+replicaCount: 1
+
+image:
+  # -- Piper image name
+  name: piper
+  # -- Piper public dockerhub repo
+  repository: rookout
+  # -- Piper image pull policy
+  pullPolicy: IfNotPresent
+  # -- Piper image tag
+  tag: latest
+
+# -- secret to use for image pulling
+imagePullSecrets: []
+
+# -- String to partially override "piper.fullname" template
+nameOverride: ""
+
+# -- String to fully override "piper.fullname" template
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- Annotations to be added to the Piper pods
+podAnnotations: {}
+
+# -- Security Context to set on the pod level
+podSecurityContext:
+   fsGroup: 1001
+   runAsUser: 1001
+   runAsGroup: 1001
+
+# -- Security Context to set on the container level
+securityContext:
+  runAsUser: 1001
+  capabilities:
+    drop:
+     - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+
+
+service:
+    # -- Sets the type of the Service
+  type: ClusterIP
+  # -- Service port
+  # For TLS mode change the port to 443
+  port: 80
+  #nodePort:
+  # -- Piper service extra labels
+  labels: {}
+  # -- Piper service extra annotations
+  annotations: {}
+
+ingress:
+  # -- Enable Piper ingress support
+  enabled: false
+  # -- Piper ingress class name
+  className: ""
+  # -- Piper ingress annotations
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  
+  # -- Piper ingress hosts
+  ## Hostnames must be provided if Ingress is enabled.
+  hosts:
+    - host: piper.example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  # -- Controller ingress tls
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- Additional environment variables for Piper. A list of name/value maps.
+env: []
+
+# -- Resource limits and requests for the pods.
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+
+# -- [Node selector]
+nodeSelector: {}
+
+# -- [Tolerations] for use with node taints
+tolerations: []
+
+# -- Assign custom [affinity] rules to the deployment
+affinity: {}
+
+# -- Deployment and pods extra labels
+extraLabels: {}
+
+autoscaling:
+  # -- Wheter to enable auto-scaling of piper.
+  enabled: false
+  # -- Minimum reoplicas of Piper.
+  minReplicas: 1
+  # -- Maximum reoplicas of Piper.
+  maxReplicas: 5
+  # -- CPU utilization percentage threshold.
+  targetCPUUtilizationPercentage: 85
+  # -- Memory utilization percentage threshold.
+  targetMemoryUtilizationPercentage: 85
+
+# -- Volumes of Piper Pod.
+volumes: []
+
+# -- Volumes to mount to Piper container.
+volumeMounts: []
+
+# -- Specify postStart and preStop lifecycle hooks for Piper container
+lifecycle: {}

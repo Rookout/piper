@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "piper.fullname" . }}
+  labels:
+    {{- include "piper.labels" . | nindent 4 }}
+spec:
+  revisionHistoryLimit: 3
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "piper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "piper.selectorLabels" . | nindent 8 }}
+        app: {{ .Chart.Name | trunc 63 | trimSuffix "-" }}
+        version: {{ .Values.image.tag | trunc 63 | trimSuffix "-" }}
+    spec:
+      volumes:
+      - name: piper-workflows-config
+        configMap:
+          name: piper-workflows-config
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "piper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          volumeMounts:
+          - mountPath: /piper-config
+            name: piper-workflows-config
+            readOnly: true
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- with .Values.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 4
+            successThreshold: 1
+            failureThreshold: 4
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 4
+            successThreshold: 1
+            failureThreshold: 2
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          {{- if or .Values.rookout.token .Values.rookout.existingSecret }}
+          - name: ROOKOUT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "rookout.secretName" . }}
+                key: token
+          {{- end }}
+          - name: GIT_PROVIDER
+            value: {{ .Values.piper.gitProvider.name | quote }}
+          - name: GIT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "piper.gitProvider.tokenSecretName" . }}
+                key: token
+          - name: GIT_ORG_NAME
+            value: {{ .Values.piper.gitProvider.organization.name | quote }}
+          - name: GIT_WEBHOOK_URL
+            value: {{ .Values.piper.gitProvider.webhook.url | quote }}
+          - name: GIT_WEBHOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "piper.gitProvider.webhook.secretName" . }}
+                key: secret
+          - name: GIT_ORG_LEVEL_WEBHOOK
+            value: {{ .Values.piper.gitProvider.webhook.orgLevel | quote }}
+          - name: GIT_WEBHOOK_REPO_LIST
+            value: {{ join "," .Values.piper.gitProvider.webhook.repoList | quote }}
+          - name: ARGO_WORKFLOWS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "piper.argoWorkflows.tokenSecretName" . }}
+                key: token
+          - name: ARGO_WORKFLOWS_ADDRESS
+            value: {{ .Values.piper.argoWorkflows.server.address | quote }}
+          - name: ARGO_WORKFLOWS_CREATE_CRD
+            value: {{ .Values.piper.argoWorkflows.crdCreation | quote }}
+          {{- with .Values.env }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

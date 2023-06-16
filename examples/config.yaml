@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: piper-workflows-config
+data:
+  default: |
+    spec:
+      volumes:
+      - name: shared-volume
+        emptyDir: { }
+      serviceAccountName: argo-wf
+      activeDeadlineSeconds: 7200 # (seconds) == 2 hours
+      ttlStrategy:
+        secondsAfterCompletion: 28800 # (seconds) == 8 hours
+      podGC:
+        strategy: OnPodSuccess
+      archiveLogs: true
+      artifactRepositoryRef:
+        configMap: artifact-repositories
+      nodeSelector:
+        node_pool: workflows
+      tolerations:
+        - effect: NoSchedule
+          key: node_pool
+          operator: Equal
+          value: workflows
+    onExit: # optinal, will be overwritten if specifc in .wokrflows/exit.yaml.
+      - name: github-status
+        template: exit-handler
+        arguments:
+          parameters:
+            - name: param1
+              value: "{{ workflow.labels.repo }}"

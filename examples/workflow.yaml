@@ -8,74 +8,73 @@ metadata:
     repo: somerepo
     user: gosharo
 spec:
-  activeDeadlineSeconds: 7200
+  volumes:
+  - name: shared-volume
+    emptyDir: { }
+  activeDeadlineSeconds: 7200 # (seconds) == 2 hours
+  ttlStrategy:
+    secondsAfterCompletion: 28800 # (seconds) == 8 hours
+  podGC:
+    strategy: OnPodSuccess
   archiveLogs: true
   arguments:
     parameters:
-    - name: global
-      value: multi-branch-pipeline
+      - name: PLACHOLDER
   artifactRepositoryRef:
     configMap: artifact-repositories
+  onExit: exit-handler
   entrypoint: entrypoint
   nodeSelector:
     node_pool: workflows
-  onExit: exit-handler
-  podGC:
-    strategy: OnPodSuccess
   serviceAccountName: argo-wf
+  tolerations:
+    - effect: NoSchedule
+      key: node_pool
+      operator: Equal
+      value: workflows
   templates:
   - dag:
+    name: exit-handler
       tasks:
-      - arguments:
+      - name: github-status
+        template: exit-handler
+        arguments:
           parameters:
           - name: param1
             value: '{{ workflow.labels.repo }}'
-        name: github-status
-        template: exit-handler
-    name: exit-handler
-  - inputs:
+  - name: local-step
+    inputs:
       parameters:
       - name: message
-    name: local-step
     script:
-      command:
-      - sh
       image: alpine
-      source: 'echo "wellcome to {{ workflow.parameters.global }}
-
+      command: [sh]
+      source: |
+        echo "wellcome to {{ workflow.parameters.global }}
         echo "{{ inputs.parameters.message }}"
-
-        '
   - name: exit-hanlder
     script:
-      command:
-      - sh
       image: alpine
-      source: echo "exit"
+      command: [sh]
+      source: |
+        echo "exit"
   - dag:
+      name: entrypoint
       tasks:
-      - arguments:
+      - name: local-step1
+        template: local-step
+        arguments:
           parameters:
           - name: message
             value: step-1
-        name: local-step1
+      - name: local-step2
         template: local-step
-      - arguments:
+        arguments:
           parameters:
           - name: message
             value: step-2
         dependencies:
         - local-step1
-        name: local-step2
-        template: local-step
-    name: entrypoint
-  tolerations:
-  - effect: NoSchedule
-    key: node_pool
-    operator: Equal
-    value: workflows
-  ttlStrategy:
-    secondsAfterCompletion: 28800
-  volumes:
-  - emptyDir: {}
-    name: shared-volume
+        
+        
+    

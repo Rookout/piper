@@ -1,52 +1,42 @@
-# Argo Piper
-This project aimed at providing Multibranch pipeline functionality to Argo Workflows. This project allows users to create distinct pipelines based on Git branches, making workflow organization and maintenance more efficient.
+# Piper
+![alt text](https://www.rookout.com/wp-content/uploads/2022/10/ArgoPipeline_1.0_Hero.png.webp?raw=true)
 
-## Concept
+Welcome to Piper! Piper is open source project that aimed at providing multibranch pipeline functionality to Argo Workflows, allows users to create distinct Workflows based on Git branches.
 
-![alt text](https://github.com/Rookout/argo-workflows-multibranch-pipeline/blob/main/docs/seeder-pipeline.png?raw=true)
+## Table of Contents
 
-This script will be running within Seeder Workflow, after genrate inside Workflow by ArgoEvents Sensor. You can template the Seeder Workflow with metadata from the webhook and then pass it to the Multi Brnach Workflow.
-## Usage
+- [Getting Started](#getting-started)
+- [Usage](docs/usage.md)
+- [Reporting Issues](#reporting-issues)
+- [How to Contribute](docs/CONTRIBUTING.md#how-to-contribute)
+- [Pull Requests](docs/CONTRIBUTING.md#pull-requests)
+- [Coding Guidelines](docs/CONTRIBUTING.md#coding-guidelines)
+- [Roadmap](docs/roadmap.md)
+- [License](#license)
 
-The seeder is executed via the command line. The following parameters are required:
+## Getting Started
 
-```
-python seeder.py <path to template> <path to .workflows directory> <event type> <branch>
-```
+Piper configures a webhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. This folder should contain delclerations of the templates and main DAG that will be running. Finally it will submit the Workflow as a K8s resource in the cluster. For farther explantions please check [Usage](docs/usage.md)
 
-<path to template>: Path to the seeder-workflow-template.yaml file.
-<path to .workflows directory>: Path to the directory containing the .yaml DAG files.
-<event type>: The type of the event triggering the workflow (e.g., push, pull_request, merge).
-<branch>: The branch destintion branch to merge into.
+## Reporting Issues
+
+If you encounter any issues or bugs while using Piper, please help us improve by reporting them. Follow these steps to report an issue:
+
+1. Go to the [Piper Issues](https://github.com/Rookout/Piper/issues) page on GitHub.
+2. Click on the "New Issue" button.
+3. Provide a descriptive title and detailed description of the issue, including any relevant error messages or steps to reproduce the problem.
+4. Add appropriate labels to categorize the issue (e.g., bug, enhancement, question).
+5. Submit the issue, and our team will review and address it as soon as possible.
 
 
-## Examples
-
-This repository includes an examples folder with a `seeder-workflow-template.yaml` file, a `workflow.yaml` file, and a `.workflows` directory with various DAG files.
-
-To generate a new workflow based on the provided example, navigate to the root of the repository and run:
-
-```
-python seeder.py examples/seeder-workflow-template.yaml examples/.workflows push main
-```
-
-This will generate a new workflow YAML file (`workflow.yaml`) in the root of the repository, based on the `seeder-workflow-template.yaml` file and the `.yaml` DAG files in the `.workflows` directory.
-
-`main.yaml` is the default pipeline to run if '<event-type>-<branch>.yaml' don't exists.
-
-## Roadmap
-1. Debug interface
-2. Multiple template.yaml files
-3. Create a microservice that listen to external webhooks
-4. Ability to submit directly to ArgoWorkflows server
-
-## Contributing
+## How to Contribute
 
 If you're interested in contributing to this project, please feel free to submit a pull request. We welcome all contributions and feedback.
+Please check out our [Contribution guidelines for this project](docs/CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the Apache License. Please see the LICENSE file for details.
+This project is licensed under the Apache License. Please see the [LICENSE](LICENSE) file for details.
 
 
 
