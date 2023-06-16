@@ -10,7 +10,8 @@ func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Templ
 	DAGs := make([]v1alpha1.DAGTask, 0)
 	for _, file := range fileList {
 		DAGTask := make([]v1alpha1.DAGTask, 0)
-		err := yaml.Unmarshal([]byte(*file.Content), DAGTask)
+		tmp := *file.Content
+		err := yaml.Unmarshal([]byte(tmp), DAGTask)
 		if err != nil {
 			return nil, err
 		}
