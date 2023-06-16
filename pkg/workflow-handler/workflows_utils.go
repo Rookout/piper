@@ -9,12 +9,12 @@ import (
 func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Template, error) {
 	DAGs := make([]v1alpha1.DAGTask, 0)
 	for _, file := range fileList {
-		DAGTask := &v1alpha1.DAGTask{}
+		DAGTask := make([]v1alpha1.DAGTask, 0)
 		err := yaml.Unmarshal([]byte(*file.Content), DAGTask)
 		if err != nil {
 			return nil, err
 		}
-		DAGs = append(DAGs, *DAGTask)
+		DAGs = append(DAGs, DAGTask...)
 	}
 
 	template := &v1alpha1.Template{
