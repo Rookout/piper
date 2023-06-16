@@ -29,12 +29,12 @@ func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Templ
 
 func AddFilesToTemplate(templates []v1alpha1.Template, files []*git.CommitFile) ([]v1alpha1.Template, error) {
 	for _, f := range files {
-		t := &v1alpha1.Template{}
+		t := make([]v1alpha1.Template, 0)
 		err := yaml.Unmarshal([]byte(*f.Content), t)
 		if err != nil {
 			return nil, err
 		}
-		templates = append(templates, *t)
+		templates = append(templates, t...)
 	}
 	return templates, nil
 }
