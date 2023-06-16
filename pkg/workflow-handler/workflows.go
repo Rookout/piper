@@ -2,6 +2,7 @@ package workflow_handler
 
 import (
 	"context"
+	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -156,7 +157,10 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 		return err
 	}
 
-	wfc.Submit(ctx, workflow)
+	err := wfc.Submit(ctx, workflow)
+	if err != nil {
+		return fmt.Errorf("failed to submit workflow, error: %v", err)
+	}
 
 	return nil
 }
