@@ -12,7 +12,9 @@ import (
 )
 
 func TestIsOrgWebhookEnabled(t *testing.T) {
-	assert := assertion.New(t)
+	//
+	// Prepare
+	//
 	client, mux, _, teardown := setup()
 	defer teardown()
 
@@ -42,11 +44,17 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 			},
 		},
 	}
-
 	ctx := context.Background()
 
+	//
+	// Execute
+	//
 	hooks, isEnabled := isOrgWebhookEnabled(ctx, &c)
 
-	assertion.True(t, isEnabled)
-	assertion.NotNil(t, hooks)
+	//
+	// Assert
+	//
+	assert := assertion.New(t)
+	assert.True(isEnabled)
+	assert.NotNil(t, hooks)
 }
