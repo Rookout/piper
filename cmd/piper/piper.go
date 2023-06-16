@@ -24,7 +24,7 @@ func main() {
 		rookout.Start(rookout.RookOptions{Token: cfg.RookoutConfig.Token, Labels: labels})
 	}
 
-	err = cfg.WorkflowConfig.WorkflowsSpecLoad()
+	err = cfg.WorkflowConfig.WorkflowsSpecLoad("/piper-config/..data")
 	if err != nil {
 		log.Fatalf("Failed to load workflow spec configuration, error: %v", err)
 	}
