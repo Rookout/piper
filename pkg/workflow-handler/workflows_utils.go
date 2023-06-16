@@ -38,3 +38,12 @@ func AddFilesToTemplate(templates []v1alpha1.Template, files []*git.CommitFile) 
 	}
 	return templates, nil
 }
+
+func GetParameters(paramsFile *git.CommitFile) ([]v1alpha1.Parameter, error) {
+	var params []v1alpha1.Parameter
+	err := yaml.Unmarshal([]byte(*paramsFile.Content), &params)
+	if err != nil {
+		return nil, err
+	}
+	return params, nil
+}

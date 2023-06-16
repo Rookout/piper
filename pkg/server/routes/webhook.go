@@ -4,12 +4,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	webhookHandler "github.com/rookout/piper/pkg/webhook-hanlder"
-	workflowHandler "github.com/rookout/piper/pkg/workflow-handler"
-
-	"github.com/gin-gonic/gin"
 )
 
 func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.RouterGroup) {
@@ -44,7 +42,7 @@ func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.Router
 		}
 
 		for _, wf := range workflowsBatches {
-			err = workflowHandler.HandleWorkflowBatch(&ctx, clients.Workflows, wf)
+			err = clients.Workflows.HandleWorkflowBatch(&ctx, wf)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				log.Printf("failed to handle workflow, error: %v", err)

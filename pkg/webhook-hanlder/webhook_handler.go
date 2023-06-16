@@ -117,11 +117,14 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 			if parameters == nil {
 				log.Printf("parameters.yaml not found in repo: %s branch %s", wh.Payload.Repo, wh.Payload.Branch)
 			}
+
 			workflowBatches = append(workflowBatches, &common.WorkflowsBatch{
 				OnStart:    onStartFiles,
 				OnExit:     onExitFiles,
 				Templates:  templatesFiles,
 				Parameters: parameters,
+				Config:     &trigger.Config,
+				Payload:    wh.Payload,
 			})
 		}
 	}

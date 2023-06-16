@@ -9,4 +9,6 @@ type WorkflowsBatch struct {
 	OnExit     []*git.CommitFile
 	Templates  []*git.CommitFile
 	Parameters *git.CommitFile
+	Config     *string
+	Payload    *git.WebhookPayload
 }

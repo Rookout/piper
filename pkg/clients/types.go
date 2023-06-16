@@ -7,5 +7,5 @@ import (
 
 type Clients struct {
 	Git       git.Client
-	Workflows workflowHandler.Client
+	Workflows workflowHandler.WorkflowsClient
 }
