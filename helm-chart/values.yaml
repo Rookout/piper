@@ -44,7 +44,7 @@ piper:
       address: argo-workflows-server.workflows.svc.cluster.local
       # -- The token for authentication with Argo Workflows server.
       # -- This will create a secret named <RELEASE_NAME>-token and with the key 'token'
-      token:
+      token: ""
       # -- The token for authentication with Argo Workflows server.
       # -- Reference to existing token with 'token' key.
       # -- can be created with `kubectl create secret generic piper-argo-token --from-literal=token=YOUR_TOKEN`
