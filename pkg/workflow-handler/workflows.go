@@ -2,8 +2,6 @@ package workflow_handler
 
 import (
 	"context"
-	"gopkg.in/yaml.v3"
-
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -49,17 +47,11 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if len(onExit.DAG.Tasks) == 0 {
-		DAGs := make([]v1alpha1.DAGTask, 0)
 		if len(wfc.cfg.WorkflowConfig.Configs[configName].OnExit) != 0 {
-			err = yaml.Unmarshal(wfc.cfg.WorkflowConfig.Configs[configName].OnExit, DAGs)
-			if err != nil {
-				return nil, err
-			}
-
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
-					Tasks: DAGs,
+					Tasks: wfc.cfg.WorkflowConfig.Configs[configName].OnExit,
 				},
 			}
 
@@ -79,18 +71,15 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 
 func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, params []v1alpha1.Parameter, configName string) (*v1alpha1.WorkflowSpec, error) {
 	finalSpec := &v1alpha1.WorkflowSpec{}
-	if len(wfc.cfg.WorkflowConfig.Configs) != 0 {
-		err := yaml.Unmarshal(wfc.cfg.WorkflowConfig.Configs[configName].Spec, finalSpec)
-		if err != nil {
-			return nil, err
-		}
+	_, ok := wfc.cfg.WorkflowConfig.Configs[configName]
+	if ok {
+		*finalSpec = wfc.cfg.WorkflowConfig.Configs[configName].Spec
 		if len(wfc.cfg.WorkflowConfig.Configs[configName].OnExit) != 0 {
 			finalSpec.OnExit = ONEXIT
 		}
 	}
 
 	finalSpec.Entrypoint = ENTRYPOINT
-
 	finalSpec.Templates = templates
 	finalSpec.Arguments.Parameters = params
 

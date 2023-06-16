@@ -26,7 +26,7 @@ func main() {
 
 	err = cfg.WorkflowConfig.WorkflowsSpecLoad()
 	if err != nil {
-		log.Println("Failed to load workflow spec configuration, error: %v", err)
+		log.Fatalf("Failed to load workflow spec configuration, error: %v", err)
 	}
 
 	git, err := git.NewGitProviderClient(cfg)
