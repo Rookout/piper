@@ -128,6 +128,7 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 
 func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error {
 	var params []v1alpha1.Parameter
+	var configName string
 	templates, err := wfc.ConstructTemplates(workflowsBatch, *workflowsBatch.Config)
 	if err != nil {
 		return err
@@ -151,7 +152,14 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	}
 	params = append(params, globalParams...)
 
-	spec, err := wfc.ConstructSpec(templates, params, *workflowsBatch.Config)
+	_, ok := wfc.cfg.WorkflowConfig.Configs["default"]
+	if ok {
+		configName = "default"
+	}
+	if *workflowsBatch.Config != "" {
+		configName = *workflowsBatch.Config
+	}
+	spec, err := wfc.ConstructSpec(templates, params, configName)
 
 	workflow, err := wfc.CreateWorkflow(spec, workflowsBatch)
 	if err != nil {
