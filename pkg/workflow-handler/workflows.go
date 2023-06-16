@@ -6,6 +6,7 @@ import (
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"log"
 
 	"github.com/rookout/piper/pkg/common"
 	"github.com/rookout/piper/pkg/conf"
@@ -162,5 +163,6 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 		return fmt.Errorf("failed to submit workflow, error: %v", err)
 	}
 
+	log.Printf("submit workflow for branch %s repo %s commit %s", workflowsBatch.Payload.Branch, workflowsBatch.Payload.Repo, workflowsBatch.Payload.Commit)
 	return nil
 }
