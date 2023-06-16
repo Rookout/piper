@@ -29,7 +29,7 @@ func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Templ
 	return template, nil
 }
 
-func AddFilesToTemplate(templates []v1alpha1.Template, files []*git.CommitFile) ([]v1alpha1.Template, error) {
+func AddFilesToTemplates(templates []v1alpha1.Template, files []*git.CommitFile) ([]v1alpha1.Template, error) {
 	for _, f := range files {
 		t := make([]v1alpha1.Template, 0)
 		yamlData := make([]map[string]interface{}, 0)

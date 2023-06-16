@@ -63,7 +63,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		finalTemplate = append(finalTemplate, *onExit)
 	}
 
-	finalTemplate, err = AddFilesToTemplate(finalTemplate, workflowsBatch.Templates)
+	finalTemplate, err = AddFilesToTemplates(finalTemplate, workflowsBatch.Templates)
 	if err != nil {
 		return nil, err
 	}
