@@ -49,7 +49,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if len(onExit.DAG.Tasks) == 0 {
-		if len(wfc.cfg.WorkflowConfig.Configs[configName].OnExit) != 0 {
+		if wfc.cfg.WorkflowConfig.Configs[configName].OnExit != nil {
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
