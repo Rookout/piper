@@ -58,7 +58,12 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 	var workflowBatches []*common.WorkflowsBatch
 	for _, trigger := range *wh.Triggers {
 		if utils.IsElementMatch(wh.Payload.Branch, *trigger.Branches) && utils.IsElementMatch(wh.Payload.Event, *trigger.Events) {
-			log.Printf("Trigger %s for branch %s triggered. onStart: %s onExist: %s", wh.Payload.Event, wh.Payload.Branch, *trigger.OnStart, *trigger.OnExit)
+			log.Printf(
+				"Triggering event %s for repo %s branch %s are triggered.",
+				wh.Payload.Event,
+				wh.Payload.Repo,
+				wh.Payload.Branch,
+			)
 			triggered = true
 			onStartFiles, err := wh.clients.Git.GetFiles(
 				ctx,
