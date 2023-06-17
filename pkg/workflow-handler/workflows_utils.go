@@ -7,11 +7,13 @@ import (
 	"github.com/rookout/piper/pkg/git"
 	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
+	"log"
 )
 
 func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Template, error) {
 	if len(fileList) == 0 {
-		return nil, fmt.Errorf("empty file list for %s", name)
+		log.Printf("empty file list for %s", name)
+		return nil, nil
 	}
 	DAGs := make([]v1alpha1.DAGTask, 0)
 	for _, file := range fileList {
