@@ -57,6 +57,12 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 	triggered := false
 	var workflowBatches []*common.WorkflowsBatch
 	for _, trigger := range *wh.Triggers {
+		if trigger.Branches == nil {
+			return nil, fmt.Errorf("trigger from repo %s branch %s missing branch field", wh.Payload.Repo, wh.Payload.Branch)
+		}
+		if trigger.Events == nil {
+			return nil, fmt.Errorf("trigger from repo %s branch %s missing event field", wh.Payload.Repo, wh.Payload.Branch)
+		}
 		if utils.IsElementMatch(wh.Payload.Branch, *trigger.Branches) && utils.IsElementMatch(wh.Payload.Event, *trigger.Events) {
 			log.Printf(
 				"Triggering event %s for repo %s branch %s are triggered.",
