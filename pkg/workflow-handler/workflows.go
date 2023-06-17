@@ -49,7 +49,8 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if len(onExit.DAG.Tasks) == 0 {
-		if wfc.cfg.WorkflowConfig.Configs[configName].OnExit != nil {
+		_, ok := wfc.cfg.WorkflowConfig.Configs[configName]
+		if ok && wfc.cfg.WorkflowConfig.Configs[configName].OnExit != nil {
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
@@ -129,7 +130,15 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error {
 	var params []v1alpha1.Parameter
 	var configName string
-	templates, err := wfc.ConstructTemplates(workflowsBatch, *workflowsBatch.Config)
+	_, ok := wfc.cfg.WorkflowConfig.Configs["default"]
+	if ok {
+		configName = "default"
+	}
+	if *workflowsBatch.Config != "" {
+		configName = *workflowsBatch.Config
+	}
+
+	templates, err := wfc.ConstructTemplates(workflowsBatch, configName)
 	if err != nil {
 		return err
 	}
@@ -152,13 +161,6 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	}
 	params = append(params, globalParams...)
 
-	_, ok := wfc.cfg.WorkflowConfig.Configs["default"]
-	if ok {
-		configName = "default"
-	}
-	if *workflowsBatch.Config != "" {
-		configName = *workflowsBatch.Config
-	}
 	spec, err := wfc.ConstructSpec(templates, params, configName)
 
 	workflow, err := wfc.CreateWorkflow(spec, workflowsBatch)
