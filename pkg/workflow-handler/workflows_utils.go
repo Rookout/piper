@@ -2,15 +2,24 @@ package workflow_handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"log"
 )
 
 func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Template, error) {
+	if len(fileList) == 0 {
+		log.Printf("empty file list for %s", name)
+		return nil, nil
+	}
 	DAGs := make([]v1alpha1.DAGTask, 0)
 	for _, file := range fileList {
+		if file.Content == nil || file.Path == nil {
+			return nil, fmt.Errorf("missing content or path for %s", name)
+		}
 		DAGTask := make([]v1alpha1.DAGTask, 0)
 		err := yaml.Unmarshal([]byte(*file.Content), &DAGTask)
 		if err != nil {
@@ -32,15 +41,9 @@ func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Templ
 func AddFilesToTemplates(templates []v1alpha1.Template, files []*git.CommitFile) ([]v1alpha1.Template, error) {
 	for _, f := range files {
 		t := make([]v1alpha1.Template, 0)
-		yamlData := make([]map[string]interface{}, 0)
-		err := yaml.Unmarshal([]byte(*f.Content), &yamlData)
+		jsonBytes, err := utils.ConvertYAMLListToJSONList(*f.Content)
 		if err != nil {
 			return nil, err
-		}
-
-		jsonBytes, err := json.Marshal(&yamlData)
-		if err != nil {
-			log.Fatalf("Failed to marshal JSON: %v", err)
 		}
 
 		err = json.Unmarshal(jsonBytes, &t)

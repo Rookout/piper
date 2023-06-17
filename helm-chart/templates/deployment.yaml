@@ -107,11 +107,13 @@ spec:
             value: {{ .Values.piper.gitProvider.webhook.orgLevel | quote }}
           - name: GIT_WEBHOOK_REPO_LIST
             value: {{ join "," .Values.piper.gitProvider.webhook.repoList | quote }}
+          {{- if or .Values.piper.argoWorkflows.server.token .Values.piper.argoWorkflows.server.existingSecret }}
           - name: ARGO_WORKFLOWS_TOKEN
             valueFrom:
               secretKeyRef:
                 name: {{ template "piper.argoWorkflows.tokenSecretName" . }}
                 key: token
+          {{- end }}
           - name: ARGO_WORKFLOWS_NAMESPACE
             value: {{ .Values.piper.argoWorkflows.server.namespace | default .Release.Namespace | quote }}
           - name: ARGO_WORKFLOWS_ADDRESS

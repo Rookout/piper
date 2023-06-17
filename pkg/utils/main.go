@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"gopkg.in/yaml.v3"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"strings"
 )
 
 func ListContains(subList, list []string) bool {
@@ -73,4 +77,53 @@ func StringToMap(str string) map[string]string {
 	}
 
 	return m
+}
+
+func ConvertYAMLListToJSONList(yamlString string) ([]byte, error) {
+	// Unmarshal YAML into a map[string]interface{}
+	yamlData := make([]map[string]interface{}, 0)
+	err := yaml.Unmarshal([]byte(yamlString), &yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal YAML: %v", err)
+	}
+
+	// Marshal the YAML data as JSON
+	jsonBytes, err := json.Marshal(&yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JSON: %v", err)
+	}
+
+	return jsonBytes, nil
+}
+
+func ConvertYAMToJSON(yamlString []byte) ([]byte, error) {
+	// Unmarshal YAML into a map[string]interface{}
+	yamlData := make(map[string]interface{})
+	err := yaml.Unmarshal(yamlString, &yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal YAML: %v", err)
+	}
+
+	// Marshal the YAML data as JSON
+	jsonBytes, err := json.Marshal(&yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JSON: %v", err)
+	}
+
+	return jsonBytes, nil
+}
+
+func ReturnEmptyStringIfNull(p *string) string {
+	if p == nil || *p == "" {
+		return ""
+	}
+	return *p
+}
+
+func ReturnEmptyStringListIfNull(p []string) []string {
+	emptyList := make([]string, 0)
+	if p == nil {
+		return emptyList
+	}
+	return p
 }
