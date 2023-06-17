@@ -44,7 +44,18 @@ func GetFilesInLinkDirectory(linkPath string) (*string, []string, error) {
 			return err
 		}
 		if !d.IsDir() {
-			fileNames = append(fileNames, d.Name())
+			info, err := d.Info()
+			if err != nil {
+				return err
+			}
+			if info.Mode()&os.ModeSymlink != 0 {
+				return nil // Skip symbolic links
+			}
+			relPath, err := filepath.Rel(realPath, path)
+			if err != nil {
+				return err
+			}
+			fileNames = append(fileNames, relPath)
 		}
 		return nil
 	})

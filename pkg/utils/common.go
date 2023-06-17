@@ -112,18 +112,3 @@ func ConvertYAMToJSON(yamlString []byte) ([]byte, error) {
 
 	return jsonBytes, nil
 }
-
-func ReturnEmptyStringIfNull(p *string) string {
-	if p == nil || *p == "" {
-		return ""
-	}
-	return *p
-}
-
-func ReturnEmptyStringListIfNull(p []string) []string {
-	emptyList := make([]string, 0)
-	if p == nil {
-		return emptyList
-	}
-	return p
-}
