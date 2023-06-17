@@ -2,6 +2,7 @@ package workflow_handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/git"
 	"github.com/rookout/piper/pkg/utils"
@@ -9,8 +10,14 @@ import (
 )
 
 func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Template, error) {
+	if len(fileList) == 0 {
+		return nil, fmt.Errorf("empty file list for %s", name)
+	}
 	DAGs := make([]v1alpha1.DAGTask, 0)
 	for _, file := range fileList {
+		if file.Content == nil || file.Path == nil {
+			return nil, fmt.Errorf("missing content or path for %s", name)
+		}
 		DAGTask := make([]v1alpha1.DAGTask, 0)
 		err := yaml.Unmarshal([]byte(*file.Content), &DAGTask)
 		if err != nil {
