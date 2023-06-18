@@ -33,3 +33,10 @@ helm:
 	helm lint ./helm-chart
 	helm template ./helm-chart  --debug > _lint.yaml
 	helm-docs
+
+.PHONY: test
+test:
+	go test -short ./pkg/...
+
+$(GOPATH)/bin/golangci-lint:
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b `go env GOPATH`/bin v1.52.2
