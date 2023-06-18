@@ -36,8 +36,8 @@ jobs:
           fetch-depth: 0
       - name: Configure Git
         run: |
-          git config user.name "piper"
-          git config user.email "piper@rookout.com
+          git config user.name "sonario"
+          git config user.email "sonario@rookout.com
       - name: Check Git diff in /helm-chart
         run: |
           if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main -- helm-chart/)" != "" ]; then
