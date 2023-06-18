@@ -29,7 +29,6 @@ jobs:
       - run: make test
   e2e-tests:
     name: E2E Tests
-    needs: [ piper-image ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
