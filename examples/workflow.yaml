@@ -35,13 +35,13 @@ spec:
   templates:
   - dag:
     name: exit-handler
-      tasks:
-      - name: github-status
-        template: exit-handler
-        arguments:
-          parameters:
-          - name: param1
-            value: '{{ workflow.labels.repo }}'
+    tasks:
+    - name: github-status
+      template: exit-handler
+      arguments:
+        parameters:
+        - name: param1
+          value: '{{ workflow.labels.repo }}'
   - name: local-step
     inputs:
       parameters:
@@ -52,7 +52,7 @@ spec:
       source: |
         echo "wellcome to {{ workflow.parameters.global }}
         echo "{{ inputs.parameters.message }}"
-  - name: exit-hanlder
+  - name: exit-handler
     script:
       image: alpine
       command: [sh]
