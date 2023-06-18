@@ -1,4 +1,4 @@
-package webhook_hanlder
+package webhook_handler
 
 import (
 	"context"
