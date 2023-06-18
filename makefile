@@ -6,7 +6,7 @@ ngrok:
 
 .PHONY: local-build
 local-build:
-	docker build -t localhost:5001/piper:latest .
+	DOCKER_BUILDKIT=1 docker build -t localhost:5001/piper:latest .
 
 .PHONY: init-kind
 init-kind:
@@ -14,7 +14,7 @@ init-kind:
 	kubectl config set-context kind-piper
 
 .PHONY: deploy
-deploy: local-build init-kind
+deploy: init-kind
 	docker push localhost:5001/piper:latest
 	helm upgrade --install piper ./helm-chart -f values.dev.yaml && kubectl rollout restart deployment piper
 
