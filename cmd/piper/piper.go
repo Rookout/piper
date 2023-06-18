@@ -21,7 +21,10 @@ func main() {
 
 	if cfg.RookoutConfig.Token != "" {
 		labels := utils.StringToMap(cfg.RookoutConfig.Labels)
-		rookout.Start(rookout.RookOptions{Token: cfg.RookoutConfig.Token, Labels: labels})
+		err = rookout.Start(rookout.RookOptions{Token: cfg.RookoutConfig.Token, Labels: labels})
+		if err != nil {
+			log.Printf("failed to start Rookout, error: %v\n", err)
+		}
 	}
 
 	err = cfg.WorkflowConfig.WorkflowsSpecLoad("/piper-config/..data")
