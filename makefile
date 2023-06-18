@@ -10,7 +10,7 @@ local-build:
 
 .PHONY: init-kind
 init-kind:
-	@if [ $(kind get clusters | grep piper) = "" ]; then sh ./scripts/init-kind.sh; else echo "Kind piper exists, switching context"; fi
+	@if [[ "$(kind get clusters -q | grep piper)" == "" ]]; then sh ./scripts/init-kind.sh; else echo "Kind piper exists, switching context"; fi
 	kubectl config set-context kind-piper
 
 .PHONY: deploy
