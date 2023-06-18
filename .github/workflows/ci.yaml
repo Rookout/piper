@@ -48,7 +48,7 @@ jobs:
         run: make deploy
 
   piper-image:
-    name: piper-image
+    name: Piper Image Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [ tests ]
@@ -67,9 +67,8 @@ jobs:
           cache-to: type=gha,mode=max
 
   lint:
-    name: lint
+    name: Go Lint
     runs-on: ubuntu-latest
-    needs: [ tests ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -84,7 +83,7 @@ jobs:
           skip-pkg-cache: true
 
   helm:
-    name: helm
+    name: Helm Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
