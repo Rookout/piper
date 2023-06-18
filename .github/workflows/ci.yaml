@@ -39,11 +39,10 @@ jobs:
           cache: true
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
-      - name: Build and export
+      - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
           push: true
           tags: localhost:5001/piper:latest
           cache-from: type=gha
