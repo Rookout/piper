@@ -73,7 +73,7 @@ jobs:
           fetch-depth: 0
       - name: Check Git diff in /helm-chart
         run: |
-          if git diff --exit-code --name-only --diff-filter=d origin/main -- helm-chart/; then
+          if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main -- helm-chart/)" != "" ]; then
             echo "There are Git diffs in the /helm-chart folder."
             echo "CHART_UPDATED=true" >> $GITHUB_ENV
           else
