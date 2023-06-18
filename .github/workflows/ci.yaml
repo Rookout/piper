@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches:
@@ -35,21 +36,27 @@ jobs:
     needs: [ tests ]
     steps:
       - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and export
         uses: docker/build-push-action@v4
         with:
           context: .
-          tags: rookout/piper:latest
-          outputs: type=docker,dest=/tmp/piper_image.tar
-          target: piper
+          platforms: linux/amd64,linux/arm64
+          tags: localhost:5000/piper:latest
+#          outputs: type=docker,dest=/tmp/piper_image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - uses: actions/upload-artifact@v3
-        with:
-          name: piper
-          path: /tmp/piper_image.tar
-          if-no-files-found: error
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: piper
+#          path: /tmp/piper_image.tar
+#          if-no-files-found: error
   lint:
     name: lint
     runs-on: ubuntu-latest
