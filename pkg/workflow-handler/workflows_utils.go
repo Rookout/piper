@@ -47,6 +47,9 @@ func AddFilesToTemplates(templates []v1alpha1.Template, files []*git.CommitFile)
 		}
 
 		err = json.Unmarshal(jsonBytes, &t)
+		if err != nil {
+			return nil, err
+		}
 		templates = append(templates, t...)
 	}
 	return templates, nil

@@ -37,3 +37,10 @@ helm:
 .PHONY: test
 test:
 	go test -short ./pkg/...
+
+$(GOPATH)/bin/golangci-lint:
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b `go env GOPATH`/bin v1.52.2
+
+.PHONY: lint
+lint: $(GOPATH)/bin/golangci-lint
+	$(GOPATH)/bin/golangci-lint run --fix --verbose

@@ -21,7 +21,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook
 	if resp.StatusCode != 200 {
 		return &emptyHook, false
 	}
-	if hooks == nil || len(hooks) == 0 {
+	if len(hooks) == 0 {
 		return &emptyHook, false
 	}
 	for _, hook := range hooks {
@@ -41,7 +41,7 @@ func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string)
 	if resp.StatusCode != 200 {
 		return &emptyHook, false
 	}
-	if hooks == nil || len(hooks) == 0 {
+	if len(hooks) == 0 {
 		return &emptyHook, false
 	}
 
