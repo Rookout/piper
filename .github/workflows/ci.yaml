@@ -47,15 +47,11 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          tags: localhost:5000/piper:latest
-#          outputs: type=docker,dest=/tmp/piper_image.tar
+          push: false
+          tags: localhost:5000/piper:latest # going to be used for e2e later
           cache-from: type=gha
           cache-to: type=gha,mode=max
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: piper
-#          path: /tmp/piper_image.tar
-#          if-no-files-found: error
+
   lint:
     name: lint
     runs-on: ubuntu-latest
