@@ -29,6 +29,7 @@ jobs:
       - run: make test
   e2e-tests:
     name: E2E Tests
+    needs: [ piper-image ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -46,23 +47,13 @@ jobs:
           sudo mv ./kind /usr/local/bin/kind
       - name: init kind cluster
         run: make deploy
-
-  piper-image:
-    name: Piper Image Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: [ tests ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
-      - name: Build and export
+      - name: Build and export # here because make deploy init localhost registry
         uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: false
-          tags: localhost:5000/piper:latest # going to be used for e2e later
+          push: push
+          tags: localhost:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
