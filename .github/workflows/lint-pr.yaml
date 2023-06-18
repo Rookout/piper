@@ -1,12 +1,18 @@
-name: Lint PR
+name: Check PR title
 
-on: [pull_request]
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
 
 permissions:
   contents: read
 
 jobs:
-  main:
+  lint:
     permissions:
       pull-requests: read  # for amannn/action-semantic-pull-request to analyze PRs
       statuses: write  # for amannn/action-semantic-pull-request to mark status of analyzed PR
@@ -21,12 +27,6 @@ jobs:
             feat
             fix
             docs
-            style
-            refactor
-            perf
-            test
-            build
-            ci
             chore
             revert
 
