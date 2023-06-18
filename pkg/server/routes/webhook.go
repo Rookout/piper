@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
-	webhookHandler "github.com/rookout/piper/pkg/webhook-hanlder"
+	webhookHandler "github.com/rookout/piper/pkg/webhook-handler"
 )
 
 func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.RouterGroup) {
