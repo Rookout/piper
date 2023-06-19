@@ -8,7 +8,6 @@ jobs:
   piper-image:
     name: piper-image
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
@@ -60,4 +59,4 @@ jobs:
           version:  ${{ github.ref }}
           charts_dir: helm-chart
         env:
-          CR_TOKEN: {{ github.token }}
+          CR_TOKEN: ${{ github.token }}
