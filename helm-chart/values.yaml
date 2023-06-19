@@ -41,7 +41,7 @@ piper:
       # -- The namespace in which the Workflow CRD will be created.
       namespace: ""
       # -- The DNS address of Argo Workflow server that Piper can address.
-      address: ""  #argo-workflows-server.workflows.svc.cluster.local
+      address: "" #argo-workflows-server.workflows.svc.cluster.local
       # -- The token for authentication with Argo Workflows server.
       # -- This will create a secret named <RELEASE_NAME>-token and with the key 'token'
       token: ""
