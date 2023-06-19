@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Rookout/piper/compare/v1.0.14...v1.1.0) (2023-06-19)
+
+
+### Features
+
+* add app version to helm chart ([#47](https://github.com/Rookout/piper/issues/47)) ([12e592d](https://github.com/Rookout/piper/commit/12e592d2222ed74fc7fee6d23ba20271491102ac))
+
 ## [1.0.14](https://github.com/Rookout/piper/compare/v1.0.13...v1.0.14) (2023-06-19)
 
 
