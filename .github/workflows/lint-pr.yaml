@@ -36,4 +36,4 @@ jobs:
           # Configure that a scope must always be provided.
           requireScope: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}

@@ -5,13 +5,17 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/server/routes"
+	"log"
 )
 
 var router = gin.Default()
 
 func Start(cfg *conf.Config, clients *clients.Clients) {
 	getRoutes(cfg, clients)
-	router.Run()
+	err := router.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getRoutes(cfg *conf.Config, clients *clients.Clients) {

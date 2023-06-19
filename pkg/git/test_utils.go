@@ -65,7 +65,10 @@ func testFormValues(t *testing.T, r *http.Request, values values) {
 		want.Set(k, v)
 	}
 
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		t.Errorf("Go error parsing form: %v", err)
+	}
 	if got := r.Form; !cmp.Equal(got, want) {
 		t.Errorf("Request parameters: %v, want %v", got, want)
 	}
