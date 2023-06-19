@@ -66,4 +66,5 @@ jobs:
           charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ github.token }}
+          CR_SKIP_EXISTING: true
         if: ${{ env.CHART_UPDATED }}
