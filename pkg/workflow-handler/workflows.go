@@ -162,6 +162,9 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	params = append(params, globalParams...)
 
 	spec, err := wfc.ConstructSpec(templates, params, configName)
+	if err != nil {
+		return err
+	}
 
 	workflow, err := wfc.CreateWorkflow(spec, workflowsBatch)
 	if err != nil {
