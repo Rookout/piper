@@ -25,7 +25,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: rookout/piper:${{ github.ref }}
+          tags: rookout/piper:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   helm:
@@ -58,7 +58,7 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         with:
-          version:  ${{ github.ref }}
+          version:  ${{ github.ref_name }}
           charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ github.token }}
