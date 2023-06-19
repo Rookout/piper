@@ -101,7 +101,7 @@ image:
   # -- Piper image pull policy
   pullPolicy: IfNotPresent
   # -- Piper image tag
-  tag: latest
+  tag: ""
 
 # -- secret to use for image pulling
 imagePullSecrets: []

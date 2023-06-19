@@ -46,5 +46,6 @@ jobs:
         uses: stefanprodan/helm-gh-pages@master
         with:
           chart_version: ${{ github.ref_name }}
+          app_version: ${{ github.ref_name }}
           token: ${{ secrets.GIT_TOKEN }}
           charts_dir: .

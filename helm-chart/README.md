@@ -1,6 +1,6 @@
 # piper
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
 
 A Helm chart for Piper
 
@@ -20,7 +20,7 @@ A Helm chart for Piper
 | image.name | string | `"piper"` | Piper image name |
 | image.pullPolicy | string | `"IfNotPresent"` | Piper image pull policy |
 | image.repository | string | `"rookout"` | Piper public dockerhub repo |
-| image.tag | string | `"latest"` | Piper image tag |
+| image.tag | string | `""` | Piper image tag |
 | imagePullSecrets | list | `[]` | secret to use for image pulling |
 | ingress.annotations | object | `{}` | Piper ingress annotations |
 | ingress.className | string | `""` | Piper ingress class name |
