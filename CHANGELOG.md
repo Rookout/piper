@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.10](https://github.com/Rookout/piper/compare/v1.0.9...v1.0.10) (2023-06-19)
+
+
+### Bug Fixes
+
+* chart release flow ([#38](https://github.com/Rookout/piper/issues/38)) ([89bb175](https://github.com/Rookout/piper/commit/89bb175707ae7be73374340510148b0b4fe19e6b))
+* move chart path ([#35](https://github.com/Rookout/piper/issues/35)) ([f9d3a42](https://github.com/Rookout/piper/commit/f9d3a4253f2a32b5582ee0048386ccddd4d64937))
+* move chart path ([#37](https://github.com/Rookout/piper/issues/37)) ([c4da10b](https://github.com/Rookout/piper/commit/c4da10b3039fe0ac4dba310e3545b8ab2d6553f6))
+
 ## [1.0.9](https://github.com/Rookout/piper/compare/v1.0.8...v1.0.9) (2023-06-19)
 
 
