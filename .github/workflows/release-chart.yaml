@@ -17,7 +17,7 @@ jobs:
         run: |
           git config user.name "sonario"
           git config user.email "sonario@rookout.com"
-      - name: Check Git diff in /helm-chart
+      - name: Check Git diff in /charts
         run: |
           if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main~2 -- helm-chart/)" != "" ]; then
             echo "There are Git diffs in the /helm-chart folder."
@@ -40,9 +40,6 @@ jobs:
         if: ${{ env.CHART_UPDATED }}
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
-        with:
-          charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ github.token }}
-          CR_SKIP_EXISTING: true
         if: ${{ env.CHART_UPDATED }}
