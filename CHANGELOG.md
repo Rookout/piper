@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.14](https://github.com/Rookout/piper/compare/v1.0.13...v1.0.14) (2023-06-19)
+
+
+### Bug Fixes
+
+* change chart deployment flow ([#45](https://github.com/Rookout/piper/issues/45)) ([bcb329c](https://github.com/Rookout/piper/commit/bcb329c6a2b77f6d40e37ee0827b0f40a260e749))
+
 ## [1.0.13](https://github.com/Rookout/piper/compare/v1.0.12...v1.0.13) (2023-06-19)
 
 
