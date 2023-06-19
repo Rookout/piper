@@ -16,7 +16,7 @@ init-kind:
 .PHONY: deploy
 deploy: init-kind
 	docker push localhost:5001/piper:latest
-	helm upgrade --install piper ./helm-chart -f values.dev.yaml && kubectl rollout restart deployment piper
+	helm upgrade --install piper ./charts/piper -f values.dev.yaml && kubectl rollout restart deployment piper
 
 .PHONY: restart
 restart: local-build
@@ -30,8 +30,8 @@ clean:
 
 .PHONY: helm
 helm:
-	helm lint ./helm-chart
-	helm template ./helm-chart  --debug > _lint.yaml
+	helm lint ./charts/piper
+	helm template ./charts/piper --debug > _lint.yaml
 	helm-docs
 
 .PHONY: test
