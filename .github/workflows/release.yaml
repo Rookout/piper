@@ -41,11 +41,11 @@ jobs:
           git config user.email "sonario@rookout.com"
       - name: Check Git diff in /helm-chart
         run: |
-          if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main~2 -- charts/)" != "" ]; then
-            echo "There are Git diffs in the /charts folder."
+          if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main~2 -- helm-chart/)" != "" ]; then
+            echo "There are Git diffs in the /helm-chart folder."
             echo "CHART_UPDATED=true" >> $GITHUB_ENV
           else
-            echo "There are no Git diffs in the /charts folder."
+            echo "There are no Git diffs in the /helm-chart folder."
           fi
       - name: Install Helm
         uses: azure/setup-helm@v3
