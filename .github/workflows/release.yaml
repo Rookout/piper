@@ -60,4 +60,4 @@ jobs:
           version:  ${{ github.ref }}
           charts_dir: helm-chart
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: {{ github.token }}
