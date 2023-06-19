@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/Rookout/piper/compare/v1.0.1...v1.0.2) (2023-06-19)
+
+
+### Bug Fixes
+
+* minor chart fix ([#18](https://github.com/Rookout/piper/issues/18)) ([4e34925](https://github.com/Rookout/piper/commit/4e34925591e795972c5d4bae9315666e5abadbc9))
+
 ## [1.0.1](https://github.com/Rookout/piper/compare/v1.0.0...v1.0.1) (2023-06-19)
 
 
