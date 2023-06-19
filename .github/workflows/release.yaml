@@ -65,4 +65,5 @@ jobs:
         env:
           CR_TOKEN: ${{ github.token }}
           charts_dir: .
+          CR_SKIP_EXISTING: true
         if: ${{ env.CHART_UPDATED }}
