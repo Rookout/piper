@@ -6,12 +6,12 @@ Please check out values.yaml file of the helm chart.
 
 To add piper helm repo run:
 ```bash
-helm repo add piper https://piper.rookout.com
+helm repo add piper https://rookout.github.io/piper/
 ```
 
-After configuring Piper, run the following command for installation:
+After configuring Piper value.yaml, run the following command for installation:
 ```bash
-helm install piper piper/piper --namespace workflows
+helm install piper piper/piper
 ```
 
 ## Configuration
