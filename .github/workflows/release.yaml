@@ -2,7 +2,7 @@ name: Release Workflow
 
 on:
   release:
-    types: [*]
+    types: [created]
 
 jobs:
   piper-image:
