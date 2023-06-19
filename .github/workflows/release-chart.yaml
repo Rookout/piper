@@ -17,13 +17,13 @@ jobs:
         run: |
           git config user.name "sonario"
           git config user.email "sonario@rookout.com"
-      - name: Check Git diff in /helm-chart
+      - name: Check Git diff in /charts
         run: |
-          if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main~2 -- helm-chart/)" != "" ]; then
-            echo "There are Git diffs in the /helm-chart folder."
+          if [ "$(git diff --exit-code --name-only --diff-filter=d origin/main~2 -- charts/)" != "" ]; then
+            echo "There are Git diffs in the /charts folder."
             echo "CHART_UPDATED=true" >> $GITHUB_ENV
           else
-            echo "There are no Git diffs in the /helm-chart folder."
+            echo "There are no Git diffs in the /charts folder."
           fi
       - name: Install Helm
         uses: azure/setup-helm@v3
@@ -36,13 +36,10 @@ jobs:
       - name: Helm lint and template
         run: |
           make helm
-          echo ""  >> ./helm-chart/Chart.yaml
+          echo ""  >> ./charts/piper/Chart.yaml
         if: ${{ env.CHART_UPDATED }}
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
-        with:
-          charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ github.token }}
-          CR_SKIP_EXISTING: true
         if: ${{ env.CHART_UPDATED }}
