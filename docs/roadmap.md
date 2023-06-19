@@ -14,6 +14,7 @@
 - [x] HPA support.
 - [x] Run as non-root user.
 - [ ] Label management.
+- [ ] Add tag event to webhook_handler.
 
 ## General
 - [ ] Test suite.
