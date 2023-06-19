@@ -17,3 +17,4 @@ jobs:
         with:
           release-type: helm
           package-name: piper
+          token: ${{ secret.GIT_TOKEN }}
