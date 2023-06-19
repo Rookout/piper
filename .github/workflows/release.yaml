@@ -64,4 +64,5 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: ${{ github.token }}
+          charts_dir: .
         if: ${{ env.CHART_UPDATED }}
