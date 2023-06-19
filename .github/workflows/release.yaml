@@ -5,7 +5,6 @@ on:
     types:
       - published
       - edited
-      - released
 
 jobs:
   piper-image:
