@@ -58,7 +58,7 @@ jobs:
       - name: Helm lint and template
         run: |
           make helm
-          helm package ./helm-chart
+          echo ""  >> ./helm-chart/Chart.yaml
         if: ${{ env.CHART_UPDATED }}
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
