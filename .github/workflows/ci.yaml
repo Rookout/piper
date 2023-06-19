@@ -90,6 +90,6 @@ jobs:
           fi
       - name: Helm lint and template
         run: |
-          apt-get install helm-docs
+          sudo apt-get install helm-docs
           make helm
         if: ${{ env.CHART_UPDATED }}
