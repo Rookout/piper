@@ -17,9 +17,10 @@
 - [ ] Add tag event to github webhook handler.
 
 ## General
-- [ ] Test suite.
-- [ ] e2e tests.
-- [ ] gh pages for docs and chart.
+- [ ] Test suite - In progress.
+- [ ] e2e tests - In progress.
+- [x] gh pages for docs.
+- [x] gh pages for chart.
 
 ## CI
 - [x] Dockerfile .
