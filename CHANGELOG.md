@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/Rookout/piper/compare/v1.0.10...v1.0.11) (2023-06-19)
+
+
+### Bug Fixes
+
+* move chart path ([#39](https://github.com/Rookout/piper/issues/39)) ([50af217](https://github.com/Rookout/piper/commit/50af2178642f36ffff10087a1be69021d0497d2c))
+
 ## [1.0.10](https://github.com/Rookout/piper/compare/v1.0.9...v1.0.10) (2023-06-19)
 
 
