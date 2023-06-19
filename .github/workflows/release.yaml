@@ -1,9 +1,9 @@
 name: Release Workflow
 
 on:
-  create:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
+
 jobs:
   piper-image:
     name: piper-image
