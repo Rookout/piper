@@ -7,15 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
-	webhookHandler "github.com/rookout/piper/pkg/webhook-handler"
+	webhookHandler "github.com/rookout/piper/pkg/webhook_handler"
 )
 
-func AddWebhookRoutes(cfg *conf.Config, clients *clients.Clients, rg *gin.RouterGroup) {
+func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.RouterGroup) {
 	webhook := rg.Group("/webhook")
 
 	webhook.POST("", func(c *gin.Context) {
 		ctx := c.Copy().Request.Context()
-		webhookPayload, err := clients.Git.HandlePayload(c.Request, []byte(cfg.GitConfig.WebhookSecret))
+		webhookPayload, err := clients.GitProvider.HandlePayload(c.Request, []byte(cfg.GitProviderConfig.WebhookSecret))
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

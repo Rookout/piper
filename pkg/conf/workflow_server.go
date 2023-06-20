@@ -5,7 +5,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type ArgoConfig struct {
+type WorkflowServerConfig struct {
 	ArgoToken   string `envconfig:"ARGO_WORKFLOWS_TOKEN" required:"true"`
 	ArgoAddress string `envconfig:"ARGO_WORKFLOWS_ADDRESS" required:"true"`
 	CreateCRD   bool   `envconfig:"ARGO_WORKFLOWS_CREATE_CRD" default:"true"`
@@ -13,7 +13,7 @@ type ArgoConfig struct {
 	KubeConfig  string `envconfig:"KUBE_CONFIG" default:""`
 }
 
-func (cfg *ArgoConfig) ArgoConfLoad() error {
+func (cfg *WorkflowServerConfig) ArgoConfLoad() error {
 	err := envconfig.Process("", cfg)
 	if err != nil {
 		return fmt.Errorf("failed to load the Argo configuration, error: %v", err)

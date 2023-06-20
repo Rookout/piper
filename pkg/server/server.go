@@ -10,7 +10,7 @@ import (
 
 var router = gin.Default()
 
-func Start(cfg *conf.Config, clients *clients.Clients) {
+func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
 	getRoutes(cfg, clients)
 	err := router.Run()
 	if err != nil {
@@ -18,7 +18,7 @@ func Start(cfg *conf.Config, clients *clients.Clients) {
 	}
 }
 
-func getRoutes(cfg *conf.Config, clients *clients.Clients) {
+func getRoutes(cfg *conf.GlobalConfig, clients *clients.Clients) {
 	v1 := router.Group("/")
 	routes.AddHealthRoutes(cfg, v1)
 	routes.AddWebhookRoutes(cfg, clients, v1)

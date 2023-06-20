@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddHealthRoutes(cfg *conf.Config, rg *gin.RouterGroup) {
+func AddHealthRoutes(cfg *conf.GlobalConfig, rg *gin.RouterGroup) {
 	health := rg.Group("/healthz")
 
 	health.GET("", func(c *gin.Context) {

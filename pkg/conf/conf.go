@@ -5,14 +5,14 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type Config struct {
-	GitConfig
-	ArgoConfig
+type GlobalConfig struct {
+	GitProviderConfig
+	WorkflowServerConfig
 	RookoutConfig
-	WorkflowConfig
+	WorkflowsConfig
 }
 
-func (cfg *Config) Load() error {
+func (cfg *GlobalConfig) Load() error {
 	err := envconfig.Process("", cfg)
 	if err != nil {
 		return fmt.Errorf("failed to load the configuration, error: %v", err)
@@ -21,8 +21,8 @@ func (cfg *Config) Load() error {
 	return nil
 }
 
-func LoadConfig() (*Config, error) {
-	cfg := new(Config)
+func LoadConfig() (*GlobalConfig, error) {
+	cfg := new(GlobalConfig)
 
 	err := cfg.Load()
 	if err != nil {

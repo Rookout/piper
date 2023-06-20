@@ -1,14 +1,14 @@
 package common
 
 import (
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/git_provider"
 )
 
 type WorkflowsBatch struct {
-	OnStart    []*git.CommitFile
-	OnExit     []*git.CommitFile
-	Templates  []*git.CommitFile
-	Parameters *git.CommitFile
+	OnStart    []*git_provider.CommitFile
+	OnExit     []*git_provider.CommitFile
+	Templates  []*git_provider.CommitFile
+	Parameters *git_provider.CommitFile
 	Config     *string
-	Payload    *git.WebhookPayload
+	Payload    *git_provider.WebhookPayload
 }

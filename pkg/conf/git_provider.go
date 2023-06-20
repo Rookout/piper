@@ -6,7 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type GitConfig struct {
+type GitProviderConfig struct {
 	Provider        string `envconfig:"GIT_PROVIDER" required:"true"`
 	Token           string `envconfig:"GIT_TOKEN" required:"true"`
 	OrgName         string `envconfig:"GIT_ORG_NAME" required:"true"`
@@ -16,7 +16,7 @@ type GitConfig struct {
 	WebhookSecret   string `envconfig:"GIT_WEBHOOK_SECRET" required:"false"`
 }
 
-func (cfg *GitConfig) GitConfLoad() error {
+func (cfg *GitProviderConfig) GitConfLoad() error {
 	err := envconfig.Process("", cfg)
 	if err != nil {
 		return fmt.Errorf("failed to load the Git provider configuration, error: %v", err)

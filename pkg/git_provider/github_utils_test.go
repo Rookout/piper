@@ -1,4 +1,4 @@
-package git
+package git_provider
 
 import (
 	"context"
@@ -37,8 +37,8 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 
 	c := GithubClientImpl{
 		client: client,
-		cfg: &conf.Config{
-			GitConfig: conf.GitConfig{
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{
 				OrgName:    "test",
 				WebhookURL: "https://bla.com",
 			},
