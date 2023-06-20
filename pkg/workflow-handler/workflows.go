@@ -133,9 +133,30 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	_, ok := wfc.cfg.WorkflowConfig.Configs["default"]
 	if ok {
 		configName = "default"
+		log.Printf(
+			"%s config selected for workflow in repo: %s branch %s",
+			configName,
+			workflowsBatch.Payload.Repo,
+			workflowsBatch.Payload.Branch,
+		)
 	}
 	if *workflowsBatch.Config != "" {
-		configName = *workflowsBatch.Config
+		_, ok = wfc.cfg.WorkflowConfig.Configs[*workflowsBatch.Config]
+		if ok {
+			configName = *workflowsBatch.Config
+			log.Printf(
+				"%s config overwrited for workflow in repo: %s branch %s",
+				*workflowsBatch.Config,
+				workflowsBatch.Payload.Repo,
+				workflowsBatch.Payload.Branch,
+			)
+		} else {
+			log.Printf(
+				"error in selecting config, staying with default config for repo %s branch %s",
+				workflowsBatch.Payload.Repo,
+				workflowsBatch.Payload.Branch,
+			)
+		}
 	}
 
 	templates, err := wfc.ConstructTemplates(workflowsBatch, configName)
