@@ -7,12 +7,12 @@
 - [x] onExit overwrite in triggers.yaml.
 - [x] HPA support.
 - [x] Run as non-root user.
+- [x] triggers.yaml config selection.
 - [ ] Argo Workflows Server linter and submitter.
 - [ ] Workflow status management service.
 - [ ] Graceful shutdown.
 - [ ] Logger.
 - [ ] debug pause injection implementation feature (will fail the pipeline).
-- [ ] triggers.yaml config selection.
 - [ ] Label management.
 - [ ] Add tag event to github webhook handler.
 

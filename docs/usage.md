@@ -8,6 +8,8 @@ This file holds a list of triggers that will be executed `onStart` by `event` fr
 
 `onExit` can overwrite the default `onExit` configuration from `piper-workflows-config` by reference existing DAG tasks as [exit.yaml](../examples/.workflows/exit.yaml).
 
+`config` field used for workflow configuration selection. the default value is `default` configuration.
+
 ###  main.yaml or others 
 
 This [file](../examples/.workflows/main.yaml) can be named as you wish and will be referenced in `triggers.yaml` file. It will define an entrypoint DAG that the Workflow will execute.

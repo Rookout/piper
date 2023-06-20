@@ -3,3 +3,4 @@
   onStart: ["main.yaml"]
   onExit: ["exit.yaml"]
   templates: ["templates.yaml"]
+  config: "default"
