@@ -14,8 +14,9 @@ git checkout -b my-feature
 4. Make your changes, following the coding guidelines outlined in this document.
 5. Commit your changes with clear and descriptive commit messages and sign it:
 ```bash
-git commit -s -m "Add new feature"
+git commit -s -m "fix: Add new feature"
 ```
+* please make sure you commit as described in [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/)
 6. Push your changes to your forked repository:
 ```bash
 git push origin my-feature
@@ -36,6 +37,7 @@ We welcome and appreciate contributions from the community. If you have develope
 
 ### Pull Request Naming
 
+The name should follow conventional commit naming. 
 
 ## Coding Guidelines
 

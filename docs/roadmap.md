@@ -4,23 +4,23 @@
 - [x] Create webhook server. 
 - [x] Github provider handler.
 - [x] Implementation of Workflow creation by the example.
+- [x] onExit overwrite in triggers.yaml.
+- [x] HPA support.
+- [x] Run as non-root user.
 - [ ] Argo Workflows Server linter and submitter.
 - [ ] Workflow status management service.
 - [ ] Graceful shutdown.
 - [ ] Logger.
 - [ ] debug pause injection implementation feature (will fail the pipeline).
-- [x] onExit overwrite in triggers.yaml.
 - [ ] triggers.yaml config selection.
-- [x] HPA support.
-- [x] Run as non-root user.
 - [ ] Label management.
 - [ ] Add tag event to github webhook handler.
 
 ## General
-- [ ] Test suite - In progress.
-- [ ] e2e tests - In progress.
 - [x] gh pages for docs.
 - [x] gh pages for chart.
+- [ ] Test suite - In progress.
+- [ ] e2e tests - In progress.
 
 ## CI
 - [x] Dockerfile .

@@ -2,9 +2,9 @@
 
 Piper will look in each of the target branches a `.workflows` [folder](../examples/.workflows). This folder should contain the following files to create a Workflow out of branch configuration:
 
-### triggers.yaml
+### triggers.yaml (convention name)
 
-This file holds a list of triggers to that will be executed `onStart` by `event` from specific `branch`. In this [example](../examples/.workflows/triggers.yaml), `main.yaml` will be executed as DAG when `push` or `merge` events will be applied in `main` branch. 
+This file holds a list of triggers that will be executed `onStart` by `event` from specific `branch`. In this [example](../examples/.workflows/triggers.yaml), `main.yaml` will be executed as DAG when `push` or `merge` events will be applied in `main` branch. 
 
 `onExit` can overwrite the default `onExit` configuration from `piper-workflows-config` by reference existing DAG tasks as [exit.yaml](../examples/.workflows/exit.yaml).
 
@@ -24,7 +24,7 @@ This [file](../examples/.workflows/templates.yaml) will have additional template
 
 As a best practice, use this file as implementation of template and reference them from executed [file](../examples/.workflows/main.yaml).
 
-###  parameters.yaml
+###  parameters.yaml (convention name)
 
 This [file](../examples/.workflows/parameters.yaml) will hold a list of global parameters of the Workflow. can be referenced from any template with `{{ workflow.parameters.___ }}
 
