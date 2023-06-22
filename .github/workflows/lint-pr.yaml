@@ -32,8 +32,10 @@ jobs:
 
           # Configure which scopes are allowed (newline delimited).
           scopes: |
-            *
+            RK-\d+
           # Configure that a scope must always be provided.
           requireScope: false
+          ignoreLabels: |
+            autorelease: pending
         env:
           GITHUB_TOKEN: ${{ github.token }}
