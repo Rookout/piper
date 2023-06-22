@@ -1,11 +1,11 @@
 package clients
 
 import (
-	"github.com/rookout/piper/pkg/git"
-	workflowHandler "github.com/rookout/piper/pkg/workflow-handler"
+	"github.com/rookout/piper/pkg/git_provider"
+	"github.com/rookout/piper/pkg/workflow_handler"
 )
 
 type Clients struct {
-	Git       git.Client
-	Workflows workflowHandler.WorkflowsClient
+	GitProvider git_provider.Client
+	Workflows   workflow_handler.WorkflowsClient
 }

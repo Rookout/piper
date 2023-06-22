@@ -5,10 +5,10 @@ import (
 
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/server"
 	"github.com/rookout/piper/pkg/utils"
-	workflowHandler "github.com/rookout/piper/pkg/workflow-handler"
+	workflowHandler "github.com/rookout/piper/pkg/workflow_handler"
 
 	rookout "github.com/Rookout/GoSDK"
 )
@@ -16,7 +16,7 @@ import (
 func main() {
 	cfg, err := conf.LoadConfig()
 	if err != nil {
-		log.Fatalf("failed to load the configuration for Piper, error: %v", err)
+		log.Panicf("failed to load the configuration for Piper, error: %v", err)
 	}
 
 	if cfg.RookoutConfig.Token != "" {
@@ -27,26 +27,26 @@ func main() {
 		}
 	}
 
-	err = cfg.WorkflowConfig.WorkflowsSpecLoad("/piper-config/..data")
+	err = cfg.WorkflowsConfig.WorkflowsSpecLoad("/piper-config/..data")
 	if err != nil {
-		log.Fatalf("Failed to load workflow spec configuration, error: %v", err)
+		log.Panicf("Failed to load workflow spec configuration, error: %v", err)
 	}
 
-	git, err := git.NewGitProviderClient(cfg)
+	gitProvider, err := git_provider.NewGitProviderClient(cfg)
 	if err != nil {
-		log.Fatalf("failed to load the Git client for Piper, error: %v", err)
+		log.Panicf("failed to load the Git client for Piper, error: %v", err)
 	}
 	workflows, err := workflowHandler.NewWorkflowsClient(cfg)
 	if err != nil {
-		log.Fatalf("failed to load the Argo Workflows client for Piper, error: %v", err)
+		log.Panicf("failed to load the Argo Workflows client for Piper, error: %v", err)
 	}
 
-	clients := &clients.Clients{
-		Git:       git,
-		Workflows: workflows,
+	globalClients := &clients.Clients{
+		GitProvider: gitProvider,
+		Workflows:   workflows,
 	}
 
-	err = clients.Git.SetWebhook()
+	err = globalClients.GitProvider.SetWebhook()
 	if err != nil {
 		panic(err)
 	}
@@ -56,5 +56,5 @@ func main() {
 	//	panic(err)
 	//}
 
-	server.Start(cfg, clients)
+	server.Start(cfg, globalClients)
 }

@@ -1,4 +1,4 @@
-package git
+package git_provider
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 
 func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook, bool) {
 	emptyHook := github.Hook{}
-	hooks, resp, err := c.client.Organizations.ListHooks(ctx, c.cfg.GitConfig.OrgName, &github.ListOptions{})
+	hooks, resp, err := c.client.Organizations.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, &github.ListOptions{})
 	if err != nil {
 		return &emptyHook, false
 	}
@@ -25,7 +25,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook
 		return &emptyHook, false
 	}
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitConfig.WebhookURL {
+		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitProviderConfig.WebhookURL {
 			return hook, true
 		}
 	}
@@ -34,7 +34,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook
 
 func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string) (*github.Hook, bool) {
 	emptyHook := github.Hook{}
-	hooks, resp, err := c.client.Repositories.ListHooks(ctx, c.cfg.GitConfig.OrgName, repo, &github.ListOptions{})
+	hooks, resp, err := c.client.Repositories.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, repo, &github.ListOptions{})
 	if err != nil {
 		return &emptyHook, false
 	}
@@ -46,7 +46,7 @@ func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string)
 	}
 
 	for _, hook := range hooks {
-		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitConfig.WebhookURL {
+		if hook.GetActive() && hook.GetName() == "web" && hook.Config["url"] == c.cfg.GitProviderConfig.WebhookURL {
 			return hook, true
 		}
 	}
@@ -77,7 +77,7 @@ func GetScopes(ctx context.Context, client *github.Client) ([]string, error) {
 
 }
 
-func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.Config) error {
+func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.GlobalConfig) error {
 
 	orgScopes := []string{"admin:org_hook"}
 	repoAdminScopes := []string{"admin:repo_hook"}
@@ -92,7 +92,7 @@ func ValidatePermissions(ctx context.Context, client *github.Client, cfg *conf.C
 		return fmt.Errorf("permissions error: no scopes found for the github client")
 	}
 
-	if cfg.GitConfig.OrgLevelWebhook {
+	if cfg.GitProviderConfig.OrgLevelWebhook {
 		if utils.ListContains(orgScopes, scopes) {
 			return nil
 		}

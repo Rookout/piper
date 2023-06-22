@@ -20,11 +20,11 @@ const (
 
 type WorkflowsClientImpl struct {
 	clientSet *wfClientSet.Clientset
-	cfg       *conf.Config
+	cfg       *conf.GlobalConfig
 }
 
-func NewWorkflowsClient(cfg *conf.Config) (WorkflowsClient, error) {
-	restClientConfig, err := utils.GetClientConfig(cfg.ArgoConfig.KubeConfig)
+func NewWorkflowsClient(cfg *conf.GlobalConfig) (WorkflowsClient, error) {
+	restClientConfig, err := utils.GetClientConfig(cfg.WorkflowServerConfig.KubeConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +49,12 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if onExit == nil || len(onExit.DAG.Tasks) == 0 {
-		_, ok := wfc.cfg.WorkflowConfig.Configs[configName]
-		if ok && wfc.cfg.WorkflowConfig.Configs[configName].OnExit != nil {
+		_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
+		if ok && wfc.cfg.WorkflowsConfig.Configs[configName].OnExit != nil {
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
-					Tasks: wfc.cfg.WorkflowConfig.Configs[configName].OnExit,
+					Tasks: wfc.cfg.WorkflowsConfig.Configs[configName].OnExit,
 				},
 			}
 
@@ -74,10 +74,10 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 
 func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, params []v1alpha1.Parameter, configName string) (*v1alpha1.WorkflowSpec, error) {
 	finalSpec := &v1alpha1.WorkflowSpec{}
-	_, ok := wfc.cfg.WorkflowConfig.Configs[configName]
+	_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
 	if ok {
-		*finalSpec = wfc.cfg.WorkflowConfig.Configs[configName].Spec
-		if len(wfc.cfg.WorkflowConfig.Configs[configName].OnExit) != 0 {
+		*finalSpec = wfc.cfg.WorkflowsConfig.Configs[configName].Spec
+		if len(wfc.cfg.WorkflowsConfig.Configs[configName].OnExit) != 0 {
 			finalSpec.OnExit = ONEXIT
 		}
 	}
@@ -130,7 +130,7 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error {
 	var params []v1alpha1.Parameter
 	var configName string
-	_, ok := wfc.cfg.WorkflowConfig.Configs["default"]
+	_, ok := wfc.cfg.WorkflowsConfig.Configs["default"]
 	if ok {
 		configName = "default"
 		log.Printf(

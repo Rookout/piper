@@ -2,7 +2,7 @@ package workflow_handler
 
 import (
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/git_provider"
 	assertion "github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ func TestAddFilesToTemplates(t *testing.T) {
 	assert := assertion.New(t)
 
 	template := make([]v1alpha1.Template, 0)
-	files := make([]*git.CommitFile, 0)
+	files := make([]*git_provider.CommitFile, 0)
 
 	content := `
 - name: local-step
@@ -26,7 +26,7 @@ func TestAddFilesToTemplates(t *testing.T) {
       echo "{{ inputs.parameters.message }}"
 `
 	path := "path"
-	files = append(files, &git.CommitFile{
+	files = append(files, &git_provider.CommitFile{
 		Content: &content,
 		Path:    &path,
 	})
