@@ -2,6 +2,7 @@ package conf
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/utils"
@@ -21,6 +22,10 @@ func (wfc *WorkflowsConfig) WorkflowsSpecLoad(configPath string) error {
 	wfc.Configs = make(map[string]*ConfigInstance)
 
 	configs, err := utils.GetFilesData(configPath)
+	if len(configs) == 0 {
+		log.Printf("No config files to load at %s", configPath)
+		return nil
+	}
 	if err != nil {
 		return err
 	}
