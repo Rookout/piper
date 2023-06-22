@@ -118,7 +118,7 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 			configName,
 			workflowsBatch.Payload.Repo,
 			workflowsBatch.Payload.Branch,
-		)
+		) // Info
 	}
 	if *workflowsBatch.Config != "" {
 		ok = IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config)
@@ -129,13 +129,13 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 				*workflowsBatch.Config,
 				workflowsBatch.Payload.Repo,
 				workflowsBatch.Payload.Branch,
-			)
+			) // Info
 		} else {
 			log.Printf(
 				"error in selecting config, staying with default config for repo %s branch %s",
 				workflowsBatch.Payload.Repo,
 				workflowsBatch.Payload.Branch,
-			)
+			) // Error
 		}
 	}
 
