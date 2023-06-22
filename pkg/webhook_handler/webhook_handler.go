@@ -6,20 +6,20 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/common"
 	"github.com/rookout/piper/pkg/conf"
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"log"
 )
 
 type WebhookHandlerImpl struct {
-	cfg      *conf.Config
+	cfg      *conf.GlobalConfig
 	clients  *clients.Clients
 	Triggers *[]Trigger
-	Payload  *git.WebhookPayload
+	Payload  *git_provider.WebhookPayload
 }
 
-func NewWebhookHandler(cfg *conf.Config, clients *clients.Clients, payload *git.WebhookPayload) (*WebhookHandlerImpl, error) {
+func NewWebhookHandler(cfg *conf.GlobalConfig, clients *clients.Clients, payload *git_provider.WebhookPayload) (*WebhookHandlerImpl, error) {
 	var err error
 
 	return &WebhookHandlerImpl{
@@ -39,7 +39,7 @@ func (wh *WebhookHandlerImpl) RegisterTriggers(ctx *context.Context) error {
 		return fmt.Errorf(".workflows/triggers.yaml file does not exist in %s/%s", wh.Payload.Repo, wh.Payload.Branch)
 	}
 
-	triggers, err := wh.clients.Git.GetFile(ctx, wh.Payload.Repo, wh.Payload.Branch, ".workflows/triggers.yaml")
+	triggers, err := wh.clients.GitProvider.GetFile(ctx, wh.Payload.Repo, wh.Payload.Branch, ".workflows/triggers.yaml")
 	if err != nil {
 		return fmt.Errorf("failed to get triggers content: %v", err)
 	}
@@ -71,7 +71,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				wh.Payload.Branch,
 			)
 			triggered = true
-			onStartFiles, err := wh.clients.Git.GetFiles(
+			onStartFiles, err := wh.clients.GitProvider.GetFiles(
 				ctx,
 				wh.Payload.Repo,
 				wh.Payload.Branch,
@@ -84,9 +84,9 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				return nil, err
 			}
 
-			onExitFiles := make([]*git.CommitFile, 0)
+			onExitFiles := make([]*git_provider.CommitFile, 0)
 			if trigger.OnExit != nil {
-				onExitFiles, err = wh.clients.Git.GetFiles(
+				onExitFiles, err = wh.clients.GitProvider.GetFiles(
 					ctx,
 					wh.Payload.Repo,
 					wh.Payload.Branch,
@@ -100,9 +100,9 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				}
 			}
 
-			templatesFiles := make([]*git.CommitFile, 0)
+			templatesFiles := make([]*git_provider.CommitFile, 0)
 			if trigger.Templates != nil {
-				templatesFiles, err = wh.clients.Git.GetFiles(
+				templatesFiles, err = wh.clients.GitProvider.GetFiles(
 					ctx,
 					wh.Payload.Repo,
 					wh.Payload.Branch,
@@ -116,7 +116,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				}
 			}
 
-			parameters, err := wh.clients.Git.GetFile(
+			parameters, err := wh.clients.GitProvider.GetFile(
 				ctx,
 				wh.Payload.Repo,
 				wh.Payload.Branch,
@@ -146,7 +146,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 }
 
 func IsFileExists(ctx *context.Context, wh *WebhookHandlerImpl, path string, file string) bool {
-	files, err := wh.clients.Git.ListFiles(ctx, wh.Payload.Repo, wh.Payload.Branch, path)
+	files, err := wh.clients.GitProvider.ListFiles(ctx, wh.Payload.Repo, wh.Payload.Branch, path)
 	if err != nil {
 		log.Printf("Error listing files in repo: %s branch: %s. %v", wh.Payload.Repo, wh.Payload.Branch, err)
 		return false

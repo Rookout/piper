@@ -7,7 +7,7 @@ import (
 	"github.com/rookout/piper/pkg/utils"
 )
 
-type WorkflowConfig struct {
+type WorkflowsConfig struct {
 	Configs map[string]*ConfigInstance
 }
 
@@ -16,7 +16,7 @@ type ConfigInstance struct {
 	OnExit []v1alpha1.DAGTask    `yaml:"onExit"`
 }
 
-func (wfc *WorkflowConfig) WorkflowsSpecLoad(configPath string) error {
+func (wfc *WorkflowsConfig) WorkflowsSpecLoad(configPath string) error {
 	var jsonBytes []byte
 	wfc.Configs = make(map[string]*ConfigInstance)
 
