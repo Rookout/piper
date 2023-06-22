@@ -40,8 +40,9 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 		client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
-				OrgName:    "test",
-				WebhookURL: "https://bla.com",
+				OrgLevelWebhook: true,
+				OrgName:         "test",
+				WebhookURL:      "https://bla.com",
 			},
 		},
 	}
