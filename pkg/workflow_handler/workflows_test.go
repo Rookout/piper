@@ -11,6 +11,7 @@ import (
 
 func TestSelectConfig(t *testing.T) {
 	var wfc *conf.WorkflowsConfig
+
 	assert := assertion.New(t)
 	// Create a sample WorkflowsBatch object for testing
 	configName := "default"
@@ -75,13 +76,20 @@ func TestSelectConfig(t *testing.T) {
 		Payload: &git_provider.WebhookPayload{},
 	}
 
-	wfc = &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
+	var wfc4 *conf.WorkflowsConfig
+	wfc4 = &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
 		"config1": {Spec: v1alpha1.WorkflowSpec{},
 			OnExit: []v1alpha1.DAGTask{}},
 	}}
 
+	wfcImpl4 := &WorkflowsClientImpl{
+		cfg: &conf.GlobalConfig{
+			WorkflowsConfig: *wfc4,
+		},
+	}
+
 	// Call the SelectConfig function
-	returnConfigName, err = wfcImpl.SelectConfig(workflowsBatch)
+	returnConfigName, err = wfcImpl4.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
 	assert.Nil(err)
