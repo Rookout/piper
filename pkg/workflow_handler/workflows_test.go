@@ -10,6 +10,7 @@ import (
 )
 
 func TestSelectConfig(t *testing.T) {
+	var wfc *conf.WorkflowsConfig
 	assert := assertion.New(t)
 	// Create a sample WorkflowsBatch object for testing
 	configName := "default"
@@ -19,7 +20,7 @@ func TestSelectConfig(t *testing.T) {
 	}
 
 	// Create a mock WorkflowsClientImpl object with necessary dependencies
-	wfc := &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
+	wfc = &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
 		"default": {Spec: v1alpha1.WorkflowSpec{},
 			OnExit: []v1alpha1.DAGTask{}},
 		"config1": {Spec: v1alpha1.WorkflowSpec{},
