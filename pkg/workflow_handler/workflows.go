@@ -110,7 +110,7 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 
 func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBatch) (string, error) {
 	var configName string
-	ok := IsConfigExists(wfc.cfg, "default")
+	ok := IsConfigExists(&wfc.cfg.WorkflowsConfig, "default")
 	if ok {
 		configName = "default"
 		log.Printf(
@@ -121,7 +121,7 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 		)
 	}
 	if *workflowsBatch.Config != "" {
-		ok = IsConfigExists(wfc.cfg, *workflowsBatch.Config)
+		ok = IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config)
 		if ok {
 			configName = *workflowsBatch.Config
 			log.Printf(

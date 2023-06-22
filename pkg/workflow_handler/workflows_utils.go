@@ -65,7 +65,7 @@ func GetParameters(paramsFile *git_provider.CommitFile) ([]v1alpha1.Parameter, e
 	return params, nil
 }
 
-func IsConfigExists(cfg *conf.GlobalConfig, config string) bool {
-	_, ok := cfg.WorkflowsConfig.Configs[config]
+func IsConfigExists(cfg *conf.WorkflowsConfig, config string) bool {
+	_, ok := cfg.Configs[config]
 	return ok
 }
