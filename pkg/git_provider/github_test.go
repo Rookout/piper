@@ -13,24 +13,43 @@ import (
 )
 
 func TestListFiles(t *testing.T) {
-	//
 	// Prepare
-	//
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	contentName := ".workflows"
-	contentType := "dir"
-	contentPath := ""
-	jsonBytes, _ := json.Marshal(&github.RepositoryContent{
+	contentName := "exit.yaml"
+	contentType := "file"
+	contentPath := ".workflows/exit.yaml"
+	repoContent := &github.RepositoryContent{
 		Type: &contentType,
 		Name: &contentName,
 		Path: &contentPath,
-	})
+	}
 
-	mux.HandleFunc("/repos/test/test-repo1/contents/?ref=branch1", func(w http.ResponseWriter, r *http.Request) {
+	contentName2 := "main.yaml"
+	contentType2 := "file"
+	contentPath2 := ".workflows/main.yaml"
+	repoContent2 := &github.RepositoryContent{
+		Type: &contentType2,
+		Name: &contentName2,
+		Path: &contentPath2,
+	}
+	jsonBytes, _ := json.Marshal([]github.RepositoryContent{*repoContent, *repoContent2})
+
+	mux.HandleFunc("/repos/test/test-repo1/contents/.workflows", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
-		testFormValues(t, r, values{})
+		//testFormValues(t, r, values{})
+
+		// Get the ref value from the URL query parameters
+		ref := r.URL.Query().Get("ref")
+		expectedRef := "branch1"
+
+		// Check if the ref value matches the expected value
+		if ref != expectedRef {
+			http.Error(w, "Invalid ref value", http.StatusBadRequest)
+			return
+		}
+
 		_, _ = fmt.Fprint(w, string(jsonBytes))
 	})
 
@@ -46,16 +65,13 @@ func TestListFiles(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	//
 	// Execute
-	//
-	actualContent, err := c.ListFiles(&ctx, "test-repo1", "branch1", "")
-	expectedContent := `[{"name":".workflows"',"path":".workflows","type":"dir"}]`
+	actualContent, err := c.ListFiles(&ctx, "test-repo1", "branch1", ".workflows")
+	expectedContent := []string{"exit.yaml", "main.yaml"}
 
-	//
 	// Assert
-	//
 	assert := assertion.New(t)
-	assert.Equal(expectedContent, actualContent)
 	assert.NotNil(t, err)
+	assert.Equal(expectedContent, actualContent)
+
 }
