@@ -76,8 +76,7 @@ func TestSelectConfig(t *testing.T) {
 		Payload: &git_provider.WebhookPayload{},
 	}
 
-	var wfc4 *conf.WorkflowsConfig
-	wfc4 = &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
+	wfc4 := &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
 		"config1": {Spec: v1alpha1.WorkflowSpec{},
 			OnExit: []v1alpha1.DAGTask{}},
 	}}
