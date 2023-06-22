@@ -1,14 +1,15 @@
-package git
+package git_provider
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"testing"
+
 	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/conf"
 	assertion "github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestListFiles(t *testing.T) {
@@ -35,8 +36,8 @@ func TestListFiles(t *testing.T) {
 
 	c := GithubClientImpl{
 		client: client,
-		cfg: &conf.Config{
-			GitConfig: conf.GitConfig{
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,
 				OrgName:         "test",
 				RepoList:        "test-repo1",

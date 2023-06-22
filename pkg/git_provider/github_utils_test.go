@@ -1,14 +1,15 @@
-package git
+package git_provider
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"testing"
+
 	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/conf"
 	assertion "github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestIsOrgWebhookEnabled(t *testing.T) {
@@ -37,11 +38,10 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 
 	c := GithubClientImpl{
 		client: client,
-		cfg: &conf.Config{
-			GitConfig: conf.GitConfig{
-				OrgLevelWebhook: true,
-				OrgName:         "test",
-				WebhookURL:      "https://bla.com",
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{
+				OrgName:    "test",
+				WebhookURL: "https://bla.com",
 			},
 		},
 	}
@@ -86,8 +86,8 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 
 	c := GithubClientImpl{
 		client: client,
-		cfg: &conf.Config{
-			GitConfig: conf.GitConfig{
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,
 				OrgName:         "test",
 				WebhookURL:      "https://bla.com",

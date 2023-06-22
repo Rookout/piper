@@ -1,4 +1,4 @@
-package git
+package git_provider
 
 import (
 	"fmt"

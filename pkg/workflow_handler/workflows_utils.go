@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	"github.com/rookout/piper/pkg/git"
+	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"log"
 )
 
-func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Template, error) {
+func CreateDAGTemplate(fileList []*git_provider.CommitFile, name string) (*v1alpha1.Template, error) {
 	if len(fileList) == 0 {
 		log.Printf("empty file list for %s", name)
 		return nil, nil
@@ -38,7 +38,7 @@ func CreateDAGTemplate(fileList []*git.CommitFile, name string) (*v1alpha1.Templ
 	return template, nil
 }
 
-func AddFilesToTemplates(templates []v1alpha1.Template, files []*git.CommitFile) ([]v1alpha1.Template, error) {
+func AddFilesToTemplates(templates []v1alpha1.Template, files []*git_provider.CommitFile) ([]v1alpha1.Template, error) {
 	for _, f := range files {
 		t := make([]v1alpha1.Template, 0)
 		jsonBytes, err := utils.ConvertYAMLListToJSONList(*f.Content)
@@ -55,7 +55,7 @@ func AddFilesToTemplates(templates []v1alpha1.Template, files []*git.CommitFile)
 	return templates, nil
 }
 
-func GetParameters(paramsFile *git.CommitFile) ([]v1alpha1.Parameter, error) {
+func GetParameters(paramsFile *git_provider.CommitFile) ([]v1alpha1.Parameter, error) {
 	var params []v1alpha1.Parameter
 	err := yaml.Unmarshal([]byte(*paramsFile.Content), &params)
 	if err != nil {
