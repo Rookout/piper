@@ -70,7 +70,7 @@ func TestSelectConfig(t *testing.T) {
 	assert.Equal("default", returnConfigName)
 
 	// Test case 4 - selection of non-existing config when default config not exists
-	configName = "notInConfigs"
+	configName = "notInConfig"
 	workflowsBatch = &common.WorkflowsBatch{
 		Config:  &configName, // Set the desired config name here
 		Payload: &git_provider.WebhookPayload{},
