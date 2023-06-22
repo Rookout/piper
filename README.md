@@ -6,6 +6,7 @@ Welcome to Piper! Piper is open source project that aimed at providing multibran
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [Installation](docs/installation.md)
 - [Usage](docs/usage.md)
 - [Reporting Issues](#reporting-issues)
 - [How to Contribute](docs/CONTRIBUTING.md#how-to-contribute)
