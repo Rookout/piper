@@ -26,7 +26,7 @@ func CreateDAGTemplate(fileList []*git_provider.CommitFile, name string) (*v1alp
 		if err != nil {
 			return nil, err
 		}
-		err = yaml.Unmarshal(jsonBytes, &DAGTask)
+		err = json.Unmarshal(jsonBytes, &DAGTask)
 		if err != nil {
 			return nil, err
 		}
