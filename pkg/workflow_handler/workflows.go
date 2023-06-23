@@ -108,8 +108,17 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 
 func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBatch) string {
 	var configName string
+	if IsConfigExists(&wfc.cfg.WorkflowsConfig, "default") {
+		configName = "default"
+		log.Printf(
+			"%s config selected for workflow in repo: %s branch %s",
+			configName,
+			workflowsBatch.Payload.Repo,
+			workflowsBatch.Payload.Branch,
+		) // Info
+	}
 
-	if *workflowsBatch.Config != "" && !IsConfigExists(&wfc.cfg.WorkflowsConfig, "default") {
+	if *workflowsBatch.Config != "" {
 		if IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config) {
 			configName = *workflowsBatch.Config
 			log.Printf(
@@ -125,14 +134,6 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 				workflowsBatch.Payload.Branch,
 			) // Error
 		}
-	} else {
-		configName = "default"
-		log.Printf(
-			"%s config selected for workflow in repo: %s branch %s",
-			configName,
-			workflowsBatch.Payload.Repo,
-			workflowsBatch.Payload.Branch,
-		) // Info
 	}
 
 	return configName
