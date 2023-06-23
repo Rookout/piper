@@ -22,7 +22,11 @@ func CreateDAGTemplate(fileList []*git_provider.CommitFile, name string) (*v1alp
 			return nil, fmt.Errorf("missing content or path for %s", name)
 		}
 		DAGTask := make([]v1alpha1.DAGTask, 0)
-		err := yaml.Unmarshal([]byte(*file.Content), &DAGTask)
+		jsonBytes, err := utils.ConvertYAMToJSON([]byte(*file.Content))
+		if err != nil {
+			return nil, err
+		}
+		err = yaml.Unmarshal(jsonBytes, &DAGTask)
 		if err != nil {
 			return nil, err
 		}
