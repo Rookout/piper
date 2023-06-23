@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
@@ -62,4 +63,9 @@ func GetParameters(paramsFile *git_provider.CommitFile) ([]v1alpha1.Parameter, e
 		return nil, err
 	}
 	return params, nil
+}
+
+func IsConfigExists(cfg *conf.WorkflowsConfig, config string) bool {
+	_, ok := cfg.Configs[config]
+	return ok
 }

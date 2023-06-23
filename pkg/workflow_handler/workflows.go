@@ -108,9 +108,38 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 	return workflow, nil
 }
 
-func (wfc *WorkflowsClientImpl) SetConfig(wf *v1alpha1.Workflow, spec *v1alpha1.WorkflowSpec) error {
-	//TODO implement me
-	panic("implement me")
+func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBatch) (string, error) {
+	var configName string
+	ok := IsConfigExists(&wfc.cfg.WorkflowsConfig, "default")
+	if ok {
+		configName = "default"
+		log.Printf(
+			"%s config selected for workflow in repo: %s branch %s",
+			configName,
+			workflowsBatch.Payload.Repo,
+			workflowsBatch.Payload.Branch,
+		) // Info
+	}
+	if *workflowsBatch.Config != "" {
+		ok = IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config)
+		if ok {
+			configName = *workflowsBatch.Config
+			log.Printf(
+				"%s config overwrited for workflow in repo: %s branch %s",
+				*workflowsBatch.Config,
+				workflowsBatch.Payload.Repo,
+				workflowsBatch.Payload.Branch,
+			) // Info
+		} else {
+			log.Printf(
+				"error in selecting config, staying with default config for repo %s branch %s",
+				workflowsBatch.Payload.Repo,
+				workflowsBatch.Payload.Branch,
+			) // Error
+		}
+	}
+
+	return configName, nil
 }
 
 func (wfc *WorkflowsClientImpl) Lint(wf *v1alpha1.Workflow) error {
@@ -129,13 +158,10 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 
 func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error {
 	var params []v1alpha1.Parameter
-	var configName string
-	_, ok := wfc.cfg.WorkflowsConfig.Configs["default"]
-	if ok {
-		configName = "default"
-	}
-	if *workflowsBatch.Config != "" {
-		configName = *workflowsBatch.Config
+
+	configName, err := wfc.SelectConfig(workflowsBatch)
+	if err != nil {
+		return err
 	}
 
 	templates, err := wfc.ConstructTemplates(workflowsBatch, configName)
