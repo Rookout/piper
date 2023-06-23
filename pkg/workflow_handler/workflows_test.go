@@ -35,10 +35,9 @@ func TestSelectConfig(t *testing.T) {
 	}
 
 	// Call the SelectConfig function
-	returnConfigName, err := wfcImpl.SelectConfig(workflowsBatch)
+	returnConfigName := wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("default", returnConfigName)
 
 	// Test case 2
@@ -49,10 +48,9 @@ func TestSelectConfig(t *testing.T) {
 	}
 
 	// Call the SelectConfig function
-	returnConfigName, err = wfcImpl.SelectConfig(workflowsBatch)
+	returnConfigName = wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("config1", returnConfigName)
 
 	// Test case 3 - selection of non-existing config when default config exists
@@ -63,10 +61,9 @@ func TestSelectConfig(t *testing.T) {
 	}
 
 	// Call the SelectConfig function
-	returnConfigName, err = wfcImpl.SelectConfig(workflowsBatch)
+	returnConfigName = wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("default", returnConfigName)
 
 	// Test case 4 - selection of non-existing config when default config not exists
@@ -88,10 +85,9 @@ func TestSelectConfig(t *testing.T) {
 	}
 
 	// Call the SelectConfig function
-	returnConfigName, err = wfcImpl4.SelectConfig(workflowsBatch)
+	returnConfigName = wfcImpl4.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.NotNil(returnConfigName)
 
 }

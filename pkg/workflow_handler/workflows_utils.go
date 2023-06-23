@@ -71,6 +71,5 @@ func IsConfigExists(cfg *conf.WorkflowsConfig, config string) bool {
 }
 
 func IsConfigsOnExitExists(cfg *conf.WorkflowsConfig, config string) bool {
-	_, ok := cfg.Configs[config].OnExit
-	return ok
+	return len(cfg.Configs[config].OnExit) != 0
 }
