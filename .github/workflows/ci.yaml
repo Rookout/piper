@@ -41,7 +41,8 @@ jobs:
       - uses: docker/setup-buildx-action@v2
       - name: install kind
         run: |
-          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          mkdir kind
+          wget https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 -P /kind
           chmod +x ./kind
           sudo mv ./kind /usr/local/bin/kind
       - name: Create k8s Kind Cluster
