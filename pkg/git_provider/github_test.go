@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/utils"
 	assertion "github.com/stretchr/testify/assert"
 )
 
@@ -17,23 +18,18 @@ func TestListFiles(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	contentName := "exit.yaml"
-	contentType := "file"
-	contentPath := ".workflows/exit.yaml"
 	repoContent := &github.RepositoryContent{
-		Type: &contentType,
-		Name: &contentName,
-		Path: &contentPath,
+		Type: utils.SPtr("file"),
+		Name: utils.SPtr("exit.yaml"),
+		Path: utils.SPtr(".workflows/exit.yaml"),
 	}
 
-	contentName2 := "main.yaml"
-	contentType2 := "file"
-	contentPath2 := ".workflows/main.yaml"
 	repoContent2 := &github.RepositoryContent{
-		Type: &contentType2,
-		Name: &contentName2,
-		Path: &contentPath2,
+		Type: utils.SPtr("file"),
+		Name: utils.SPtr("main.yaml"),
+		Path: utils.SPtr(".workflows/main.yaml"),
 	}
+
 	jsonBytes, _ := json.Marshal([]github.RepositoryContent{*repoContent, *repoContent2})
 
 	mux.HandleFunc("/repos/test/test-repo1/contents/.workflows", func(w http.ResponseWriter, r *http.Request) {

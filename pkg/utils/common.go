@@ -112,3 +112,7 @@ func ConvertYAMToJSON(yamlString []byte) ([]byte, error) {
 
 	return jsonBytes, nil
 }
+
+func SPtr(str string) *string {
+	return &str
+}
