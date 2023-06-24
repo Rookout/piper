@@ -74,4 +74,8 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-sleep 30
+# waiting for docker registry to start
+REGISTRY_CONTAINER_ID=$(docker ps -a | grep  registry:2   | awk '{print $1}')
+until [ "`docker inspect -f {{.State.Running}} $REGISTRY_CONTAINER_ID`"=="true" ]; do
+    sleep 1;
+done;
