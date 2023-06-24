@@ -31,7 +31,7 @@ ENV GIN_MODE=release
 
 USER 1001
 
-COPY .git /.git
+COPY /.git /.git
 
 COPY --chown=1001 --from=builder /piper/piper /bin
 

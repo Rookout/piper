@@ -56,7 +56,12 @@ jobs:
           install_only: true
       - name:
         run: |
-          make deploy
+          make init-kind 
+          make init-nginx 
+          make init-argo-workflows 
+          make local-build 
+          make local-push 
+          make init-piper
       - name: debugging
         run: |
           docker ps -a
