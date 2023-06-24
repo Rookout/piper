@@ -40,7 +40,8 @@ jobs:
           install_only: true
       - name: init kind cluster
         run: |
-          init-kind local-build
+          make init-kind 
+          make local-build
       - name: debugging
         run: |
           kind get clusters 
