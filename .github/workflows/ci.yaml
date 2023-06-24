@@ -36,15 +36,12 @@ jobs:
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
     steps:
-      - name: debugging
-        run: |
-          docker ps -a
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
       - name: install kind
         run: |
-          apk add curl
+          apk add curl make
           curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
