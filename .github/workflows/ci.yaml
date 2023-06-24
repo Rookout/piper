@@ -52,6 +52,9 @@ jobs:
         uses: helm/kind-action@v1.7.0
         with:
           install_only: true
+      - name:
+        run: |
+          make deploy
       - name: debugging
         run: |
           docker ps -a
