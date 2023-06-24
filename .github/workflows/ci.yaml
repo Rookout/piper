@@ -34,11 +34,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
-        with:
-          go-version: "1.20"
-          cache: true
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
       - name: install kind
         run: |
           curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
@@ -46,25 +41,11 @@ jobs:
           sudo mv ./kind /usr/local/bin/kind
       - name: init kind cluster
         run: |
-          make init-kind 
-          make init-nginx 
-          make init-argo-workflows
+          make deploy
       - name: debugging
         run: |
+          kind get clusters 
           docker ps -a
-      - name: Build Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: false
-          tags: localhost:5001/piper:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: docker push
-        run: |
-          docker push localhost:5001/piper:latest
-      - name: deploy piper
-        run: make init-piper
 
 
   lint:
