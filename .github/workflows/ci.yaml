@@ -31,17 +31,13 @@ jobs:
     name: E2E Tests (on development)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    container:
+      image: registry:2
+      options: --restart=always -p "127.0.0.1:$5001:5000" --name "kind-registry"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.7.0
-        with:
-          install_only: true
-      - name: init kind cluster
-        run: |
-          make init-kind 
-          make local-build
       - name: debugging
         run: |
           kind get clusters 
