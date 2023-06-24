@@ -48,7 +48,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: kind-registry:5000/piper:latest
+          tags: ${{ env env.KIND_REGISTRY }}/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: init piper
