@@ -13,7 +13,7 @@ init-kind:
 ifeq ("$(kind get clusters -q | grep piper)", "")
 	sh ./scripts/init-kind.sh
 else
-	echo "Kind piper exists, switching context"
+	echo "Kind piper exists, skipping cluster installation"
 endif
 	kubectl config set-context kind-piper
 
