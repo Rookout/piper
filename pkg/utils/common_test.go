@@ -209,7 +209,6 @@ age: 30
 
 func TestSPtr(t *testing.T) {
 	sPtr := SPtr("test")
-
 	assert.Equal(t, *sPtr, "test")
 }
 
