@@ -212,3 +212,8 @@ func TestSPtr(t *testing.T) {
 
 	assert.Equal(t, *sPtr, "test")
 }
+
+func TestBPtr(t *testing.T) {
+	bPtr := BPtr(false)
+	assert.Equal(t, *bPtr, false)
+}

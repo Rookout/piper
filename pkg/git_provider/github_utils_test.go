@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/utils"
 	assertion "github.com/stretchr/testify/assert"
 )
 
@@ -19,13 +20,11 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	active := true
-	hookName := "web"
 	config := make(map[string]interface{})
 	config["url"] = "https://bla.com"
 	Hooks := github.Hook{
-		Active: &active,
-		Name:   &hookName,
+		Active: utils.BPtr(true),
+		Name:   utils.SPtr("web"),
 		Config: config,
 	}
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
@@ -68,13 +67,11 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	active := true
-	hookName := "web"
 	config := make(map[string]interface{})
 	config["url"] = "https://bla.com"
 	Hooks := github.Hook{
-		Active: &active,
-		Name:   &hookName,
+		Active: utils.BPtr(true),
+		Name:   utils.SPtr("web"),
 		Config: config,
 	}
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
