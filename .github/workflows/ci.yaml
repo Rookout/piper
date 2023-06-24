@@ -31,34 +31,16 @@ jobs:
     name: E2E Tests (on development)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    container:
-      image: docker:dind
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
-      - name: install kind
+      - name: Kubernetes KinD Cluster
+        uses: container-tools/kind-action@v1
+      - name: install nginx and workflows
         run: |
-          apk add curl make
-          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-          chmod +x ./kind
-          mv ./kind /usr/local/bin/kind
-      - name: install kubectl
-        run: |
-          curl -Lo ./kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          mv ./kubectl /usr/local/bin/kubectl
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.7.0
-        with:
-          install_only: true
-      - name: init kind nginx workflows
-        run: |
-          make init-kind 
-          make init-nginx 
-          make init-argo-workflows
+          sh ./scripts/init-nginx.sh
+          sh ./scripts/init-argo-workflows.sh
       - name: debugging
         run: |
           docker ps -a
@@ -69,7 +51,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: localhost:5001/piper:latest
+          tags: kind-registry:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: init piper
