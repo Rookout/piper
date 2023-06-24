@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL := /bin/sh
 
 .PHONY: ngrok
 ngrok:
@@ -10,13 +10,40 @@ local-build:
 
 .PHONY: init-kind
 init-kind:
-	@if [[ "$(kind get clusters -q | grep piper)" == "" ]]; then sh ./scripts/init-kind.sh; else echo "Kind piper exists, switching context"; fi
+ifeq ($(kind get clusters -q | grep piper), "")
+	sh ./scripts/init-kind.sh
+else
+	echo "Kind piper exists, switching context"
+endif
 	kubectl config set-context kind-piper
 
+.PHONY: init-nginx
+init-nginx:
+ifeq ($(kubectl get pods -n ingress-nginx | grep nginx ), "")
+	sh ./scripts/init-nginx.sh
+else
+	echo "Nginx controller exists, skipping installation"
+endif
+
+.PHONY: init-argo-workflows
+init-argo-workflows:
+ifeq ($(helm list -n workflows | grep argo-workflow), "")
+	sh ./scripts/init-argo-workflows.sh
+else
+	echo "Workflows release exists, skipping installation"
+endif
+
+.PHONY: init-piper
+init-piper:
+ifeq ($(helm list | grep piper), "")
+	helm upgrade --install piper ./helm-chart -f values.dev.yaml
+else
+	echo "Workflows release exists, skipping installation"
+endif
+
 .PHONY: deploy
-deploy: init-kind
+deploy: init-kind init-nginx init-argo-workflows init-piper local-build
 	docker push localhost:5001/piper:latest
-	helm upgrade --install piper ./helm-chart -f values.dev.yaml && kubectl rollout restart deployment piper
 
 .PHONY: restart
 restart: local-build

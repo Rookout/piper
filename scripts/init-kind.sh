@@ -75,13 +75,3 @@ data:
 EOF
 
 sleep 30
-
-# 6. Deploy of nginx ingress controller to the cluster
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
-kubectl wait --namespace ingress-nginx \
-       --for=condition=ready pod \
-       --selector=app.kubernetes.io/component=controller \
-       --timeout=90s
-
-# 7. Install argo workflows
-helm upgrade --install argo-workflow argo/argo-workflows -n workflows --create-namespace -f workflows.values.yaml
