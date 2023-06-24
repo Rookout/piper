@@ -39,7 +39,7 @@ jobs:
         install_only: true
       - name: init kind cluster
         run: |
-          make deploy
+          init-kind local-build
       - name: debugging
         run: |
           kind get clusters 

@@ -8,6 +8,10 @@ ngrok:
 local-build:
 	DOCKER_BUILDKIT=1 docker build -t localhost:5001/piper:latest .
 
+.PHONY: local-push
+local-push:
+	docker push localhost:5001/piper:latest
+
 .PHONY: init-kind
 init-kind:
 ifeq ($(kind get clusters -q | grep piper), "")
@@ -42,8 +46,7 @@ else
 endif
 
 .PHONY: deploy
-deploy: init-kind init-nginx init-argo-workflows init-piper local-build
-	docker push localhost:5001/piper:latest
+deploy: init-kind init-nginx init-argo-workflows local-build local-push init-piper
 
 .PHONY: restart
 restart: local-build
