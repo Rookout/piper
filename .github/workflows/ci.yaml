@@ -54,19 +54,27 @@ jobs:
         uses: helm/kind-action@v1.7.0
         with:
           install_only: true
-      - name:
+      - name: init kind nginx workflows
         run: |
           make init-kind 
           make init-nginx 
-          make init-argo-workflows 
-          make local-build 
-          make local-push 
-          make init-piper
+          make init-argo-workflows
       - name: debugging
         run: |
           docker ps -a
           kind get clusters
-
+          kubectl get pods -n ingress-nginx | grep nginx
+      - name: Build Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: localhost:5001/piper:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: init piper
+        run: |
+          make init-piper
 
   lint:
     name: Go Lint
