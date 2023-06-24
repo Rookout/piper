@@ -40,16 +40,9 @@ jobs:
         with:
           cluster_name: piper
           registry: true
-          config: ./scripts/kind-config.yaml
-      - name: install nginx and workflows
+      - name: install workflows
         run: |
-          sh ./scripts/init-nginx.sh
           sh ./scripts/init-argo-workflows.sh
-      - name: debugging
-        run: |
-          docker ps -a
-          kind get clusters
-          kubectl get pods -n ingress-nginx | grep nginx
       - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
@@ -61,6 +54,9 @@ jobs:
       - name: init piper
         run: |
           make init-piper
+      - name: debugging
+        run: |
+          kubectl get pods
 
   lint:
     name: Go Lint
