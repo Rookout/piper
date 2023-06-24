@@ -15,7 +15,3 @@ nodes:
       - containerPort: 443
         hostPort: 443
         protocol: TCP
-containerdConfigPatches:
-  - |-
-    [plugins."io.containerd.grpc.v1.cri".registry]
-      config_path = "/etc/containerd/certs.d"

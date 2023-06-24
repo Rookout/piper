@@ -37,6 +37,10 @@ jobs:
       - uses: docker/setup-buildx-action@v2
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
+        with:
+          cluster_name: piper
+          registry: true
+          config: ./scripts/kind-config.yaml
       - name: install nginx and workflows
         run: |
           sh ./scripts/init-nginx.sh
