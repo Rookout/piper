@@ -35,7 +35,7 @@ endif
 
 .PHONY: init-piper
 init-piper: init-kind local-build
-ifeq ($(helm list | grep piper), "")
+ifeq ("$(helm list | grep piper)", "")
 	helm upgrade --install piper ./helm-chart -f values.dev.yaml
 else
 	echo "Workflows release exists, skipping installation"
