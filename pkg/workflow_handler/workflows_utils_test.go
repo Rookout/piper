@@ -62,8 +62,8 @@ func TestCreateDAGTemplate(t *testing.T) {
 	assert.NotNil(err)
 
 	// Test case 3: Valid file list
-	path := "some-path"
-	content := `- name: local-step1
+	path3 := "some-path"
+	content3 := `- name: local-step1
   template: local-step
   arguments:
     parameters:
@@ -81,8 +81,8 @@ func TestCreateDAGTemplate(t *testing.T) {
   dependencies:
     - local-step1`
 	file = &git_provider.CommitFile{
-		Content: &content,
-		Path:    &path,
+		Content: &content3,
+		Path:    &path3,
 	}
 	fileList = []*git_provider.CommitFile{file}
 	name = "template3"
@@ -110,4 +110,39 @@ func TestCreateDAGTemplate(t *testing.T) {
 	assert.Equal("common-toolkit", template.DAG.Tasks[1].TemplateRef.Name)
 	assert.Equal("versioning", template.DAG.Tasks[1].TemplateRef.Template)
 	assert.True(template.DAG.Tasks[1].TemplateRef.ClusterScope)
+
+	// Test case 4: invalid configuration
+	path4 := "some-path"
+	content4 := `- noName: local-step1
+  wrongkey2: local-step
+- noName: local-step2
+  wrongkey: something
+  dependencies:
+    - local-step1`
+	file = &git_provider.CommitFile{
+		Content: &content4,
+		Path:    &path4,
+	}
+	fileList = []*git_provider.CommitFile{file}
+	name = "template4"
+	template, err = CreateDAGTemplate(fileList, name)
+
+	assert.Nil(template)
+	assert.NotNil(err)
+
+	// Test case 5: yaml syntax error
+	path5 := "some-path"
+	content5 := `- noName: local-step1
+  wrongkey2: local-step
+error: should be list`
+	file = &git_provider.CommitFile{
+		Content: &content5,
+		Path:    &path5,
+	}
+	fileList = []*git_provider.CommitFile{file}
+	name = "template5"
+	template, err = CreateDAGTemplate(fileList, name)
+
+	assert.Nil(template)
+	assert.NotNil(err)
 }
