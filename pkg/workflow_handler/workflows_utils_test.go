@@ -1,6 +1,7 @@
 package workflow_handler
 
 import (
+	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/git_provider"
 	assertion "github.com/stretchr/testify/assert"
@@ -38,6 +39,55 @@ func TestAddFilesToTemplates(t *testing.T) {
 	assert.Equal([]string{"sh"}, template[0].Script.Command)
 	expectedScript := "echo \"wellcome to {{ workflow.parameters.global }}\necho \"{{ inputs.parameters.message }}\"\n"
 	assert.Equal(expectedScript, template[0].Script.Source)
+}
+func TestValidateDAGTasks(t *testing.T) {
+	assert := assertion.New(t)
+	// Define test cases
+	tests := []struct {
+		name  string
+		tasks []v1alpha1.DAGTask
+		want  error
+	}{
+		{
+			name: "Valid tasks",
+			tasks: []v1alpha1.DAGTask{
+				{Name: "Task1", Template: "Template1"},
+				{Name: "Task2", TemplateRef: &v1alpha1.TemplateRef{Name: "Template2"}},
+			},
+			want: nil,
+		},
+		{
+			name: "Empty task name",
+			tasks: []v1alpha1.DAGTask{
+				{Name: "", Template: "Template1"},
+			},
+			want: fmt.Errorf("task name cannot be empty"),
+		},
+		{
+			name: "Empty template and templateRef",
+			tasks: []v1alpha1.DAGTask{
+				{Name: "Task1"},
+			},
+			want: fmt.Errorf("task template or templateRef cannot be empty"),
+		},
+	}
+
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// Call the function being tested
+			got := ValidateDAGTasks(test.tasks)
+
+			// Use assert to check the equality of the error
+			if test.want != nil {
+				assert.Error(got)
+				assert.NotNil(got)
+			} else {
+				assert.NoError(got)
+				assert.Nil(got)
+			}
+		})
+	}
 }
 
 func TestCreateDAGTemplate(t *testing.T) {
