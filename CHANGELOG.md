@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/Rookout/piper/compare/v1.1.0...v1.1.1) (2023-06-23)
+
+
+### Bug Fixes
+
+* blank config map support ([#52](https://github.com/Rookout/piper/issues/52)) ([fc4a4b2](https://github.com/Rookout/piper/commit/fc4a4b28617afdd618125d1fbcd796b4967b2650))
+* config injection new config validation ([#49](https://github.com/Rookout/piper/issues/49)) ([c84ea9a](https://github.com/Rookout/piper/commit/c84ea9ac8542810b156bf2ae62fafa83a6fc1de0))
+* refactor names ([#51](https://github.com/Rookout/piper/issues/51)) ([36e066f](https://github.com/Rookout/piper/commit/36e066f8f738547af825b7833d97f9f4c4750f08))
+
 ## [1.1.0](https://github.com/Rookout/piper/compare/v1.0.14...v1.1.0) (2023-06-19)
 
 
