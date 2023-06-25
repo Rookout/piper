@@ -1,4 +1,5 @@
 SHELL := /bin/sh
+CLUSTER_DEPLOYED := $(shell kind get clusters -q | grep piper)
 
 .PHONY: ngrok
 ngrok:
@@ -14,36 +15,24 @@ local-push:
 
 .PHONY: init-kind
 init-kind:
-ifeq ($(kind get clusters -q | grep piper), "")
+ifndef CLUSTER_DEPLOYED
 	sh ./scripts/init-kind.sh
 else
-	echo "Kind piper exists, switching context"
+	$(info Kind piper cluster exists, skipping cluster installation)
 endif
 	kubectl config set-context kind-piper
 
 .PHONY: init-nginx
-init-nginx:
-ifeq ($(kubectl get pods -n ingress-nginx | grep nginx ), "")
+init-nginx: init-kind
 	sh ./scripts/init-nginx.sh
-else
-	echo "Nginx controller exists, skipping installation"
-endif
 
 .PHONY: init-argo-workflows
-init-argo-workflows:
-ifeq ($(helm list -n workflows | grep argo-workflow), "")
+init-argo-workflows: init-kind
 	sh ./scripts/init-argo-workflows.sh
-else
-	echo "Workflows release exists, skipping installation"
-endif
 
 .PHONY: init-piper
-init-piper:
-ifeq ($(helm list | grep piper), "")
-	helm upgrade --install piper ./helm-chart -f values.dev.yaml
-else
-	echo "Workflows release exists, skipping installation"
-endif
+init-piper: init-kind local-build
+	sh ./scripts/init-piper.sh
 
 .PHONY: deploy
 deploy: init-kind init-nginx init-argo-workflows local-build local-push init-piper
@@ -55,8 +44,8 @@ restart: local-build
 
 .PHONY: clean
 clean:
-	docker stop kind-registry && docker rm kind-registry
 	kind delete cluster --name piper
+	docker stop kind-registry && docker rm kind-registry
 
 .PHONY: helm
 helm:

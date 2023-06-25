@@ -74,4 +74,19 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-sleep 30
+
+echo "waiting for nodes to be ready"
+until [ "`kubectl describe nodes | grep Taints: | awk '{print $2}'`"=="<none>" ]; do
+    sleep 0.1;
+done;
+
+# waiting for core dns to up - to indicate that scheduling can happen
+echo "waiting core dns to up"
+until [ "`kubectl rollout status deployment --namespace kube-system | grep coredns`"=="deployment "coredns" successfully rolled out" ]; do
+    sleep 0.1;
+done;
+
+kubectl wait --namespace kube-system \
+       --for=condition=ready pod \
+       --selector=k8s-app=kube-dns \
+       --timeout=30s
