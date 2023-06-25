@@ -74,14 +74,20 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-sleep 30
 
-# 6. Deploy of nginx ingress controller to the cluster
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
-kubectl wait --namespace ingress-nginx \
+echo "waiting for nodes to be ready"
+until [ "`kubectl describe nodes | grep Taints: | awk '{print $2}'`"=="<none>" ]; do
+    sleep 0.1;
+done;
+
+# waiting for core dns to up - to indicate that scheduling can happen
+echo "waiting core dns to up"
+until [ "`kubectl rollout status deployment --namespace kube-system | grep coredns`"=="deployment "coredns" successfully rolled out" ]; do
+    sleep 0.1;
+done;
+
+kubectl wait --namespace kube-system \
        --for=condition=ready pod \
-       --selector=app.kubernetes.io/component=controller \
-       --timeout=90s
+       --selector=k8s-app=kube-dns \
+       --timeout=30s
 
-# 7. Install argo workflows
-helm upgrade --install argo-workflow argo/argo-workflows -n workflows --create-namespace -f workflows.values.yaml
