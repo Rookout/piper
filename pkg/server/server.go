@@ -8,17 +8,28 @@ import (
 	"log"
 )
 
-var router = gin.Default()
+func Init() *gin.Engine {
+	engine := gin.New()
+	engine.Use(
+		gin.LoggerWithConfig(gin.LoggerConfig{
+			SkipPaths: []string{"/healthz"},
+		}),
+		gin.Recovery(),
+	)
+	return engine
+}
 
 func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
-	getRoutes(cfg, clients)
+	router := Init()
+	getRoutes(cfg, clients, router)
+
 	err := router.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func getRoutes(cfg *conf.GlobalConfig, clients *clients.Clients) {
+func getRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, router *gin.Engine) {
 	v1 := router.Group("/")
 	routes.AddHealthRoutes(cfg, v1)
 	routes.AddWebhookRoutes(cfg, clients, v1)
