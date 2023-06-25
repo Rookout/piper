@@ -1,0 +1,42 @@
+name: Snyk Scan
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+jobs:
+  snyk:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-latest
+    steps:
+      - name: actions/checkout@v3
+      - name: Set up Snyk CLI to check for security issues
+        uses: snyk/actions/setup@806182742461562b67788a64410098c9d9b96adb
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+          cache: true
+        env:
+          SNYK_TOKEN:  ${{ secrets.SNYK_TOKEN }}
+      - name: Snyk Open Source monitor
+        run: snyk monitor --all-projects
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - name: Build Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          tags: rookout/piper:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Snyk Container monitor
+        run: snyk container monitor rookout/piper:latest --file=Dockerfile
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-code.sarif
