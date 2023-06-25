@@ -44,8 +44,8 @@ restart: local-build
 
 .PHONY: clean
 clean:
-	docker stop kind-registry && docker rm kind-registry
 	kind delete cluster --name piper
+	docker stop kind-registry && docker rm kind-registry
 
 .PHONY: helm
 helm:
