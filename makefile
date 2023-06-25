@@ -10,10 +10,10 @@ local-build:
 
 .PHONY: init-kind
 init-kind:
-ifeq ($(kind get clusters -q | grep piper), "")
-	sh ./scripts/init-kind.sh
-else
+ifeq ($(kind get clusters -q | grep piper), "piper")
 	echo "Kind piper exists, skipping cluster installation"
+else
+	sh ./scripts/init-kind.sh
 endif
 	kubectl config set-context kind-piper
 
