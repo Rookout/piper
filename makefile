@@ -43,6 +43,11 @@ endif
 
 .PHONY: deploy
 deploy: init-kind init-nginx init-argo-workflows local-build init-piper
+	docker push localhost:5001/piper:latest
+
+.PHONY: restart
+restart: local-build
+	docker push localhost:5001/piper:latest
 	kubectl rollout restart deployment piper
 
 .PHONY: clean
