@@ -91,29 +91,30 @@ func TestValidateDAGTasks(t *testing.T) {
 }
 
 func TestCreateDAGTemplate(t *testing.T) {
-	// Test case 1: Empty file list
 	assert := assertion.New(t)
+	t.Run("Empty file list", func(t *testing.T) {
+		fileList := []*git_provider.CommitFile{}
+		name := "template1"
+		template, err := CreateDAGTemplate(fileList, name)
+		assert.Nil(template)
+		assert.Nil(err)
+	})
 
-	fileList := []*git_provider.CommitFile{}
-	name := "template1"
-	template, err := CreateDAGTemplate(fileList, name)
-	assert.Nil(template)
-	assert.Nil(err)
+	t.Run("Missing content or path", func(t *testing.T) {
+		file := &git_provider.CommitFile{
+			Content: nil,
+			Path:    nil,
+		}
+		fileList := []*git_provider.CommitFile{file}
+		name := "template2"
+		template, err := CreateDAGTemplate(fileList, name)
+		assert.Nil(template)
+		assert.NotNil(err)
+	})
 
-	// Test case 2: Missing content or path
-	file := &git_provider.CommitFile{
-		Content: nil,
-		Path:    nil,
-	}
-	fileList = []*git_provider.CommitFile{file}
-	name = "template2"
-	template, err = CreateDAGTemplate(fileList, name)
-	assert.Nil(template)
-	assert.NotNil(err)
-
-	// Test case 3: Valid file list
-	path3 := "some-path"
-	content3 := `- name: local-step1
+	t.Run("Valid file list", func(t *testing.T) {
+		path3 := "some-path"
+		content3 := `- name: local-step1
   template: local-step
   arguments:
     parameters:
@@ -130,69 +131,72 @@ func TestCreateDAGTemplate(t *testing.T) {
         value: step-2
   dependencies:
     - local-step1`
-	file = &git_provider.CommitFile{
-		Content: &content3,
-		Path:    &path3,
-	}
-	fileList = []*git_provider.CommitFile{file}
-	name = "template3"
-	template, err = CreateDAGTemplate(fileList, name)
+		file := &git_provider.CommitFile{
+			Content: &content3,
+			Path:    &path3,
+		}
+		fileList := []*git_provider.CommitFile{file}
+		name := "template3"
+		template, err := CreateDAGTemplate(fileList, name)
 
-	assert.Nil(err)
-	assert.NotNil(template)
+		assert.Nil(err)
+		assert.NotNil(template)
 
-	assert.Equal(name, template.Name)
-	assert.NotNil(template.DAG)
-	assert.Equal(2, len(template.DAG.Tasks))
+		assert.Equal(name, template.Name)
+		assert.NotNil(template.DAG)
+		assert.Equal(2, len(template.DAG.Tasks))
 
-	assert.NotNil(template.DAG.Tasks[0])
-	assert.Equal("local-step1", template.DAG.Tasks[0].Name)
-	assert.Equal("local-step", template.DAG.Tasks[0].Template)
-	assert.Equal(1, len(template.DAG.Tasks[0].Arguments.Parameters))
-	assert.Equal("message", template.DAG.Tasks[0].Arguments.Parameters[0].Name)
-	assert.Equal("step-1", template.DAG.Tasks[0].Arguments.Parameters[0].Value.String())
+		assert.NotNil(template.DAG.Tasks[0])
+		assert.Equal("local-step1", template.DAG.Tasks[0].Name)
+		assert.Equal("local-step", template.DAG.Tasks[0].Template)
+		assert.Equal(1, len(template.DAG.Tasks[0].Arguments.Parameters))
+		assert.Equal("message", template.DAG.Tasks[0].Arguments.Parameters[0].Name)
+		assert.Equal("step-1", template.DAG.Tasks[0].Arguments.Parameters[0].Value.String())
 
-	assert.NotNil(template.DAG.Tasks[1])
-	assert.Equal("local-step2", template.DAG.Tasks[1].Name)
-	assert.Equal(1, len(template.DAG.Tasks[1].Dependencies))
-	assert.Equal("local-step1", template.DAG.Tasks[1].Dependencies[0])
-	assert.NotNil(template.DAG.Tasks[1].TemplateRef)
-	assert.Equal("common-toolkit", template.DAG.Tasks[1].TemplateRef.Name)
-	assert.Equal("versioning", template.DAG.Tasks[1].TemplateRef.Template)
-	assert.True(template.DAG.Tasks[1].TemplateRef.ClusterScope)
+		assert.NotNil(template.DAG.Tasks[1])
+		assert.Equal("local-step2", template.DAG.Tasks[1].Name)
+		assert.Equal(1, len(template.DAG.Tasks[1].Dependencies))
+		assert.Equal("local-step1", template.DAG.Tasks[1].Dependencies[0])
+		assert.NotNil(template.DAG.Tasks[1].TemplateRef)
+		assert.Equal("common-toolkit", template.DAG.Tasks[1].TemplateRef.Name)
+		assert.Equal("versioning", template.DAG.Tasks[1].TemplateRef.Template)
+		assert.True(template.DAG.Tasks[1].TemplateRef.ClusterScope)
+	})
 
-	// Test case 4: invalid configuration
-	path4 := "some-path"
-	content4 := `- noName: local-step1
+	t.Run("Invalid configuration", func(t *testing.T) {
+		path4 := "some-path"
+		content4 := `- noName: local-step1
   wrongkey2: local-step
 - noName: local-step2
   wrongkey: something
   dependencies:
     - local-step1`
-	file = &git_provider.CommitFile{
-		Content: &content4,
-		Path:    &path4,
-	}
-	fileList = []*git_provider.CommitFile{file}
-	name = "template4"
-	template, err = CreateDAGTemplate(fileList, name)
+		file := &git_provider.CommitFile{
+			Content: &content4,
+			Path:    &path4,
+		}
+		fileList := []*git_provider.CommitFile{file}
+		name := "template4"
+		template, err := CreateDAGTemplate(fileList, name)
 
-	assert.Nil(template)
-	assert.NotNil(err)
+		assert.Nil(template)
+		assert.NotNil(err)
+	})
 
-	// Test case 5: yaml syntax error
-	path5 := "some-path"
-	content5 := `- noName: local-step1
+	t.Run("YAML syntax error", func(t *testing.T) {
+		path5 := "some-path"
+		content5 := `- noName: local-step1
   wrongkey2: local-step
 error: should be list`
-	file = &git_provider.CommitFile{
-		Content: &content5,
-		Path:    &path5,
-	}
-	fileList = []*git_provider.CommitFile{file}
-	name = "template5"
-	template, err = CreateDAGTemplate(fileList, name)
+		file := &git_provider.CommitFile{
+			Content: &content5,
+			Path:    &path5,
+		}
+		fileList := []*git_provider.CommitFile{file}
+		name := "template5"
+		template, err := CreateDAGTemplate(fileList, name)
 
-	assert.Nil(template)
-	assert.NotNil(err)
+		assert.Nil(template)
+		assert.NotNil(err)
+	})
 }
