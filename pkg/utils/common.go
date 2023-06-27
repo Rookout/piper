@@ -112,3 +112,11 @@ func ConvertYAMLToJSON(yamlString []byte) ([]byte, error) {
 
 	return jsonBytes, nil
 }
+
+func SPtr(str string) *string {
+	return &str
+}
+
+func BPtr(b bool) *bool {
+	return &b
+}

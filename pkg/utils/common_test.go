@@ -206,3 +206,13 @@ age: 30
 	assert.Error(t, err)
 	assert.Nil(t, resultJSON3)
 }
+
+func TestSPtr(t *testing.T) {
+	sPtr := SPtr("test")
+	assert.Equal(t, *sPtr, "test")
+}
+
+func TestBPtr(t *testing.T) {
+	bPtr := BPtr(false)
+	assert.Equal(t, *bPtr, false)
+}

@@ -43,7 +43,7 @@ func (c *GithubClientImpl) ListFiles(ctx *context.Context, repo string, branch s
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		return nil, err
+		return nil, fmt.Errorf("github provider returned %d: failed to get contents of %s/%s%s", resp.StatusCode, repo, branch, path)
 	}
 	if directoryContent == nil {
 		return nil, nil
