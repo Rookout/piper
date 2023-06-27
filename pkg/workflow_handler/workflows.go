@@ -90,15 +90,14 @@ func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, par
 func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, workflowsBatch *common.WorkflowsBatch) (*v1alpha1.Workflow, error) {
 	workflow := &v1alpha1.Workflow{
 		ObjectMeta: metav1.ObjectMeta{
-			GenerateName: workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-",
+			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
-			//Labels: map[string]string{
-			//	"repo":      workflowsBatch.Payload.Repo,
-			//	"branch":    workflowsBatch.Payload.Branch,
-			//	"user":      workflowsBatch.Payload.User,
-			//	"userEmail": workflowsBatch.Payload.UserEmail,
-			//	"commit":    workflowsBatch.Payload.Commit,
-			//},
+			Labels: map[string]string{
+				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
+				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
+				"user":   ConvertToValidString(workflowsBatch.Payload.User),
+				"commit": ConvertToValidString(workflowsBatch.Payload.Commit),
+			},
 		},
 		Spec: *spec,
 	}

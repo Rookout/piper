@@ -9,6 +9,8 @@ import (
 	"github.com/rookout/piper/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"log"
+	"regexp"
+	"strings"
 )
 
 func CreateDAGTemplate(fileList []*git_provider.CommitFile, name string) (*v1alpha1.Template, error) {
@@ -98,4 +100,19 @@ func ValidateDAGTasks(tasks []v1alpha1.DAGTask) error {
 
 	}
 	return nil
+}
+
+func ConvertToValidString(input string) string {
+	// Convert to lowercase
+	lowercase := strings.ToLower(input)
+
+	// Replace underscores with hyphens
+	converted := strings.ReplaceAll(lowercase, "_", "-")
+
+	// Remove symbols except . and -
+	pattern := `[^a-z0-9.\-]`
+	re := regexp.MustCompile(pattern)
+	validString := re.ReplaceAllString(converted, "")
+
+	return validString
 }

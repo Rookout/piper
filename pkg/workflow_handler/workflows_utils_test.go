@@ -200,3 +200,25 @@ error: should be list`
 		assert.NotNil(err)
 	})
 }
+
+func TestConvertToValidString(t *testing.T) {
+	assert := assertion.New(t)
+
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"A@bC!-123.def", "abc-123.def"},
+		{"Hello World!", "helloworld"},
+		{"123$%^", "123"},
+		{"abc_123.xyz", "abc-123.xyz"}, // Underscore (_) should be converted to hyphen (-)
+		{"..--..", "..--.."},           // Only dots (.) and hyphens (-) should remain
+	}
+
+	for _, test := range tests {
+		t.Run(test.input, func(t *testing.T) {
+			converted := ConvertToValidString(test.input)
+			assert.Equal(converted, test.expected)
+		})
+	}
+}
