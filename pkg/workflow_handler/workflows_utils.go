@@ -84,6 +84,7 @@ func IsConfigExists(cfg *conf.WorkflowsConfig, config string) bool {
 
 func IsConfigsOnExitExists(cfg *conf.WorkflowsConfig, config string) bool {
 	return len(cfg.Configs[config].OnExit) != 0
+}
 
 func ValidateDAGTasks(tasks []v1alpha1.DAGTask) error {
 	for _, task := range tasks {
@@ -97,3 +98,4 @@ func ValidateDAGTasks(tasks []v1alpha1.DAGTask) error {
 
 	}
 	return nil
+}
