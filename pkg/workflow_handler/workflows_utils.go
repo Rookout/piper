@@ -22,11 +22,23 @@ func CreateDAGTemplate(fileList []*git_provider.CommitFile, name string) (*v1alp
 			return nil, fmt.Errorf("missing content or path for %s", name)
 		}
 		DAGTask := make([]v1alpha1.DAGTask, 0)
-		err := yaml.Unmarshal([]byte(*file.Content), &DAGTask)
+		jsonBytes, err := utils.ConvertYAMLListToJSONList(*file.Content)
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(jsonBytes, &DAGTask)
+		if err != nil {
+			return nil, err
+		}
+		err = ValidateDAGTasks(DAGTask)
 		if err != nil {
 			return nil, err
 		}
 		DAGs = append(DAGs, DAGTask...)
+	}
+
+	if len(DAGs) == 0 {
+		return nil, fmt.Errorf("no tasks for %s", name)
 	}
 
 	template := &v1alpha1.Template{
@@ -72,4 +84,16 @@ func IsConfigExists(cfg *conf.WorkflowsConfig, config string) bool {
 
 func IsConfigsOnExitExists(cfg *conf.WorkflowsConfig, config string) bool {
 	return len(cfg.Configs[config].OnExit) != 0
-}
+
+func ValidateDAGTasks(tasks []v1alpha1.DAGTask) error {
+	for _, task := range tasks {
+		if task.Name == "" {
+			return fmt.Errorf("task name cannot be empty: %+v\n", task)
+		}
+
+		if task.Template == "" && task.TemplateRef == nil {
+			return fmt.Errorf("task template or templateRef cannot be empty: %+v\n", task)
+		}
+
+	}
+	return nil
