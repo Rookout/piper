@@ -130,11 +130,10 @@ func TestCreateWorkflow(t *testing.T) {
 	// Create a sample WorkflowsBatch
 	workflowsBatch := &common.WorkflowsBatch{
 		Payload: &git_provider.WebhookPayload{
-			Repo:      "my-repo",
-			Branch:    "my-branch",
-			User:      "my-user",
-			UserEmail: "my-user-email",
-			Commit:    "my-commit",
+			Repo:   "my-repo",
+			Branch: "my-branch",
+			User:   "my-user",
+			Commit: "my-commit",
 		},
 	}
 
@@ -151,11 +150,10 @@ func TestCreateWorkflow(t *testing.T) {
 	assert.Equal("my-repo-my-branch-", workflow.ObjectMeta.GenerateName)
 	assert.Equal(wfcImpl.cfg.Namespace, workflow.ObjectMeta.Namespace)
 	assert.Equal(map[string]string{
-		"repo":      "my-repo",
-		"branch":    "my-branch",
-		"user":      "my-user",
-		"userEmail": "my-user-email",
-		"commit":    "my-commit",
+		"repo":   "my-repo",
+		"branch": "my-branch",
+		"user":   "my-user",
+		"commit": "my-commit",
 	}, workflow.ObjectMeta.Labels)
 
 	// Assert that the workflow's Spec is assigned correctly
