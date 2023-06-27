@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/Rookout/piper/compare/v1.1.2...v1.1.3) (2023-06-27)
+
+
+### Bug Fixes
+
+* generate name conversion and labels added - RK-19070 ([#74](https://github.com/Rookout/piper/issues/74)) ([ca3fad0](https://github.com/Rookout/piper/commit/ca3fad063c0bcf8ea5a7f03a673180eac56f0c8f))
+
 ## [1.1.2](https://github.com/Rookout/piper/compare/v1.1.1...v1.1.2) (2023-06-27)
 
 
