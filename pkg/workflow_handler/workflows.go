@@ -49,8 +49,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if onExit == nil || len(onExit.DAG.Tasks) == 0 {
-		_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
-		if ok && wfc.cfg.WorkflowsConfig.Configs[configName].OnExit != nil {
+		if IsConfigExists(&wfc.cfg.WorkflowsConfig, configName) && IsConfigsOnExitExists(&wfc.cfg.WorkflowsConfig, configName) {
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
@@ -74,8 +73,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 
 func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, params []v1alpha1.Parameter, configName string) (*v1alpha1.WorkflowSpec, error) {
 	finalSpec := &v1alpha1.WorkflowSpec{}
-	_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
-	if ok {
+	if IsConfigExists(&wfc.cfg.WorkflowsConfig, configName) {
 		*finalSpec = wfc.cfg.WorkflowsConfig.Configs[configName].Spec
 		if len(wfc.cfg.WorkflowsConfig.Configs[configName].OnExit) != 0 {
 			finalSpec.OnExit = ONEXIT
@@ -110,34 +108,28 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 
 func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBatch) (string, error) {
 	var configName string
-	ok := IsConfigExists(&wfc.cfg.WorkflowsConfig, "default")
-	if ok {
+	if IsConfigExists(&wfc.cfg.WorkflowsConfig, "default") {
 		configName = "default"
-		log.Printf(
-			"%s config selected for workflow in repo: %s branch %s",
-			configName,
-			workflowsBatch.Payload.Repo,
-			workflowsBatch.Payload.Branch,
-		) // Info
 	}
+
 	if *workflowsBatch.Config != "" {
-		ok = IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config)
-		if ok {
+		if IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config) {
 			configName = *workflowsBatch.Config
-			log.Printf(
-				"%s config overwrited for workflow in repo: %s branch %s",
-				*workflowsBatch.Config,
-				workflowsBatch.Payload.Repo,
-				workflowsBatch.Payload.Branch,
-			) // Info
 		} else {
-			log.Printf(
+			return configName, fmt.Errorf(
 				"error in selecting config, staying with default config for repo %s branch %s",
 				workflowsBatch.Payload.Repo,
 				workflowsBatch.Payload.Branch,
-			) // Error
+			)
 		}
 	}
+
+	log.Printf(
+		"%s config selected for workflow in repo: %s branch %s",
+		configName,
+		workflowsBatch.Payload.Repo,
+		workflowsBatch.Payload.Branch,
+	) // Info
 
 	return configName, nil
 }
