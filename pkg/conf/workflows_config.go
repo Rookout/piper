@@ -32,7 +32,7 @@ func (wfc *WorkflowsConfig) WorkflowsSpecLoad(configPath string) error {
 
 	for key, config := range configs {
 		tmp := new(ConfigInstance)
-		jsonBytes, err = utils.ConvertYAMToJSON(config)
+		jsonBytes, err = utils.ConvertYAMLToJSON(config)
 		if err != nil {
 			return err
 		}
