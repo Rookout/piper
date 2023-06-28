@@ -30,11 +30,6 @@ jobs:
   e2e-tests:
     name: E2E Tests (on development)
     runs-on: ubuntu-latest
-#    services:
-#      registry:
-#        image: registry:2
-#        ports:
-#          - 5000:5000
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
