@@ -53,12 +53,18 @@ jobs:
           tags: localhost:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Setup Ngrok Tunnel
+        run: |
+          apt-get install ngrok
+          ngrok http 80  --log ~/test/ngrok.log
+          echo "NGROK_URL=$(cat ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV
       - name: init piper
         run: |
           make init-piper
       - name: debugging
         run: |
           kubectl get pods
+          echo $NGROK_URL
 
   lint:
     name: Go Lint
