@@ -24,6 +24,7 @@ jobs:
           tags: rookout/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          load: true
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         env:
