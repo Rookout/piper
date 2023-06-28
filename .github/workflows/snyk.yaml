@@ -16,10 +16,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
-      - name: Set up Snyk CLI to check for security issues
-        uses: snyk/actions/setup@806182742461562b67788a64410098c9d9b96adb
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Build Docker Image without push
         uses: docker/build-push-action@v4
         with:
@@ -28,16 +24,17 @@ jobs:
           tags: rookout/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Snyk Container monitor
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-          snyk auth 
-          snyk container monitor rookout/piper:latest --file=Dockerfile
+        with:
+          image: rookout/piper:latest
+          args: --file=Dockerfile
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk-code.sarif
+          sarif_file: snyk.sarif
   snyk-golang:
     permissions:
       contents: read # for actions/checkout to fetch code
