@@ -54,8 +54,8 @@ github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 h1:wPbRQzjjwF
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8/go.mod h1:I0gYDMZ6Z5GRU7l58bNFSkPTFN6Yl12dsUlAZ8xy98g=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
-github.com/Rookout/GoSDK v0.1.44 h1:6ORNzf35Sie/ub5nTVTAB+0lIIADfFvdG7BwC/v1cl8=
-github.com/Rookout/GoSDK v0.1.44/go.mod h1:4TxlzXHwogs4hNhGzB9GgJjZBjo/XdmOrVfLYZ5BbUg=
+github.com/Rookout/GoSDK v0.1.45 h1:8RfzdEGsUmMlgIQD0hOUaWIV54iPB4U0VTq3bZtqEz0=
+github.com/Rookout/GoSDK v0.1.45/go.mod h1:4TxlzXHwogs4hNhGzB9GgJjZBjo/XdmOrVfLYZ5BbUg=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/argoproj/argo-workflows/v3 v3.4.8 h1:13NHWUnSu7M+hS0CO54ZoRkbMcVR2tJDII80Plcdzb8=
 github.com/argoproj/argo-workflows/v3 v3.4.8/go.mod h1:LF9L+r1C3vSiKm/2vfuK/gsgGEQSLcjJF5AA/6Cr1lc=
