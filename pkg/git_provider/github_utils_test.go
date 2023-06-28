@@ -17,7 +17,7 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	//
 	// Prepare
 	//
-	client, mux, _, teardown := setup()
+	client, mux, _, teardown := Setup()
 	defer teardown()
 
 	config := make(map[string]interface{})
@@ -30,13 +30,13 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
 
 	mux.HandleFunc("/orgs/test/hooks", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-		testFormValues(t, r, values{})
+		TestMethod(t, r, "GET")
+		TestFormValues(t, r, values{})
 		_, _ = fmt.Fprint(w, string(jsonBytes))
 	})
 
 	c := GithubClientImpl{
-		client: client,
+		Client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: true,
@@ -64,7 +64,7 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	//
 	// Prepare
 	//
-	client, mux, _, teardown := setup()
+	client, mux, _, teardown := Setup()
 	defer teardown()
 
 	config := make(map[string]interface{})
@@ -77,13 +77,13 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
 
 	mux.HandleFunc("/repos/test/test-repo2/hooks", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-		testFormValues(t, r, values{})
+		TestMethod(t, r, "GET")
+		TestFormValues(t, r, values{})
 		_, _ = fmt.Fprint(w, string(jsonBytes))
 	})
 
 	c := GithubClientImpl{
-		client: client,
+		Client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,

@@ -15,7 +15,7 @@ import (
 
 func TestListFiles(t *testing.T) {
 	// Prepare
-	client, mux, _, teardown := setup()
+	client, mux, _, teardown := Setup()
 	defer teardown()
 
 	repoContent := &github.RepositoryContent{
@@ -33,8 +33,8 @@ func TestListFiles(t *testing.T) {
 	jsonBytes, _ := json.Marshal([]github.RepositoryContent{*repoContent, *repoContent2})
 
 	mux.HandleFunc("/repos/test/test-repo1/contents/.workflows", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
-		//testFormValues(t, r, values{})
+		TestMethod(t, r, "GET")
+		//TestFormValues(t, r, values{})
 
 		// Get the ref value from the URL query parameters
 		ref := r.URL.Query().Get("ref")
@@ -50,7 +50,7 @@ func TestListFiles(t *testing.T) {
 	})
 
 	c := GithubClientImpl{
-		client: client,
+		Client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,
