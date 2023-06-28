@@ -13,7 +13,7 @@ import (
 )
 
 type GithubClientImpl struct {
-	Client *github.Client
+	client *github.Client
 	cfg    *conf.GlobalConfig
 	hooks  []*github.Hook
 }
@@ -28,7 +28,7 @@ func NewGithubClient(cfg *conf.GlobalConfig) (Client, error) {
 	}
 
 	return &GithubClientImpl{
-		Client: client,
+		client: client,
 		cfg:    cfg,
 		hooks:  []*github.Hook{},
 	}, err
@@ -38,7 +38,7 @@ func (c *GithubClientImpl) ListFiles(ctx *context.Context, repo string, branch s
 	var files []string
 
 	opt := &github.RepositoryContentGetOptions{Ref: branch}
-	_, directoryContent, resp, err := c.Client.Repositories.GetContents(*ctx, c.cfg.GitProviderConfig.OrgName, repo, path, opt)
+	_, directoryContent, resp, err := c.client.Repositories.GetContents(*ctx, c.cfg.GitProviderConfig.OrgName, repo, path, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *GithubClientImpl) GetFile(ctx *context.Context, repo string, branch str
 	var commitFile CommitFile
 
 	opt := &github.RepositoryContentGetOptions{Ref: branch}
-	fileContent, _, resp, err := c.Client.Repositories.GetContents(*ctx, c.cfg.GitProviderConfig.OrgName, repo, path, opt)
+	fileContent, _, resp, err := c.client.Repositories.GetContents(*ctx, c.cfg.GitProviderConfig.OrgName, repo, path, opt)
 	if err != nil {
 		return &commitFile, err
 	}
@@ -115,7 +115,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 	if c.cfg.GitProviderConfig.OrgLevelWebhook {
 		respHook, ok := isOrgWebhookEnabled(ctx, c)
 		if !ok {
-			retHook, resp, err := c.Client.Organizations.CreateHook(
+			retHook, resp, err := c.client.Organizations.CreateHook(
 				ctx,
 				c.cfg.GitProviderConfig.OrgName,
 				hook,
@@ -128,7 +128,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 			}
 			c.hooks = append(c.hooks, retHook)
 		} else {
-			updatedHook, resp, err := c.Client.Organizations.EditHook(
+			updatedHook, resp, err := c.client.Organizations.EditHook(
 				ctx,
 				c.cfg.GitProviderConfig.OrgName,
 				respHook.GetID(),
@@ -152,7 +152,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
 			respHook, ok := isRepoWebhookEnabled(ctx, c, repo)
 			if !ok {
-				_, resp, err := c.Client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
+				_, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
 				if err != nil {
 					return err
 				}
@@ -162,7 +162,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				}
 				c.hooks = append(c.hooks, hook)
 			} else {
-				updatedHook, resp, err := c.Client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
+				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
 				if err != nil {
 					return err
 				}
@@ -184,7 +184,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 	for _, hook := range c.hooks {
 		if c.cfg.GitProviderConfig.OrgLevelWebhook {
 
-			resp, err := c.Client.Organizations.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
+			resp, err := c.client.Organizations.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
 
 			if err != nil {
 				return err
@@ -196,7 +196,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 
 		} else {
 			for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
-				resp, err := c.Client.Repositories.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
+				resp, err := c.client.Repositories.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
 
 				if err != nil {
 					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", repo, resp.StatusCode, err)

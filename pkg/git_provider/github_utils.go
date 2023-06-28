@@ -14,7 +14,7 @@ import (
 
 func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook, bool) {
 	emptyHook := github.Hook{}
-	hooks, resp, err := c.Client.Organizations.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, &github.ListOptions{})
+	hooks, resp, err := c.client.Organizations.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, &github.ListOptions{})
 	if err != nil {
 		return &emptyHook, false
 	}
@@ -34,7 +34,7 @@ func isOrgWebhookEnabled(ctx context.Context, c *GithubClientImpl) (*github.Hook
 
 func isRepoWebhookEnabled(ctx context.Context, c *GithubClientImpl, repo string) (*github.Hook, bool) {
 	emptyHook := github.Hook{}
-	hooks, resp, err := c.Client.Repositories.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, repo, &github.ListOptions{})
+	hooks, resp, err := c.client.Repositories.ListHooks(ctx, c.cfg.GitProviderConfig.OrgName, repo, &github.ListOptions{})
 	if err != nil {
 		return &emptyHook, false
 	}

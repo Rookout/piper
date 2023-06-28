@@ -36,7 +36,7 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	})
 
 	c := GithubClientImpl{
-		Client: client,
+		client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: true,
@@ -83,7 +83,7 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	})
 
 	c := GithubClientImpl{
-		Client: client,
+		client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,

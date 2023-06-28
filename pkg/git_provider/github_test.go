@@ -50,7 +50,7 @@ func TestListFiles(t *testing.T) {
 	})
 
 	c := GithubClientImpl{
-		Client: client,
+		client: client,
 		cfg: &conf.GlobalConfig{
 			GitProviderConfig: conf.GitProviderConfig{
 				OrgLevelWebhook: false,
