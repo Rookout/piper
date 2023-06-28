@@ -44,7 +44,7 @@ jobs:
           echo "NGROK_URL=$(cat ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV
       - name: debugging
         run: |
-          echo $NGROK_URL
+          echo ${{ env.NGROK_URL }}
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
