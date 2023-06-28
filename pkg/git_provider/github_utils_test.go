@@ -17,7 +17,7 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	//
 	// Prepare
 	//
-	client, mux, _, teardown := Setup()
+	client, mux, _, teardown := setup()
 	defer teardown()
 
 	config := make(map[string]interface{})
@@ -64,7 +64,7 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	//
 	// Prepare
 	//
-	client, mux, _, teardown := Setup()
+	client, mux, _, teardown := setup()
 	defer teardown()
 
 	config := make(map[string]interface{})

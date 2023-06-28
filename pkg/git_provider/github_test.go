@@ -15,7 +15,7 @@ import (
 
 func TestListFiles(t *testing.T) {
 	// Prepare
-	client, mux, _, teardown := Setup()
+	client, mux, _, teardown := setup()
 	defer teardown()
 
 	repoContent := &github.RepositoryContent{

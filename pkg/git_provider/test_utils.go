@@ -17,7 +17,7 @@ const (
 	baseURLPath = "/api-v3"
 )
 
-func Setup() (client *github.Client, mux *http.ServeMux, serverURL string, teardown func()) {
+func setup() (client *github.Client, mux *http.ServeMux, serverURL string, teardown func()) {
 	// mux is the HTTP request multiplexer used with the test server.
 	mux = http.NewServeMux()
 
