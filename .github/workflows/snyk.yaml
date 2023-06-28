@@ -38,7 +38,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Snyk Container monitor
-        run: snyk container monitor rookout/piper:latest --file=Dockerfile
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk auth 
+          snyk container monitor rookout/piper:latest --file=Dockerfile
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
