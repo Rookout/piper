@@ -12,6 +12,7 @@ type CommitFile struct {
 
 type WebhookPayload struct {
 	Event            string `json:"event"`
+	Action           string `json:"action"`
 	Repo             string `json:"repoName"`
 	Branch           string `json:"branch"`
 	Commit           string `json:"commit"`

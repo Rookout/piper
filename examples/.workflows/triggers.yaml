@@ -1,4 +1,6 @@
-- events: ["merge","push"]
+- events:
+    - push
+    - pull_request.synchronize
   branches: ["main"]
   onStart: ["main.yaml"]
   onExit: ["exit.yaml"]
