@@ -33,8 +33,8 @@ func TestListFiles(t *testing.T) {
 	jsonBytes, _ := json.Marshal([]github.RepositoryContent{*repoContent, *repoContent2})
 
 	mux.HandleFunc("/repos/test/test-repo1/contents/.workflows", func(w http.ResponseWriter, r *http.Request) {
-		TestMethod(t, r, "GET")
-		//TestFormValues(t, r, values{})
+		testMethod(t, r, "GET")
+		//testFormValues(t, r, values{})
 
 		// Get the ref value from the URL query parameters
 		ref := r.URL.Query().Get("ref")

@@ -30,8 +30,8 @@ func TestIsOrgWebhookEnabled(t *testing.T) {
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
 
 	mux.HandleFunc("/orgs/test/hooks", func(w http.ResponseWriter, r *http.Request) {
-		TestMethod(t, r, "GET")
-		TestFormValues(t, r, values{})
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{})
 		_, _ = fmt.Fprint(w, string(jsonBytes))
 	})
 
@@ -77,8 +77,8 @@ func TestIsRepoWebhookEnabled(t *testing.T) {
 	jsonBytes, _ := json.Marshal(&[]github.Hook{Hooks})
 
 	mux.HandleFunc("/repos/test/test-repo2/hooks", func(w http.ResponseWriter, r *http.Request) {
-		TestMethod(t, r, "GET")
-		TestFormValues(t, r, values{})
+		testMethod(t, r, "GET")
+		testFormValues(t, r, values{})
 		_, _ = fmt.Fprint(w, string(jsonBytes))
 	})
 

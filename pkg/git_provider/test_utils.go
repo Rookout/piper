@@ -49,7 +49,7 @@ func setup() (client *github.Client, mux *http.ServeMux, serverURL string, teard
 	return client, mux, server.URL, server.Close
 }
 
-func TestMethod(t *testing.T, r *http.Request, want string) {
+func testMethod(t *testing.T, r *http.Request, want string) {
 	t.Helper()
 	if got := r.Method; got != want {
 		t.Errorf("Request method: %v, want %v", got, want)
@@ -58,7 +58,7 @@ func TestMethod(t *testing.T, r *http.Request, want string) {
 
 type values map[string]string
 
-func TestFormValues(t *testing.T, r *http.Request, values values) {
+func testFormValues(t *testing.T, r *http.Request, values values) {
 	t.Helper()
 	want := url.Values{}
 	for k, v := range values {
