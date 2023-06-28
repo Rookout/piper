@@ -37,7 +37,7 @@ jobs:
       - uses: docker/setup-buildx-action@v2
         with:
           driver-opts: network=host
-      - uses: apogiatzis/ngrok-tunneling-action@<VERSION>
+      - uses: apogiatzis/ngrok-tunneling-action@v0.1.4
         with:
           timeout: 1h
           port: 4000
