@@ -37,6 +37,11 @@ jobs:
       - uses: docker/setup-buildx-action@v2
         with:
           driver-opts: network=host
+      - uses: apogiatzis/ngrok-tunneling-action@<VERSION>
+        with:
+          timeout: 1h
+          port: 4000
+          ngrok_authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
       - name: Setup Ngrok Tunnel
         run: |
           curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
