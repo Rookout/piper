@@ -15,39 +15,38 @@ import (
 // MockGitProvider is a mock implementation of the git_provider.Client interface.
 type MockGitProvider struct{}
 
+var fileContentMap = map[string]*string{
+	"main.yaml":       utils.SPtr("main.yaml"),
+	"exit.yaml":       utils.SPtr("exit.yaml"),
+	"parameters.yaml": utils.SPtr("parameters.yaml"),
+}
+
 func GetContent(filename string) *string {
-	fileContentMap := map[string]*string{
-		"main.yaml":       utils.SPtr("main.yaml"),
-		"exit.yaml":       utils.SPtr("exit.yaml"),
-		"parameters.yaml": utils.SPtr("parameters.yaml"),
-	}
 
 	return fileContentMap[filename]
 }
 
-func GetFileMap() *map[string]*git_provider.CommitFile {
-	return &map[string]*git_provider.CommitFile{
-		"repo1/branch1/.workflows/main.yaml": &git_provider.CommitFile{
-			Path:    utils.SPtr(".workflows/main.yaml"),
-			Content: GetContent("main.yaml"),
-		},
-		"repo1/branch1/.workflows/exit.yaml": &git_provider.CommitFile{
-			Path:    utils.SPtr(".workflows/exit.yaml"),
-			Content: GetContent("exit.yaml"),
-		},
-		"repo1/branch2/.workflows/main.yaml": &git_provider.CommitFile{
-			Path:    utils.SPtr(".workflows/main.yaml"),
-			Content: GetContent("main.yaml"),
-		},
-		"repo1/branch2/.workflows/parameters.yaml": &git_provider.CommitFile{
-			Path:    utils.SPtr(".workflows/parameters.yaml"),
-			Content: GetContent("parameters.yaml"),
-		},
-	}
+var fileMappings = map[string]*git_provider.CommitFile{
+	"repo1/branch1/.workflows/main.yaml": &git_provider.CommitFile{
+		Path:    utils.SPtr(".workflows/main.yaml"),
+		Content: GetContent("main.yaml"),
+	},
+	"repo1/branch1/.workflows/exit.yaml": &git_provider.CommitFile{
+		Path:    utils.SPtr(".workflows/exit.yaml"),
+		Content: GetContent("exit.yaml"),
+	},
+	"repo1/branch2/.workflows/main.yaml": &git_provider.CommitFile{
+		Path:    utils.SPtr(".workflows/main.yaml"),
+		Content: GetContent("main.yaml"),
+	},
+	"repo1/branch2/.workflows/parameters.yaml": &git_provider.CommitFile{
+		Path:    utils.SPtr(".workflows/parameters.yaml"),
+		Content: GetContent("parameters.yaml"),
+	},
 }
 
 func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
-	fileMappings := *GetFileMap()
+
 	fullPath := fmt.Sprintf("%s/%s/%s", repo, branch, path)
 	if fileInfo, ok := fileMappings[fullPath]; ok {
 		return fileInfo, nil
