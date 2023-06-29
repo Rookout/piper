@@ -543,11 +543,11 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 			} else {
 				assert.Nil(err)
 				for iwf, wf := range WorkflowsBatches {
-					for i, _ := range wf.OnStart {
+					for i := range wf.OnStart {
 						assert.Equal(*test.expectedWorkflowBatch[iwf].OnStart[i].Path, *WorkflowsBatches[iwf].OnStart[i].Path)
 						assert.Equal(*test.expectedWorkflowBatch[iwf].OnStart[i].Content, *WorkflowsBatches[iwf].OnStart[i].Content)
 					}
-					for j, _ := range wf.OnExit {
+					for j := range wf.OnExit {
 						if test.expectedWorkflowBatch[iwf].OnExit[j].Path == nil || test.expectedWorkflowBatch[iwf].OnExit[j].Content == nil {
 							assert.Nil(WorkflowsBatches[iwf].Templates[j].Path)
 							assert.Nil(WorkflowsBatches[iwf].Templates[j].Content)
@@ -557,7 +557,7 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 						}
 					}
 
-					for k, _ := range wf.Templates {
+					for k := range wf.Templates {
 						if test.expectedWorkflowBatch[iwf].Templates[k].Path == nil || test.expectedWorkflowBatch[iwf].Templates[k].Content == nil {
 							assert.Nil(WorkflowsBatches[iwf].Templates[k].Path)
 							assert.Nil(WorkflowsBatches[iwf].Templates[k].Content)
