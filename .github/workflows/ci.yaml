@@ -71,15 +71,14 @@ jobs:
       - name: Check tunnel existence
         run: |
           echo "NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV
-          ls -alt ~/
-          cat ~/ngrok.log
-          echo $NGROK_URL 
+          cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
           echo "done"
       - name: init piper
         run: |
           helm upgrade --install piper ./helm-chart \
           -f ./examples/template.values.dev.yaml \
           --set piper.gitProvider.token=${{ secrets.GIT_TOKEN }} \
+          --set piper.gitProvider.webhook=$NGROK_URL/piper/webhook \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5000
