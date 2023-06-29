@@ -79,7 +79,7 @@ jobs:
           helm upgrade --install piper ./helm-chart \
           -f ./examples/template.values.dev.yaml \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
-          --set piper.gitProvider.webhook="${{ env.NGROK_URL }}/piper/webhook" \
+          --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5000
