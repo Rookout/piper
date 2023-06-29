@@ -45,19 +45,21 @@ jobs:
           sudo apt install ngrok
       - name: Run Ngrok
         run: |
-          touch $HOME/ngrok.log && \
-          ngrok http 80 --log $HOME/ngrok.log &
+          touch ~/ngrok.log && \
+          ngrok http 80 --log ~/ngrok.log &
       - name: Check tunnel existence
         run: |
           sleep 10
-          cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
-          NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)
+          echo "NGROK_URL=$$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
           cluster_name: piper
           registry: true
       - name: install workflows
+        run: |
+          sh ./scripts/init-nginx.sh
+      - name: install nginx
         run: |
           sh ./scripts/init-argo-workflows.sh
       - name: Build Docker Image
@@ -70,8 +72,16 @@ jobs:
           cache-to: type=gha,mode=max
       - name: init piper
         run: |
-          make init-piper
-
+          helm upgrade --install piper ./helm-chart \
+          -f ./examples/template.values.dev.yaml \
+          --set piper.gitProvider.token=${{ secrets.GIT_TOKEN }} \
+          --set piper.gitProvider.webhook=${{ env.NGROK_URL }}/piper/webhook \
+          --set piper.gitProvider.webhook.repoList:=["piper-test"] \
+          --set piper.gitProvider.organization.name="gosharo" \
+          --set image.repository=localhost:5000
+      - name: sleep
+        run: |
+          sleep 3600
   lint:
     name: Go Lint
     runs-on: ubuntu-latest

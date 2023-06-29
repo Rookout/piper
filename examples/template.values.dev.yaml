@@ -10,6 +10,7 @@ piper:
       repoList: ["REPO_NAME"]
   argoWorkflows:
     server:
+      namespace: "workflows"
       address: "ARGO_ADDRESS"
       token: "ARGO_TOKEN"
 image:
