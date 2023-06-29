@@ -49,8 +49,9 @@ jobs:
           ngrok http 80 --log ~/ngrok.log &
       - name: Check tunnel existence
         run: |
-          sleep 10
-          echo "NGROK_URL=$$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV
+          sleep 10 && \
+          echo "NGROK_URL=$$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV && \
+          echo $NGROK_URL
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
