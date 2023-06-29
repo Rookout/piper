@@ -3,7 +3,7 @@ module github.com/rookout/piper
 go 1.20
 
 require (
-	github.com/Rookout/GoSDK v0.1.44
+	github.com/Rookout/GoSDK v0.1.45
 	github.com/argoproj/argo-workflows/v3 v3.4.8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/go-cmp v0.5.9

@@ -4,7 +4,7 @@ Piper will look in each of the target branches a `.workflows` [folder](../exampl
 
 ### triggers.yaml (convention name)
 
-This file holds a list of triggers that will be executed `onStart` by `event` from specific `branch`. In this [example](../examples/.workflows/triggers.yaml), `main.yaml` will be executed as DAG when `push` or `merge` events will be applied in `main` branch. 
+This file holds a list of triggers that will be executed `onStart` by `events` from specific `branch`. In this [example](../examples/.workflows/triggers.yaml), `main.yaml` will be executed as DAG when `push` or `pull_request.synchronize` events will be applied in `main` branch. 
 
 `onExit` can overwrite the default `onExit` configuration from `piper-workflows-config` by reference existing DAG tasks as [exit.yaml](../examples/.workflows/exit.yaml).
 

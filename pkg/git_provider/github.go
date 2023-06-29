@@ -235,6 +235,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 	case *github.PushEvent:
 		webhookPayload = &WebhookPayload{
 			Event:     "push",
+			Action:    e.GetAction(),
 			Repo:      e.GetRepo().GetName(),
 			Branch:    strings.TrimPrefix(e.GetRef(), "refs/heads/"),
 			Commit:    e.GetHeadCommit().GetID(),
@@ -244,6 +245,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 	case *github.PullRequestEvent:
 		webhookPayload = &WebhookPayload{
 			Event:            "pull_request",
+			Action:           e.GetAction(),
 			Repo:             e.GetRepo().GetName(),
 			Branch:           e.GetPullRequest().GetHead().GetRef(),
 			Commit:           e.GetPullRequest().GetHead().GetSHA(),
