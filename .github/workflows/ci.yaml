@@ -37,17 +37,13 @@ jobs:
       - uses: docker/setup-buildx-action@v2
         with:
           driver-opts: network=host
-      - uses: apogiatzis/ngrok-tunneling-action@v0.1.4
-        with:
-          timeout: 1h
-          port: 4000
-          ngrok_authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
       - name: Setup Ngrok Tunnel
         run: |
           curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
           sudo apt update && \
-          sudo apt install ngrok
+          sudo apt install ngrok && \
+          ngrok http 80 &
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
@@ -66,6 +62,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: init piper
         run: |
+          sleep 5
           touch ~/ngrok.log 
           ngrok http 80 --log ~/ngrok.log &
           NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
