@@ -12,9 +12,6 @@ import (
 	"testing"
 )
 
-// MockGitProvider is a mock implementation of the git_provider.Client interface.
-type MockGitProvider struct{}
-
 var fileContentMap = map[string]*string{
 	"main.yaml":       utils.SPtr("main.yaml"),
 	"exit.yaml":       utils.SPtr("exit.yaml"),
@@ -39,6 +36,9 @@ var commitFileMap = map[string]*git_provider.CommitFile{
 		Content: fileContentMap["parameters.yaml"],
 	},
 }
+
+// MockGitProvider is a mock implementation of the git_provider.Client interface.
+type MockGitProvider struct{}
 
 func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
 
