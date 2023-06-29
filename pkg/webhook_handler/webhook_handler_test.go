@@ -26,7 +26,7 @@ func GetContent(filename string) *string {
 	return fileContentMap[filename]
 }
 
-var fileMappings = map[string]*git_provider.CommitFile{
+var commitFileMap = map[string]*git_provider.CommitFile{
 	"repo1/branch1/.workflows/main.yaml": &git_provider.CommitFile{
 		Path:    utils.SPtr(".workflows/main.yaml"),
 		Content: GetContent("main.yaml"),
@@ -48,7 +48,7 @@ var fileMappings = map[string]*git_provider.CommitFile{
 func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
 
 	fullPath := fmt.Sprintf("%s/%s/%s", repo, branch, path)
-	if fileInfo, ok := fileMappings[fullPath]; ok {
+	if fileInfo, ok := commitFileMap[fullPath]; ok {
 		return fileInfo, nil
 	}
 	return &git_provider.CommitFile{}, nil
