@@ -41,7 +41,7 @@ func GetFileMap() *map[string]*git_provider.CommitFile {
 		},
 		"repo1/branch2/.workflows/parameters.yaml": &git_provider.CommitFile{
 			Path:    utils.SPtr(".workflows/parameters.yaml"),
-			Content: GetContent("arameters.yaml"),
+			Content: GetContent("parameters.yaml"),
 		},
 	}
 }
