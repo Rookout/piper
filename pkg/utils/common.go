@@ -96,7 +96,7 @@ func ConvertYAMLListToJSONList(yamlString string) ([]byte, error) {
 	return jsonBytes, nil
 }
 
-func ConvertYAMToJSON(yamlString []byte) ([]byte, error) {
+func ConvertYAMLToJSON(yamlString []byte) ([]byte, error) {
 	// Unmarshal YAML into a map[string]interface{}
 	yamlData := make(map[string]interface{})
 	err := yaml.Unmarshal(yamlString, &yamlData)
@@ -111,4 +111,12 @@ func ConvertYAMToJSON(yamlString []byte) ([]byte, error) {
 	}
 
 	return jsonBytes, nil
+}
+
+func SPtr(str string) *string {
+	return &str
+}
+
+func BPtr(b bool) *bool {
+	return &b
 }

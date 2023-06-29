@@ -186,14 +186,14 @@ name: John
 age: 30
 `)
 	expectedJSON1 := `{"age":30,"name":"John"}`
-	resultJSON1, err := ConvertYAMToJSON(yamlString1)
+	resultJSON1, err := ConvertYAMLToJSON(yamlString1)
 	assert.NoError(t, err)
 	assert.JSONEq(t, expectedJSON1, string(resultJSON1))
 
 	// Test Case 2: Empty YAML
 	yamlString2 := []byte("")
 	expectedJSON2 := `{}`
-	resultJSON2, err := ConvertYAMToJSON(yamlString2)
+	resultJSON2, err := ConvertYAMLToJSON(yamlString2)
 	assert.NoError(t, err)
 	assert.JSONEq(t, expectedJSON2, string(resultJSON2))
 
@@ -202,7 +202,17 @@ age: 30
 - name: John
   age: 30
 `)
-	resultJSON3, err := ConvertYAMToJSON(yamlString3)
+	resultJSON3, err := ConvertYAMLToJSON(yamlString3)
 	assert.Error(t, err)
 	assert.Nil(t, resultJSON3)
+}
+
+func TestSPtr(t *testing.T) {
+	sPtr := SPtr("test")
+	assert.Equal(t, *sPtr, "test")
+}
+
+func TestBPtr(t *testing.T) {
+	bPtr := BPtr(false)
+	assert.Equal(t, *bPtr, false)
 }

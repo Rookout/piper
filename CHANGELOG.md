@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.3](https://github.com/Rookout/piper/compare/v1.1.2...v1.1.3) (2023-06-27)
+
+
+### Bug Fixes
+
+* generate name conversion and labels added - RK-19070 ([#74](https://github.com/Rookout/piper/issues/74)) ([ca3fad0](https://github.com/Rookout/piper/commit/ca3fad063c0bcf8ea5a7f03a673180eac56f0c8f))
+
+## [1.1.2](https://github.com/Rookout/piper/compare/v1.1.1...v1.1.2) (2023-06-27)
+
+
+### Bug Fixes
+
+* config selection improved logic ([#54](https://github.com/Rookout/piper/issues/54)) ([59f25dc](https://github.com/Rookout/piper/commit/59f25dc23e934fd8f935b59a734f96c5b4691ff4))
+* git tests added - RK-19030 ([#50](https://github.com/Rookout/piper/issues/50)) ([7d011c7](https://github.com/Rookout/piper/commit/7d011c7b982f686b2c27bb74c8d1eb8d6997af26))
+* json yaml conflic umarshling template ref to DAG task - RK-19034 ([#56](https://github.com/Rookout/piper/issues/56)) ([68ab378](https://github.com/Rookout/piper/commit/68ab3787fc30380dca82cd67138e54e4421889d5))
+* makefile improvence - RK-19036 ([#59](https://github.com/Rookout/piper/issues/59)) ([017d653](https://github.com/Rookout/piper/commit/017d65312473a99cf1e5bd880d21765009de4ac5))
+* remove argo configuration requierments ([#55](https://github.com/Rookout/piper/issues/55)) ([3a8ed9c](https://github.com/Rookout/piper/commit/3a8ed9c2abf2a2f711da6642f1617ef89d1d3119))
+* stop healthz logs spam ([#57](https://github.com/Rookout/piper/issues/57)) ([3f44edc](https://github.com/Rookout/piper/commit/3f44edc27e12cb52adde8137f5790f0d96277fd7))
+
 ## [1.1.1](https://github.com/Rookout/piper/compare/v1.1.0...v1.1.1) (2023-06-23)
 
 

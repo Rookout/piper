@@ -49,8 +49,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 		return nil, err
 	}
 	if onExit == nil || len(onExit.DAG.Tasks) == 0 {
-		_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
-		if ok && wfc.cfg.WorkflowsConfig.Configs[configName].OnExit != nil {
+		if IsConfigExists(&wfc.cfg.WorkflowsConfig, configName) && IsConfigsOnExitExists(&wfc.cfg.WorkflowsConfig, configName) {
 			template := &v1alpha1.Template{
 				Name: ONEXIT,
 				DAG: &v1alpha1.DAGTemplate{
@@ -74,8 +73,7 @@ func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.Workfl
 
 func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, params []v1alpha1.Parameter, configName string) (*v1alpha1.WorkflowSpec, error) {
 	finalSpec := &v1alpha1.WorkflowSpec{}
-	_, ok := wfc.cfg.WorkflowsConfig.Configs[configName]
-	if ok {
+	if IsConfigExists(&wfc.cfg.WorkflowsConfig, configName) {
 		*finalSpec = wfc.cfg.WorkflowsConfig.Configs[configName].Spec
 		if len(wfc.cfg.WorkflowsConfig.Configs[configName].OnExit) != 0 {
 			finalSpec.OnExit = ONEXIT
@@ -92,15 +90,14 @@ func (wfc *WorkflowsClientImpl) ConstructSpec(templates []v1alpha1.Template, par
 func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, workflowsBatch *common.WorkflowsBatch) (*v1alpha1.Workflow, error) {
 	workflow := &v1alpha1.Workflow{
 		ObjectMeta: metav1.ObjectMeta{
-			GenerateName: workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-",
+			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
-			//Labels: map[string]string{
-			//	"repo":      workflowsBatch.Payload.Repo,
-			//	"branch":    workflowsBatch.Payload.Branch,
-			//	"user":      workflowsBatch.Payload.User,
-			//	"userEmail": workflowsBatch.Payload.UserEmail,
-			//	"commit":    workflowsBatch.Payload.Commit,
-			//},
+			Labels: map[string]string{
+				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
+				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
+				"user":   ConvertToValidString(workflowsBatch.Payload.User),
+				"commit": ConvertToValidString(workflowsBatch.Payload.Commit),
+			},
 		},
 		Spec: *spec,
 	}
@@ -110,34 +107,28 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 
 func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBatch) (string, error) {
 	var configName string
-	ok := IsConfigExists(&wfc.cfg.WorkflowsConfig, "default")
-	if ok {
+	if IsConfigExists(&wfc.cfg.WorkflowsConfig, "default") {
 		configName = "default"
-		log.Printf(
-			"%s config selected for workflow in repo: %s branch %s",
-			configName,
-			workflowsBatch.Payload.Repo,
-			workflowsBatch.Payload.Branch,
-		) // Info
 	}
+
 	if *workflowsBatch.Config != "" {
-		ok = IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config)
-		if ok {
+		if IsConfigExists(&wfc.cfg.WorkflowsConfig, *workflowsBatch.Config) {
 			configName = *workflowsBatch.Config
-			log.Printf(
-				"%s config overwrited for workflow in repo: %s branch %s",
-				*workflowsBatch.Config,
-				workflowsBatch.Payload.Repo,
-				workflowsBatch.Payload.Branch,
-			) // Info
 		} else {
-			log.Printf(
+			return configName, fmt.Errorf(
 				"error in selecting config, staying with default config for repo %s branch %s",
 				workflowsBatch.Payload.Repo,
 				workflowsBatch.Payload.Branch,
-			) // Error
+			)
 		}
 	}
+
+	log.Printf(
+		"%s config selected for workflow in repo: %s branch %s",
+		configName,
+		workflowsBatch.Payload.Repo,
+		workflowsBatch.Payload.Branch,
+	) // Info
 
 	return configName, nil
 }

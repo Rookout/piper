@@ -38,8 +38,8 @@ func TestSelectConfig(t *testing.T) {
 	returnConfigName, err := wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("default", returnConfigName)
+	assert.Nil(err)
 
 	// Test case 2
 	configName = "config1"
@@ -52,8 +52,8 @@ func TestSelectConfig(t *testing.T) {
 	returnConfigName, err = wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("config1", returnConfigName)
+	assert.Nil(err)
 
 	// Test case 3 - selection of non-existing config when default config exists
 	configName = "notInConfigs"
@@ -66,8 +66,8 @@ func TestSelectConfig(t *testing.T) {
 	returnConfigName, err = wfcImpl.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.Equal("default", returnConfigName)
+	assert.NotNil(err)
 
 	// Test case 4 - selection of non-existing config when default config not exists
 	configName = "notInConfig"
@@ -91,7 +91,71 @@ func TestSelectConfig(t *testing.T) {
 	returnConfigName, err = wfcImpl4.SelectConfig(workflowsBatch)
 
 	// Assert the expected output
-	assert.Nil(err)
 	assert.NotNil(returnConfigName)
+	assert.NotNil(err)
+}
 
+func TestCreateWorkflow(t *testing.T) {
+	var wfc *conf.WorkflowsConfig
+	var wfs *conf.WorkflowServerConfig
+
+	// Create a WorkflowsClientImpl instance
+	assert := assertion.New(t)
+	// Create a mock WorkflowsClientImpl object with necessary dependencies
+	wfc = &conf.WorkflowsConfig{Configs: map[string]*conf.ConfigInstance{
+		"default": {Spec: v1alpha1.WorkflowSpec{},
+			OnExit: []v1alpha1.DAGTask{}},
+		"config1": {Spec: v1alpha1.WorkflowSpec{},
+			OnExit: []v1alpha1.DAGTask{}},
+	}}
+
+	wfs = &conf.WorkflowServerConfig{Namespace: "default"}
+
+	wfcImpl := &WorkflowsClientImpl{
+		cfg: &conf.GlobalConfig{
+			WorkflowsConfig:      *wfc,
+			WorkflowServerConfig: *wfs,
+		},
+	}
+
+	// Create a sample WorkflowSpec
+	spec := &v1alpha1.WorkflowSpec{
+		// Assign values to the fields of WorkflowSpec
+		// ...
+
+		// Example assignments:
+		Entrypoint: "my-entrypoint",
+	}
+
+	// Create a sample WorkflowsBatch
+	workflowsBatch := &common.WorkflowsBatch{
+		Payload: &git_provider.WebhookPayload{
+			Repo:   "my-repo",
+			Branch: "my-branch",
+			User:   "my-user",
+			Commit: "my-commit",
+		},
+	}
+
+	// Call the CreateWorkflow method
+	workflow, err := wfcImpl.CreateWorkflow(spec, workflowsBatch)
+
+	// Assert that no error occurred
+	assert.NoError(err)
+
+	// Assert that the returned workflow is not nil
+	assert.NotNil(workflow)
+
+	// Assert that the workflow's GenerateName, Namespace, and Labels are assigned correctly
+	assert.Equal("my-repo-my-branch-", workflow.ObjectMeta.GenerateName)
+	assert.Equal(wfcImpl.cfg.Namespace, workflow.ObjectMeta.Namespace)
+	assert.Equal(map[string]string{
+		"repo":   "my-repo",
+		"branch": "my-branch",
+		"user":   "my-user",
+		"commit": "my-commit",
+	}, workflow.ObjectMeta.Labels)
+
+	// Assert that the workflow's Spec is assigned correctly
+	assert.Equal(*spec, workflow.Spec)
 }

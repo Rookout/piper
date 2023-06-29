@@ -34,6 +34,6 @@ This [file](../examples/.workflows/parameters.yaml) will hold a list of global p
 ## Workflow Configuration (Spec)
 
 Best to configure using helm chart in `piper.workflowsConfig` parameter.
-To support Workflow configuration (defining Workflow spec field) as presented in the [examples](../examples/config.yaml), Piper consumes a configMap named `piper-workflows-config`. This config map can have `default` Workflow spec, that will be used for any Workflow created or, create other configuration sets that have to be explicitly called on each of the [triggers](../examples/.workflows/triggers.yaml) (`config` field). Please notice that the fields `entrypoint` and `onExit` should not exist. Instead, `entrypoint` is a managed field, and `onExit` can configure a default DAG to execute when the workflow finishes.  
+To support Workflow configuration (defining Workflow spec field) as presented in the [examples](../examples/config.yaml), Piper consumes a configMap named `piper-workflows-config`. This config map can have `default` Workflow spec, that will be used for any Workflow created or, create other configuration sets that have to be explicitly called on each of the [triggers](../examples/.workflows/triggers.yaml) (`config` field). Please notice that the fields `onStart` and `onExit` should not exist. Instead, `onStart` is a managed field, and `onExit` can configure a default DAG to execute when the workflow finishes.  
 
 
