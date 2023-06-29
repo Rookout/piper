@@ -75,7 +75,6 @@ jobs:
           cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
       - name: init piper
         run: |
-          echo $NGROK_URL
           helm upgrade --install piper ./helm-chart \
           -f ./examples/template.values.dev.yaml \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
@@ -85,6 +84,7 @@ jobs:
           --set image.repository=localhost:5000
       - name: sleep
         run: |
+          helm get values piper
           sleep 3600
 
   lint:

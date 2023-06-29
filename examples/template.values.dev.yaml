@@ -24,5 +24,5 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
   hosts:
     - paths:
-      - path: /piper(/|$)(.*)
-        pathType: ImplementationSpecific
+        - path: /piper(/|$)(.*)
+          pathType: ImplementationSpecific
