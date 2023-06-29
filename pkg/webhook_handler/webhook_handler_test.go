@@ -21,7 +21,10 @@ func GetContent(filename string) *string {
 		return utils.SPtr(`main.yaml`)
 	case ".workflows/exit.yaml":
 		return utils.SPtr(`exit.yaml`)
+	case ".workflows/parameters.yaml":
+		return utils.SPtr(`parameters.yaml`)
 	}
+
 	return nil
 }
 
@@ -37,6 +40,24 @@ func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch stri
 					Content: GetContent(path),
 				}, nil
 			case ".workflows/exit.yaml":
+				return &git_provider.CommitFile{
+					Path:    &path,
+					Content: GetContent(path),
+				}, nil
+			}
+		case "branch2":
+			switch path {
+			case ".workflows/main.yaml":
+				return &git_provider.CommitFile{
+					Path:    &path,
+					Content: GetContent(path),
+				}, nil
+			case ".workflows/exit.yaml":
+				return &git_provider.CommitFile{
+					Path:    &path,
+					Content: GetContent(path),
+				}, nil
+			case ".workflows/parameters.yaml":
 				return &git_provider.CommitFile{
 					Path:    &path,
 					Content: GetContent(path),
@@ -64,6 +85,27 @@ func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch str
 						Content: GetContent(path),
 					}
 				case ".workflows/exit.yaml":
+					{
+						toAppend = &git_provider.CommitFile{
+							Path:    &path,
+							Content: GetContent(path),
+						}
+					}
+				}
+
+				commitFiles = append(commitFiles, toAppend)
+			}
+			return commitFiles, nil
+		case "branch2":
+			for _, path := range paths {
+				toAppend := &git_provider.CommitFile{}
+				switch path {
+				case ".workflows/main.yaml":
+					toAppend = &git_provider.CommitFile{
+						Path:    &path,
+						Content: GetContent(path),
+					}
+				case ".workflows/parameters.yaml":
 					{
 						toAppend = &git_provider.CommitFile{
 							Path:    &path,
@@ -427,6 +469,56 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					Parameters: &git_provider.CommitFile{
 						Path:    nil,
 						Content: nil,
+					},
+					Config:  utils.SPtr("default"),
+					Payload: &git_provider.WebhookPayload{},
+				},
+			},
+		},
+		{name: "Branch with parameters",
+			triggers: &[]Trigger{{
+				Events:    &[]string{"event1", "event2.action2"},
+				Branches:  &[]string{"branch1", "branch2"},
+				Templates: &[]string{""},
+				OnStart:   &[]string{"main.yaml"},
+				OnExit:    &[]string{""},
+				Config:    "default",
+			}},
+			payload: &git_provider.WebhookPayload{
+				Event:            "event1",
+				Action:           "",
+				Repo:             "repo1",
+				Branch:           "branch2",
+				Commit:           "commitHSA",
+				User:             "piper",
+				UserEmail:        "piper@rookout.com",
+				PullRequestURL:   "",
+				PullRequestTitle: "",
+				DestBranch:       "",
+			},
+			expectedWorkflowBatch: []*common.WorkflowsBatch{
+				&common.WorkflowsBatch{
+					OnStart: []*git_provider.CommitFile{
+						{
+							Path:    utils.SPtr(".workflows/main.yaml"),
+							Content: GetContent(".workflows/main.yaml"),
+						},
+					},
+					OnExit: []*git_provider.CommitFile{
+						&git_provider.CommitFile{
+							Path:    nil,
+							Content: nil,
+						},
+					},
+					Templates: []*git_provider.CommitFile{
+						&git_provider.CommitFile{
+							Path:    nil,
+							Content: nil,
+						},
+					},
+					Parameters: &git_provider.CommitFile{
+						Path:    utils.SPtr(".workflows/parameters.yaml"),
+						Content: GetContent(".workflows/parameters.yaml"),
 					},
 					Config:  utils.SPtr("default"),
 					Payload: &git_provider.WebhookPayload{},
