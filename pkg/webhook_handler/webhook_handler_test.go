@@ -21,27 +21,22 @@ var fileContentMap = map[string]*string{
 	"parameters.yaml": utils.SPtr("parameters.yaml"),
 }
 
-func GetContent(filename string) *string {
-
-	return fileContentMap[filename]
-}
-
 var commitFileMap = map[string]*git_provider.CommitFile{
 	"repo1/branch1/.workflows/main.yaml": &git_provider.CommitFile{
 		Path:    utils.SPtr(".workflows/main.yaml"),
-		Content: GetContent("main.yaml"),
+		Content: fileContentMap["main.yaml"],
 	},
 	"repo1/branch1/.workflows/exit.yaml": &git_provider.CommitFile{
 		Path:    utils.SPtr(".workflows/exit.yaml"),
-		Content: GetContent("exit.yaml"),
+		Content: fileContentMap["exit.yaml"],
 	},
 	"repo1/branch2/.workflows/main.yaml": &git_provider.CommitFile{
 		Path:    utils.SPtr(".workflows/main.yaml"),
-		Content: GetContent("main.yaml"),
+		Content: fileContentMap["main.yaml"],
 	},
 	"repo1/branch2/.workflows/parameters.yaml": &git_provider.CommitFile{
 		Path:    utils.SPtr(".workflows/parameters.yaml"),
-		Content: GetContent("parameters.yaml"),
+		Content: fileContentMap["parameters.yaml"],
 	},
 }
 
@@ -120,13 +115,13 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/exit.yaml"),
-							Content: GetContent("exit.yaml"),
+							Content: fileContentMap["exit.yaml"],
 						},
 					},
 					Templates: []*git_provider.CommitFile{
@@ -170,13 +165,13 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/exit.yaml"),
-							Content: GetContent("exit.yaml"),
+							Content: fileContentMap["exit.yaml"],
 						},
 					},
 					Templates: []*git_provider.CommitFile{
@@ -289,7 +284,7 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
@@ -339,11 +334,11 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
@@ -393,17 +388,17 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
 						&git_provider.CommitFile{
 							Path:    utils.SPtr(".workflows/exit.yaml"),
-							Content: GetContent("exit.yaml"),
+							Content: fileContentMap["exit.yaml"],
 						},
 						&git_provider.CommitFile{
 							Path:    utils.SPtr(".workflows/exit.yaml"),
-							Content: GetContent("exit.yaml"),
+							Content: fileContentMap["exit.yaml"],
 						},
 					},
 					Templates: []*git_provider.CommitFile{
@@ -447,7 +442,7 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					OnStart: []*git_provider.CommitFile{
 						{
 							Path:    utils.SPtr(".workflows/main.yaml"),
-							Content: GetContent("main.yaml"),
+							Content: fileContentMap["main.yaml"],
 						},
 					},
 					OnExit: []*git_provider.CommitFile{
@@ -464,7 +459,7 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					},
 					Parameters: &git_provider.CommitFile{
 						Path:    utils.SPtr(".workflows/parameters.yaml"),
-						Content: GetContent("parameters.yaml"),
+						Content: fileContentMap["parameters.yaml"],
 					},
 					Config:  utils.SPtr("default"),
 					Payload: &git_provider.WebhookPayload{},
