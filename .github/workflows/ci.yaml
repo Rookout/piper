@@ -45,8 +45,8 @@ jobs:
           sudo apt install ngrok
       - name: Run Ngrok
         run: |
-          touch ~/ngrok.log && \
-          ngrok http 80 --log ~/ngrok.log &
+          touch $HOME/ngrok.log && \
+          ngrok http 80 --log $HOME/ngrok.log &
       - name: Check tunnel existence
         run: |
           sleep 10
