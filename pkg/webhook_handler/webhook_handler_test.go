@@ -67,7 +67,7 @@ func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch str
 					{
 						toAppend = &git_provider.CommitFile{
 							Path:    &path,
-							Content: utils.SPtr(""),
+							Content: GetContent(path),
 						}
 					}
 				}
@@ -141,10 +141,18 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 							Content: GetContent(".workflows/exit.yaml"),
 						},
 					},
-					Templates:  []*git_provider.CommitFile{},
-					Parameters: &git_provider.CommitFile{},
-					Config:     utils.SPtr("default"),
-					Payload:    &git_provider.WebhookPayload{},
+					Templates: []*git_provider.CommitFile{
+						&git_provider.CommitFile{
+							Path:    nil,
+							Content: nil,
+						},
+					},
+					Parameters: &git_provider.CommitFile{
+						Path:    nil,
+						Content: nil,
+					},
+					Config:  utils.SPtr("default"),
+					Payload: &git_provider.WebhookPayload{},
 				},
 			},
 		},
@@ -166,17 +174,28 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 					assert.Equal(*WorkflowsBatches[iwf].OnStart[i].Path, *test.expectedWorkflowBatch[iwf].OnStart[i].Path)
 					assert.Equal(*WorkflowsBatches[iwf].OnStart[i].Content, *test.expectedWorkflowBatch[iwf].OnStart[i].Content)
 				}
-				for i, _ := range wf.OnExit {
-					assert.Equal(*WorkflowsBatches[iwf].OnExit[i].Path, *test.expectedWorkflowBatch[iwf].OnExit[i].Path)
-					assert.Equal(*WorkflowsBatches[iwf].OnExit[i].Content, *test.expectedWorkflowBatch[iwf].OnExit[i].Content)
+				for j, _ := range wf.OnExit {
+					assert.Equal(*WorkflowsBatches[iwf].OnExit[j].Path, *test.expectedWorkflowBatch[iwf].OnExit[j].Path)
+					assert.Equal(*WorkflowsBatches[iwf].OnExit[j].Content, *test.expectedWorkflowBatch[iwf].OnExit[j].Content)
 				}
 
-				for i, _ := range wf.Templates {
-					assert.Equal(*WorkflowsBatches[iwf].Templates[i].Path, *test.expectedWorkflowBatch[iwf].Templates[i].Path)
-					assert.Equal(*WorkflowsBatches[iwf].Templates[i].Content, *test.expectedWorkflowBatch[iwf].Templates[i].Content)
+				for k, _ := range wf.Templates {
+					if test.expectedWorkflowBatch[iwf].Templates[k].Path == nil || test.expectedWorkflowBatch[iwf].Templates[k].Content == nil {
+						assert.Nil(WorkflowsBatches[iwf].Templates[k].Path)
+						assert.Nil(WorkflowsBatches[iwf].Templates[k].Content)
+					} else {
+						assert.Equal(*WorkflowsBatches[iwf].Templates[k].Path, *test.expectedWorkflowBatch[iwf].Templates[k].Path)
+						assert.Equal(*WorkflowsBatches[iwf].Templates[k].Content, *test.expectedWorkflowBatch[iwf].Templates[k].Content)
+					}
+
 				}
 
-				assert.Equal(*WorkflowsBatches[iwf].Parameters.Path, *test.expectedWorkflowBatch[iwf].Parameters.Path)
+				if test.expectedWorkflowBatch[iwf].Parameters.Path == nil || test.expectedWorkflowBatch[iwf].Parameters.Content == nil {
+					assert.Nil(WorkflowsBatches[iwf].Parameters.Path)
+					assert.Nil(WorkflowsBatches[iwf].Parameters.Content)
+				} else {
+					assert.Equal(*WorkflowsBatches[iwf].Parameters.Path, *test.expectedWorkflowBatch[iwf].Parameters.Path)
+				}
 				assert.Equal(*WorkflowsBatches[iwf].Config, *test.expectedWorkflowBatch[iwf].Config)
 
 			}
