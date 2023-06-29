@@ -49,7 +49,7 @@ jobs:
           ngrok http 80 --log ~/ngrok.log &
       - name: Check tunnel existence
         run: |
-          sleep 10
+          sleep 20
           echo "NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV 
           echo $NGROK_URL
       - name: Kubernetes KinD Cluster
