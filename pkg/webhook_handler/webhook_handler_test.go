@@ -28,41 +28,32 @@ func GetContent(filename string) *string {
 	return nil
 }
 
-func GetFileMap() *map[string]map[string]map[string]git_provider.CommitFile {
-	return &map[string]map[string]map[string]git_provider.CommitFile{
-		"repo1": {
-			"branch1": {
-				".workflows/main.yaml": git_provider.CommitFile{
-					Path:    utils.SPtr(".workflows/main.yaml"),
-					Content: GetContent(".workflows/main.yaml"),
-				},
-				".workflows/exit.yaml": git_provider.CommitFile{
-					Path:    utils.SPtr(".workflows/exit.yaml"),
-					Content: GetContent(".workflows/exit.yaml"),
-				},
-			},
-			"branch2": {
-				".workflows/main.yaml": git_provider.CommitFile{
-					Path:    utils.SPtr(".workflows/main.yaml"),
-					Content: GetContent(".workflows/main.yaml"),
-				},
-				".workflows/parameters.yaml": git_provider.CommitFile{
-					Path:    utils.SPtr(".workflows/parameters.yaml"),
-					Content: GetContent(".workflows/parameters.yaml"),
-				},
-			},
+func GetFileMap() *map[string]*git_provider.CommitFile {
+	return &map[string]*git_provider.CommitFile{
+		"repo1/branch1/.workflows/main.yaml": &git_provider.CommitFile{
+			Path:    utils.SPtr(".workflows/main.yaml"),
+			Content: GetContent(".workflows/main.yaml"),
+		},
+		"repo1/branch1/.workflows/exit.yaml": &git_provider.CommitFile{
+			Path:    utils.SPtr(".workflows/exit.yaml"),
+			Content: GetContent(".workflows/exit.yaml"),
+		},
+		"repo1/branch2/.workflows/main.yaml": &git_provider.CommitFile{
+			Path:    utils.SPtr(".workflows/main.yaml"),
+			Content: GetContent(".workflows/main.yaml"),
+		},
+		"repo1/branch2/.workflows/parameters.yaml": &git_provider.CommitFile{
+			Path:    utils.SPtr(".workflows/parameters.yaml"),
+			Content: GetContent(".workflows/parameters.yaml"),
 		},
 	}
 }
 
 func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
 	fileMappings := *GetFileMap()
-	if branchMap, ok := fileMappings[repo]; ok {
-		if fileMap, ok := branchMap[branch]; ok {
-			if fileInfo, ok := fileMap[path]; ok {
-				return &fileInfo, nil
-			}
-		}
+	fullPath := fmt.Sprintf("%s/%s/%s", repo, branch, path)
+	if fileInfo, ok := fileMappings[fullPath]; ok {
+		return fileInfo, nil
 	}
 	return &git_provider.CommitFile{}, nil
 }
@@ -70,20 +61,16 @@ func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch stri
 func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*git_provider.CommitFile, error) {
 	var commitFiles []*git_provider.CommitFile
 
-	fileMappings := *GetFileMap()
-
-	if branchMap, ok := fileMappings[repo]; ok {
-		if fileMap, ok := branchMap[branch]; ok {
-			for _, path := range paths {
-				if fileInfo, ok := fileMap[path]; ok {
-					commitFiles = append(commitFiles, &fileInfo)
-				}
-			}
-			return commitFiles, nil
+	for _, path := range paths {
+		f, err := m.GetFile(ctx, repo, branch, path)
+		if err != nil {
+			return nil, err
 		}
+		commitFiles = append(commitFiles, f)
 	}
 
-	return commitFiles, fmt.Errorf("not found")
+	return commitFiles, nil
+
 }
 
 func (m *MockGitProvider) ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error) {
