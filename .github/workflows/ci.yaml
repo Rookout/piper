@@ -46,7 +46,7 @@ jobs:
           touch ~/ngrok.log
       - name: Run Ngrok
         run: |
-          ngrok config add-authtoken ${{ secret.NGROK_AUTHTOKEN }}
+          ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
           (timeout 30m ngrok http 80 --log ~/ngrok.log) &
           echo $?
       - name: Kubernetes KinD Cluster
