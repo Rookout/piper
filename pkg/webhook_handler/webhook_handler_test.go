@@ -15,12 +15,14 @@ import (
 // MockGitProvider is a mock implementation of the git_provider.Client interface.
 type MockGitProvider struct{}
 
-func GetContent(filename string) *map[string]*string {
-	return &map[string]*string{
+func GetContent(filename string) *string {
+	fileContentMap := map[string]*string{
 		".workflows/main.yaml":       utils.SPtr("main.yaml"),
 		".workflows/exit.yaml":       utils.SPtr("exit.yaml"),
 		".workflows/parameters.yaml": utils.SPtr("parameters.yaml"),
 	}
+
+	return fileContentMap[filename]
 }
 
 func GetFileMap() *map[string]*git_provider.CommitFile {
