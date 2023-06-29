@@ -21,8 +21,8 @@ image:
 ingress:
   enabled: true
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-  paths:
-    - /piper/(.*)
-    - /piper
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - paths:
+        - path: /piper(/|$)(.*)
+          pathType: ImplementationSpecific
