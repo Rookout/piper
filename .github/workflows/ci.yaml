@@ -43,7 +43,12 @@ jobs:
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
           sudo apt update && \
           sudo apt install ngrok && \
-          ngrok http 80 &
+          touch ~/ngrok.log && \
+          ngrok http 80 --log ~/ngrok.log &
+      - name: Check tunnel existence
+        run: |
+          cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
+          NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
@@ -62,10 +67,6 @@ jobs:
           cache-to: type=gha,mode=max
       - name: init piper
         run: |
-          sleep 5
-          touch ~/ngrok.log 
-          ngrok http 80 --log ~/ngrok.log &
-          NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2
           make init-piper
 
   lint:
