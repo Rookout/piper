@@ -47,12 +47,6 @@ jobs:
         run: |
           touch ~/ngrok.log && \
           ngrok http 80 --log ~/ngrok.log &
-      - name: Check tunnel existence
-        run: |
-          sleep 20 && \
-          echo "NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV  && \
-          echo $NGROK_URL && \
-          echo "done"
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
@@ -72,6 +66,11 @@ jobs:
           tags: localhost:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Check tunnel existence
+        run: |
+          echo "NGROK_URL=$(cat ~/ngrok.log | grep -o 'url=https://.*' | cut -d '=' -f 2)" >> $GITHUB_ENV  && \
+          echo $NGROK_URL && \
+          echo "done"
       - name: init piper
         run: |
           helm upgrade --install piper ./helm-chart \
