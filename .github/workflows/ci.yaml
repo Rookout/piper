@@ -82,6 +82,7 @@ jobs:
       - name: sleep
         run: |
           sleep 3600
+
   lint:
     name: Go Lint
     runs-on: ubuntu-latest
