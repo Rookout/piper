@@ -28,93 +28,56 @@ func GetContent(filename string) *string {
 	return nil
 }
 
+func GetFileMap() *map[string]map[string]map[string]git_provider.CommitFile {
+	return &map[string]map[string]map[string]git_provider.CommitFile{
+		"repo1": {
+			"branch1": {
+				".workflows/main.yaml": git_provider.CommitFile{
+					Path:    utils.SPtr(".workflows/main.yaml"),
+					Content: GetContent(".workflows/main.yaml"),
+				},
+				".workflows/exit.yaml": git_provider.CommitFile{
+					Path:    utils.SPtr(".workflows/exit.yaml"),
+					Content: GetContent(".workflows/exit.yaml"),
+				},
+			},
+			"branch2": {
+				".workflows/main.yaml": git_provider.CommitFile{
+					Path:    utils.SPtr(".workflows/main.yaml"),
+					Content: GetContent(".workflows/main.yaml"),
+				},
+				".workflows/parameters.yaml": git_provider.CommitFile{
+					Path:    utils.SPtr(".workflows/parameters.yaml"),
+					Content: GetContent(".workflows/parameters.yaml"),
+				},
+			},
+		},
+	}
+}
+
 func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
-	switch repo {
-	case "repo1":
-		switch branch {
-		case "branch1":
-			switch path {
-			case ".workflows/main.yaml":
-				return &git_provider.CommitFile{
-					Path:    &path,
-					Content: GetContent(path),
-				}, nil
-			case ".workflows/exit.yaml":
-				return &git_provider.CommitFile{
-					Path:    &path,
-					Content: GetContent(path),
-				}, nil
-			}
-		case "branch2":
-			switch path {
-			case ".workflows/main.yaml":
-				return &git_provider.CommitFile{
-					Path:    &path,
-					Content: GetContent(path),
-				}, nil
-			case ".workflows/exit.yaml":
-				return &git_provider.CommitFile{
-					Path:    &path,
-					Content: GetContent(path),
-				}, nil
-			case ".workflows/parameters.yaml":
-				return &git_provider.CommitFile{
-					Path:    &path,
-					Content: GetContent(path),
-				}, nil
+	fileMappings := *GetFileMap()
+	if branchMap, ok := fileMappings[repo]; ok {
+		if fileMap, ok := branchMap[branch]; ok {
+			if fileInfo, ok := fileMap[path]; ok {
+				return &fileInfo, nil
 			}
 		}
 	}
-
 	return &git_provider.CommitFile{}, nil
 }
 
 func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*git_provider.CommitFile, error) {
 	var commitFiles []*git_provider.CommitFile
 
-	switch repo {
-	case "repo1":
-		switch branch {
-		case "branch1":
-			for _, path := range paths {
-				toAppend := &git_provider.CommitFile{}
-				switch path {
-				case ".workflows/main.yaml":
-					toAppend = &git_provider.CommitFile{
-						Path:    &path,
-						Content: GetContent(path),
-					}
-				case ".workflows/exit.yaml":
-					{
-						toAppend = &git_provider.CommitFile{
-							Path:    &path,
-							Content: GetContent(path),
-						}
-					}
-				}
+	fileMappings := *GetFileMap()
 
-				commitFiles = append(commitFiles, toAppend)
-			}
-			return commitFiles, nil
-		case "branch2":
+	if branchMap, ok := fileMappings[repo]; ok {
+		if fileMap, ok := branchMap[branch]; ok {
 			for _, path := range paths {
-				toAppend := &git_provider.CommitFile{}
-				switch path {
-				case ".workflows/main.yaml":
-					toAppend = &git_provider.CommitFile{
-						Path:    &path,
-						Content: GetContent(path),
-					}
-				case ".workflows/parameters.yaml":
-					{
-						toAppend = &git_provider.CommitFile{
-							Path:    &path,
-							Content: GetContent(path),
-						}
-					}
+				if fileInfo, ok := fileMap[path]; ok {
+					commitFiles = append(commitFiles, &fileInfo)
 				}
-
-				commitFiles = append(commitFiles, toAppend)
 			}
 			return commitFiles, nil
 		}
