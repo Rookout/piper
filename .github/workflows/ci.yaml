@@ -85,6 +85,8 @@ jobs:
       - name: sleep
         run: |
           helm get values piper
+          kubectl describe pods
+          kubectl get deployments --watch
           sleep 3600
 
   lint:
