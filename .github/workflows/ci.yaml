@@ -48,8 +48,7 @@ jobs:
           sudo apt update && \
           sudo apt install ngrok
           touch ~/ngrok.log
-          ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
-          (timeout 30m ngrok http 80 --log ~/ngrok.log) &
+          (timeout 30m ngrok http 80 --authtoken ${{ secrets.NGROK_AUTHTOKEN }} --log ~/ngrok.log) &
           echo $?
       - name: Install kind
         run: |
@@ -94,8 +93,7 @@ jobs:
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5001 \
-          --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com \
-          --set env\[1\].name=ROOKOUT_LABELS,env\[1\].value=service:piper\,env:github-action
+          --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com
       - name: sleep
         run: |
           docker ps -a
