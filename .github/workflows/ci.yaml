@@ -93,13 +93,17 @@ jobs:
           --set piper.gitProvider.webhook.repoList={piper-test} \
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5001 \
-          --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com
+          --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
+          kubectl wait  \
+          --for=condition=ready pod \
+          --selector=app=piper \
+          --timeout=60s
       - uses: actions/checkout@v3
         with:
           repository: 'gosharo/piper-test'
           path: '/piper-test'
           ref: 'main'
-      - uses: inject some changes to piper-test repo
+      - name: inject some changes to piper-test repo
         run: |
           cd ./piper-test
           echo "" >> .workflows/triggers.yaml
