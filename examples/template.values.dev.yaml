@@ -13,6 +13,21 @@ piper:
       namespace: "workflows"
       address: "ARGO_ADDRESS"
       token: "ARGO_TOKEN"
+  workflowsConfig:
+    default: |
+      spec:
+        activeDeadlineSeconds: 7200 # (seconds) == 2 hours
+        ttlStrategy:
+          secondsAfterCompletion: 28800 # (seconds) == 8 hours
+        podGC:
+          strategy: OnPodSuccess
+      onExit:
+        - name: exit-handler
+          template: local-step
+          arguments:
+            parameters:
+            - name: message
+              value: triggerd from default config
 image:
   name: piper
   repository: localhost:5001
