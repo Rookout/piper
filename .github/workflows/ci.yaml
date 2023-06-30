@@ -109,14 +109,13 @@ jobs:
           echo "" >> .workflows/triggers.yaml
           git config user.name 'e2e-test'
           git config user.email 'sonario@rookout.com'
-          git checkout -b ${{ github.github.base_ref }}
           git commit -am "trigger e2e test"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GIT_TOKEN }}
           path: piper-test
-          branch: ${{ github.github.base_ref }}
+          branch: ${{ github.ref_name }}
       - name: sleep
         run: |
           helm get values piper
