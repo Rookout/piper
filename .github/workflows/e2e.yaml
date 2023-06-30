@@ -100,16 +100,22 @@ jobs:
           git config user.email 'sonario@rookout.com'
           git commit -am "trigger e2e test"
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GIT_TOKEN }}
           path: piper-test
           branch: ${{ github.head_ref }}
           title: ${{ github.head_ref }}
-      - name: sleep
+          delete-branch: true
+      - name: Close Pull Request
+        uses: peter-evans/close-pull@v3
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          pull-request-number: {{ steps.cpr.outputs.pull-request-number }}
+          comment: Auto-closing pull request
+          delete-branch: true
+      - name: Piper Logs
         run: |
-          helm get values piper
-          sleep 60
           kubectl logs deployment/piper
-          kubectl get deployments --watch
           sleep 3600
