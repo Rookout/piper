@@ -54,10 +54,10 @@ jobs:
         with:
           cluster_name: piper
           registry: true
-          config: ./scripts/kindconfig.yaml
-      - name: install nginx
-        run: |
-          sh ./scripts/init-nginx.sh
+#          config: ./scripts/kindconfig.yaml
+#      - name: install nginx
+#        run: |
+#          sh ./scripts/init-nginx.sh
       - name: install workflows
         run: |
           sh ./scripts/init-argo-workflows.sh
