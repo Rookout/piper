@@ -102,7 +102,7 @@ jobs:
           helm get values piper
           sleep 60
           kubectl describe pods
-          
+          kubectl logs deployment/piper
           kubectl get deployments --watch
           sleep 3600
 
