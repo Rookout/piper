@@ -90,7 +90,7 @@ jobs:
           --set rookout.token="${{ secrets.ROOKOUT_DOGFOOD_TOKEN }}" \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
-          --set piper.gitProvider.webhook.repoList=["piper-test"] \
+          --set piper.gitProvider.webhook.repoList=piper-test \
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5001 \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com
