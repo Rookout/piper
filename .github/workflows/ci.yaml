@@ -84,6 +84,7 @@ jobs:
           --set image.repository=localhost:5000
       - name: sleep
         run: |
+          docker ps -a
           helm get values piper
           sleep 60
           kubectl describe pods
