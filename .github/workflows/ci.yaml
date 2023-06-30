@@ -43,7 +43,9 @@ jobs:
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
           sudo apt update && \
           sudo apt install ngrok && \
-          touch ~/ngrok.log
+          touch ~/ngrok.log && \
+          sudo chmod a+r ./scripts/kindconfig.yaml && \
+          ls -alt ./scripts
       - name: Run Ngrok
         run: |
           ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
@@ -66,7 +68,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: kind-registry:5000/piper:latest
+          tags: localhost:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Check tunnel existence
@@ -81,7 +83,7 @@ jobs:
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
-          --set image.repository=kind-registry:5000
+          --set image.repository=localhost:5000
       - name: sleep
         run: |
           docker ps -a
