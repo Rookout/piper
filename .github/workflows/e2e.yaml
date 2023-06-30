@@ -113,6 +113,7 @@ jobs:
         with:
           token: ${{ secrets.GIT_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          repository: 'gosharo/piper-test'
           comment: Auto-closing pull request
           delete-branch: true
       - name: Piper Logs
