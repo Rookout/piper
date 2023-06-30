@@ -86,6 +86,7 @@ jobs:
         run: |
           helm upgrade --install piper ./helm-chart \
           -f ./examples/template.values.dev.yaml \
+          --set rookout.token="${{ secrets.ROOKOUT_DOGFOOD_TOKEN }}" \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
@@ -97,6 +98,7 @@ jobs:
           helm get values piper
           sleep 60
           kubectl describe pods
+          
           kubectl get deployments --watch
           sleep 3600
 
