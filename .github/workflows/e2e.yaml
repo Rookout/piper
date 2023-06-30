@@ -112,7 +112,7 @@ jobs:
         uses: peter-evans/close-pull@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          pull-request-number: {{ steps.cpr.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           comment: Auto-closing pull request
           delete-branch: true
       - name: Piper Logs
