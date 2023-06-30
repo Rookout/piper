@@ -75,7 +75,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: localhost:5000/piper:latest
+          tags: localhost:5001/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Check tunnel existence
@@ -90,7 +90,7 @@ jobs:
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
-          --set image.repository=localhost:5000
+          --set image.repository=localhost:5001
       - name: sleep
         run: |
           docker ps -a
