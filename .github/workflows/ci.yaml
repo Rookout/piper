@@ -94,12 +94,28 @@ jobs:
           --set piper.gitProvider.organization.name="gosharo" \
           --set image.repository=localhost:5001 \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com
+      - uses: actions/checkout@v3
+        with:
+          repository: 'gosharo/piper-test'
+          path: '/piper-test'
+          ref: 'main'
+      - uses: inject some changes to piper-test repo
+        run: |
+          cd ./piper-test
+          echo "" >> .workflows/triggers.yaml
+          git config user.name 'e2e-test'
+          git config user.email 'sonario@rookout.com'
+          git commit -am "trigger e2e test"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          path: /piper-test
+          branch: ${{ github.github.base_ref }}
       - name: sleep
         run: |
-          docker ps -a
           helm get values piper
           sleep 60
-          kubectl describe pods
           kubectl logs deployment/piper
           kubectl get deployments --watch
           sleep 3600
