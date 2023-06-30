@@ -15,3 +15,7 @@ nodes:
       - containerPort: 443
         hostPort: 443
         protocol: TCP
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:kind-registry"]
+      endpoint = ["http://kind-registry:5000"]
