@@ -121,4 +121,4 @@ jobs:
           touch piper.log
           kubectl logs deployment/piper | tee > ./piper.log
           RESULT=$(cat ./piper.log | grep "submit workflow for branch ${{ github.head_ref }} repo piper-test commit ${{ steps.cpr.outputs.pull-request-head-sha }}")
-          if [ -z "$RESULT" ]; then exit 1; fi
+          [ ! -z "$RESULT" ] && echo $RESULT || exit 1
