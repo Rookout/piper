@@ -116,7 +116,10 @@ jobs:
           repository: 'gosharo/piper-test'
           comment: Auto-closing pull request
           delete-branch: true
-      - name: Piper Logs
+      - name: Piper Logs Check
         run: |
-          kubectl logs deployment/piper
-          sleep 3600
+          touch piper.log
+          pwd
+          ls -alt
+          kubectl logs deployment/piper | tee > ./piper.log
+          cat ./piper.log | grep "submit workflow for branch ${{ github.head_ref }} repo piper-test commit ${{ steps.cpr.outputs.pull-request-head-sha }}" || exit 1
