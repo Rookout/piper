@@ -54,10 +54,10 @@ jobs:
         with:
           cluster_name: piper
           registry: true
-#          config: ./scripts/kindconfig.yaml
-#      - name: install nginx
-#        run: |
-#          sh ./scripts/init-nginx.sh
+          config: ./scripts/kindconfig.yaml
+      - name: install nginx
+        run: |
+          sh ./scripts/init-nginx.sh
       - name: install workflows
         run: |
           sh ./scripts/init-argo-workflows.sh
@@ -66,7 +66,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: localhost:5000/piper:latest
+          tags: kind-registry:5000/piper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Check tunnel existence
@@ -81,7 +81,7 @@ jobs:
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList=["piper-test"] \
           --set piper.gitProvider.organization.name="gosharo" \
-          --set image.repository=localhost:5000
+          --set image.repository=kind-registry:5000
       - name: sleep
         run: |
           docker ps -a
