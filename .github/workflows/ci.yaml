@@ -116,6 +116,7 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           path: piper-test
           branch: ${{ github.ref_name }}
+          title: ${{ github.ref_name }}
       - name: sleep
         run: |
           helm get values piper
