@@ -3,12 +3,12 @@ package listener
 import (
 	"errors"
 	"fmt"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/rest"
 	"k8s.io/utils/strings/slices"
 	"time"
 
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -18,6 +18,7 @@ type K8sResourceEventsSubscriber struct {
 	pubSub       PubSub
 	watchStarted bool
 	stopCh       chan struct{}
+	restClient   *rest.RESTClient
 }
 
 const (
@@ -28,13 +29,14 @@ const (
 
 var supportedEvents = []string{ResourceCreated, ResourceUpdated, ResourceDeleted}
 
-func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *K8sResourceEventsSubscriber {
+func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string, restClient *rest.RESTClient) *K8sResourceEventsSubscriber {
 	return &K8sResourceEventsSubscriber{
 		resource:     resource,
 		namespace:    namespace,
 		pubSub:       NewSimplePubSub(),
 		watchStarted: false,
 		stopCh:       make(chan struct{}),
+		restClient:   restClient,
 	}
 }
 
@@ -60,27 +62,15 @@ func (a *K8sResourceEventsSubscriber) Stop() {
 }
 
 func (a *K8sResourceEventsSubscriber) startWatching() error {
-	// get pod's service account credentials
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		return err
-	}
-
-	// Create a new Kubernetes clientset
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
 	// Create a new watcher for the specified resource in the specified namespace
-	var resourceKind = a.resource.GetObjectKind().GroupVersionKind().Kind
-	watcher := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), resourceKind, a.namespace, nil)
+	var resourceKind = "workflow"
+	watcher := cache.NewListWatchFromClient(a.restClient, resourceKind, a.namespace, fields.Everything())
 
 	// Start watching for events
 	_, controller := cache.NewInformer(
 		watcher,
 		a.resource,
-		time.Second*0,
+		time.Second*1,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				_ = a.pubSub.Publish(ResourceCreated, obj)
