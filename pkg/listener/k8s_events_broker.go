@@ -52,13 +52,13 @@ func (a *K8sEventsBroker) Start() error {
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				_ = a.Publish("pod_created", obj)
+				_ = a.Publish("created", obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				_ = a.Publish("pod_updated", oldObj)
+				_ = a.Publish("updated", oldObj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				_ = a.Publish("pod_deleted", obj)
+				_ = a.Publish("deleted", obj)
 			},
 		},
 	)
