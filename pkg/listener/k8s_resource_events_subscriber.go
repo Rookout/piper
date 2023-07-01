@@ -10,29 +10,25 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-type K8sEventsBroker struct {
+type K8sResourceEventsSubscriber struct {
 	resource  string
 	namespace string
-	broker    *EventBrokerExample
+	pubsub    *EventPubSubExample
 }
 
-func NewK8sEventBroker(resource string, namespace string) *K8sEventsBroker {
-	return &K8sEventsBroker{
+func NewK8sResourceEventsSubscriber(resource string, namespace string) *K8sResourceEventsSubscriber {
+	return &K8sResourceEventsSubscriber{
 		resource:  resource,
 		namespace: namespace,
-		broker:    NewEventBrokerExample(),
+		pubsub:    NewEventPubSubExample(),
 	}
 }
 
-func (a *K8sEventsBroker) Subscribe(eventName string, callback func(eventData any)) error {
-	return a.broker.Subscribe(eventName, callback)
+func (a *K8sResourceEventsSubscriber) Subscribe(eventName string, callback func(eventData any)) error {
+	return a.pubsub.Subscribe(eventName, callback)
 }
 
-func (a *K8sEventsBroker) Publish(eventName string, eventData any) error {
-	return a.broker.Publish(eventName, eventData)
-}
-
-func (a *K8sEventsBroker) Start() error {
+func (a *K8sResourceEventsSubscriber) Start() error {
 	// get pod's service account credentials
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -55,13 +51,13 @@ func (a *K8sEventsBroker) Start() error {
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				_ = a.Publish(fmt.Sprintf("%s_created", a.resource), obj)
+				_ = a.pubsub.Publish(fmt.Sprintf("%s_created", a.resource), obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				_ = a.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
+				_ = a.pubsub.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				_ = a.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
+				_ = a.pubsub.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
 			},
 		},
 	)

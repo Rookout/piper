@@ -7,14 +7,13 @@ import (
 	"testing"
 )
 
-func TestK8sEventsBroker(t *testing.T) {
+func TestK8sResourceEventsSubscriber(t *testing.T) {
+	var subscriber Subscriber = NewK8sResourceEventsSubscriber("workflow", "default")
 
-	broker := NewK8sEventBroker("workflow", "default")
-
-	_ = broker.Subscribe("workflow_updated", func(event any) {
+	_ = subscriber.Subscribe("workflow_updated", func(event any) {
 		fmt.Printf("workflow status: %s", event.(v1alpha1.Workflow).Status.Message)
 	})
 
-	err := broker.Start()
+	err := subscriber.(*K8sResourceEventsSubscriber).Start()
 	assert.NotNil(t, err)
 }

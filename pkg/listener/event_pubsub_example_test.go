@@ -8,14 +8,14 @@ import (
 
 func TestEventBrokerExample(t *testing.T) {
 
-	broker := NewEventBrokerExample()
+	var pubSub PubSub = NewEventPubSubExample()
 
 	notifier := func(eventData any) {
 		assert.Equal(t, "workflow completed", eventData.(v1alpha1.Workflow).Status.Message)
 	}
 
-	_ = broker.Subscribe("workflow_event", notifier)
-	_ = broker.Publish("workflow_event", v1alpha1.Workflow{
+	_ = pubSub.Subscribe("workflow_event", notifier)
+	_ = pubSub.Publish("workflow_event", v1alpha1.Workflow{
 		Status: v1alpha1.WorkflowStatus{
 			Message: "workflow completed",
 		},
