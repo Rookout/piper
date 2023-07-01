@@ -120,7 +120,7 @@ jobs:
         run: |
           kubectl logs deployment/piper
           ## check if created
-          RESULT=$get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-test)
+          RESULT=$(get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-test)
           [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || echo "Workflow not exists, existing " && exit 1
 
           ## check if status phase not Failed, if yes, show message
