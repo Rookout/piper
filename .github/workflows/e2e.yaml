@@ -116,9 +116,14 @@ jobs:
           repository: 'gosharo/piper-test'
           comment: Auto-closing pull request
           delete-branch: true
-      - name: Piper Logs Check
+      - name: Check Result
         run: |
-          touch piper.log
-          kubectl logs deployment/piper | tee > ./piper.log
-          RESULT=$(cat ./piper.log | grep "submit workflow for branch ${{ github.head_ref }} repo piper-test commit ${{ steps.cpr.outputs.pull-request-head-sha }}")
-          [ ! -z "$RESULT" ] && echo $RESULT || exit 1
+          kubectl logs deployment/piper
+          ## check if created
+          RESULT=$get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-test)
+          [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || echo "Workflow not exists, existing " && exit 1
+
+          ## check if status phase not Failed, if yes, show message
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.phase")
+          MESSAGE=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.message")
+          [ ! "$RESULT" == "Failed" ] && echo "CRD created MESSAGE" || echo "Workflow Failed $MESSAGE, existing " && exit 1
