@@ -15,6 +15,7 @@ type K8sResourceEventsSubscriber struct {
 	namespace string
 	pubSub    PubSub
 	started   bool
+	stopCh    chan struct{}
 }
 
 func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *K8sResourceEventsSubscriber {
@@ -23,6 +24,7 @@ func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *
 		namespace: namespace,
 		pubSub:    NewEventPubSubExample(),
 		started:   false,
+		stopCh:    make(chan struct{}),
 	}
 }
 
@@ -37,6 +39,10 @@ func (a *K8sResourceEventsSubscriber) Subscribe(eventName string, callback func(
 	}
 
 	return a.start()
+}
+
+func (a *K8sResourceEventsSubscriber) Stop() {
+	close(a.stopCh)
 }
 
 func (a *K8sResourceEventsSubscriber) start() error {
@@ -75,11 +81,9 @@ func (a *K8sResourceEventsSubscriber) start() error {
 	)
 
 	// Run the controller
-	stopCh := make(chan struct{})
-	defer close(stopCh)
-	go controller.Run(stopCh)
+	go controller.Run(a.stopCh)
 
 	a.started = true
-	// Wait indefinitely
-	select {}
+
+	return nil
 }
