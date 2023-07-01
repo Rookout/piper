@@ -83,6 +83,7 @@ jobs:
           --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
+          sleep 20 && kubectl logs deployment/piper
           kubectl wait  \
           --for=condition=ready pod \
           --selector=app=piper \
