@@ -32,7 +32,7 @@ func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *
 	return &K8sResourceEventsSubscriber{
 		resource:     resource,
 		namespace:    namespace,
-		pubSub:       NewEventPubSubExample(),
+		pubSub:       NewSimplePubSub(),
 		watchStarted: false,
 		stopCh:       make(chan struct{}),
 	}

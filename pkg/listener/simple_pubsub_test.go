@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func TestEventBrokerExample(t *testing.T) {
+func TestSimplePubSub(t *testing.T) {
 
-	var pubSub PubSub = NewEventPubSubExample()
+	var pubSub PubSub = NewSimplePubSub()
 
 	notifier := func(eventData any) {
 		assert.Equal(t, "workflow completed", eventData.(v1alpha1.Workflow).Status.Message)
