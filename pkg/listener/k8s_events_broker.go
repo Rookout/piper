@@ -13,21 +13,23 @@ import (
 type K8sEventsBroker struct {
 	resource  string
 	namespace string
+	broker    *EventBrokerExample
 }
 
 func NewK8sEventBroker(resource string, namespace string) *K8sEventsBroker {
 	return &K8sEventsBroker{
 		resource:  resource,
 		namespace: namespace,
+		broker:    NewEventBrokerExample(),
 	}
 }
 
-func (a *K8sEventsBroker) Subscribe(_ string, _ func(eventData any)) error {
-	panic("not implemented")
+func (a *K8sEventsBroker) Subscribe(eventName string, callback func(eventData any)) error {
+	return a.broker.Subscribe(eventName, callback)
 }
 
-func (a *K8sEventsBroker) Publish(_ string, _ any) error {
-	panic("not implemented")
+func (a *K8sEventsBroker) Publish(eventName string, eventData any) error {
+	return a.broker.Publish(eventName, eventData)
 }
 
 func (a *K8sEventsBroker) Start() error {
