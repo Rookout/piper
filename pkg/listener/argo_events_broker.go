@@ -1,4 +1,4 @@
-package main
+package listener
 
 import (
 	"log"
@@ -10,7 +10,18 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-func main() {
+type ArgoEventsBroker struct {
+}
+
+func (a *ArgoEventsBroker) Subscribe(_ string, _ func(eventData any)) error {
+	panic("not implemented")
+}
+
+func (a *ArgoEventsBroker) Publish(_ string, _ any) error {
+	panic("not implemented")
+}
+
+func (a *ArgoEventsBroker) Start() {
 	// get pod's service account credentials
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -34,15 +45,15 @@ func main() {
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				pod := obj.(*corev1.Pod)
-				log.Printf("Pod added: %s/%s\n", pod.Namespace, pod.Name)
+				_ = a.Publish("pod_created", pod)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
 				pod := newObj.(*corev1.Pod)
-				log.Printf("Pod updated: %s/%s\n", pod.Namespace, pod.Name)
+				_ = a.Publish("pod_updated", pod)
 			},
 			DeleteFunc: func(obj interface{}) {
 				pod := obj.(*corev1.Pod)
-				log.Printf("Pod deleted: %s/%s\n", pod.Namespace, pod.Name)
+				_ = a.Publish("pod_deleted", pod)
 			},
 		},
 	)
