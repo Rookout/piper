@@ -10,10 +10,9 @@ import (
 func TestK8sResourceEventsSubscriber(t *testing.T) {
 	var subscriber Subscriber = NewK8sResourceEventsSubscriber("workflow", "default")
 
-	_ = subscriber.Subscribe("workflow_updated", func(event any) {
+	err := subscriber.Subscribe("workflow_updated", func(event any) {
 		fmt.Printf("workflow status: %s", event.(v1alpha1.Workflow).Status.Message)
 	})
 
-	err := subscriber.(*K8sResourceEventsSubscriber).Start()
 	assert.NotNil(t, err)
 }

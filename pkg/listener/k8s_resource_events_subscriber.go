@@ -13,22 +13,33 @@ import (
 type K8sResourceEventsSubscriber struct {
 	resource  string
 	namespace string
-	pubsub    *EventPubSubExample
+	pubSub    PubSub
+	started   bool
 }
 
 func NewK8sResourceEventsSubscriber(resource string, namespace string) *K8sResourceEventsSubscriber {
 	return &K8sResourceEventsSubscriber{
 		resource:  resource,
 		namespace: namespace,
-		pubsub:    NewEventPubSubExample(),
+		pubSub:    NewEventPubSubExample(),
+		started:   false,
 	}
 }
 
 func (a *K8sResourceEventsSubscriber) Subscribe(eventName string, callback func(eventData any)) error {
-	return a.pubsub.Subscribe(eventName, callback)
+	err := a.pubSub.Subscribe(eventName, callback)
+	if err != nil {
+		return err
+	}
+
+	if a.started {
+		return nil
+	}
+
+	return a.start()
 }
 
-func (a *K8sResourceEventsSubscriber) Start() error {
+func (a *K8sResourceEventsSubscriber) start() error {
 	// get pod's service account credentials
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -51,13 +62,13 @@ func (a *K8sResourceEventsSubscriber) Start() error {
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				_ = a.pubsub.Publish(fmt.Sprintf("%s_created", a.resource), obj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_created", a.resource), obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				_ = a.pubsub.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				_ = a.pubsub.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
 			},
 		},
 	)
@@ -67,6 +78,7 @@ func (a *K8sResourceEventsSubscriber) Start() error {
 	defer close(stopCh)
 	go controller.Run(stopCh)
 
+	a.started = true
 	// Wait indefinitely
 	select {}
 }
