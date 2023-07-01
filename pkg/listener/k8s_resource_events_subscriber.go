@@ -2,24 +2,25 @@ package listener
 
 import (
 	"fmt"
+	"k8s.io/apimachinery/pkg/runtime"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 )
 
 type K8sResourceEventsSubscriber struct {
-	resource  string
-	namespace string
-	pubSub    PubSub
-	started   bool
+	resource     string
+	resourceType runtime.Object
+	namespace    string
+	pubSub       PubSub
+	started      bool
 }
 
-func NewK8sResourceEventsSubscriber(resource string, namespace string) *K8sResourceEventsSubscriber {
+func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *K8sResourceEventsSubscriber {
 	return &K8sResourceEventsSubscriber{
-		resource:  resource,
+		resource:  resource.GetObjectKind().GroupVersionKind().Kind,
 		namespace: namespace,
 		pubSub:    NewEventPubSubExample(),
 		started:   false,
@@ -58,7 +59,7 @@ func (a *K8sResourceEventsSubscriber) start() error {
 	// Start watching for events
 	_, controller := cache.NewInformer(
 		watcher,
-		&corev1.Pod{},
+		a.resourceType,
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
