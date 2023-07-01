@@ -56,10 +56,10 @@ jobs:
           make init-kind
       - name: install nginx
         run: |
-          sh ./scripts/init-nginx.sh
+          make init nginx
       - name: install workflows
         run: |
-          sh ./scripts/init-argo-workflows.sh
+          make init-argo-workflows
       - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
