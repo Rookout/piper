@@ -126,4 +126,4 @@ jobs:
           ## check if status phase not Failed, if yes, show message
           RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.phase")
           MESSAGE=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.message")
-          [ ! "$RESULT" == "Failed" ] && echo "CRD created MESSAGE" || echo "Workflow Failed $MESSAGE, existing " && exit 1
+          [ ! "$RESULT" == "Failed" || ! "$RESULT" == "Running"  ] && echo "CRD created MESSAGE" || echo "Workflow Failed $MESSAGE, existing " && exit 1
