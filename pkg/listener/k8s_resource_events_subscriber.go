@@ -11,16 +11,15 @@ import (
 )
 
 type K8sResourceEventsSubscriber struct {
-	resource     string
-	resourceType runtime.Object
-	namespace    string
-	pubSub       PubSub
-	started      bool
+	resource  runtime.Object
+	namespace string
+	pubSub    PubSub
+	started   bool
 }
 
 func NewK8sResourceEventsSubscriber(resource runtime.Object, namespace string) *K8sResourceEventsSubscriber {
 	return &K8sResourceEventsSubscriber{
-		resource:  resource.GetObjectKind().GroupVersionKind().Kind,
+		resource:  resource,
 		namespace: namespace,
 		pubSub:    NewEventPubSubExample(),
 		started:   false,
@@ -54,22 +53,23 @@ func (a *K8sResourceEventsSubscriber) start() error {
 	}
 
 	// Create a new watcher for Pods in the specified namespace
-	watcher := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), a.resource, a.namespace, nil)
+	var resourceKind = a.resource.GetObjectKind().GroupVersionKind().Kind
+	watcher := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), resourceKind, a.namespace, nil)
 
 	// Start watching for events
 	_, controller := cache.NewInformer(
 		watcher,
-		a.resourceType,
+		a.resource,
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				_ = a.pubSub.Publish(fmt.Sprintf("%s_created", a.resource), obj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_created", resourceKind), obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				_ = a.pubSub.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_updated", resourceKind), oldObj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				_ = a.pubSub.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
+				_ = a.pubSub.Publish(fmt.Sprintf("%s_deleted", resourceKind), obj)
 			},
 		},
 	)
