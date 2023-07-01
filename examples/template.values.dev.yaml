@@ -10,6 +10,7 @@ piper:
       repoList: ["REPO_NAME"]
   argoWorkflows:
     server:
+      namespace: "workflows"
       address: "ARGO_ADDRESS"
       token: "ARGO_TOKEN"
 image:
@@ -23,5 +24,5 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
   hosts:
     - paths:
-      - path: /piper(/|$)(.*)
-        pathType: ImplementationSpecific
+        - path: /piper(/|$)(.*)
+          pathType: ImplementationSpecific

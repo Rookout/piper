@@ -90,4 +90,3 @@ kubectl wait --namespace kube-system \
        --for=condition=ready pod \
        --selector=k8s-app=kube-dns \
        --timeout=30s
-
