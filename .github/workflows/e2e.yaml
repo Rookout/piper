@@ -56,7 +56,7 @@ jobs:
           make init-kind
       - name: install nginx
         run: |
-          make init nginx
+          make init-nginx
       - name: install workflows
         run: |
           make init-argo-workflows
@@ -80,7 +80,7 @@ jobs:
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList={piper-test} \
-          --set piper.gitProvider.organization.name="gosharo" \
+          --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
           kubectl wait  \
@@ -89,7 +89,7 @@ jobs:
           --timeout=60s
       - uses: actions/checkout@v3
         with:
-          repository: 'gosharo/piper-test'
+          repository: 'rookout/piper-e2e-test'
           path: piper-test
           ref: 'main'
       - name: inject some changes to piper-test repo
@@ -113,7 +113,7 @@ jobs:
         with:
           token: ${{ secrets.GIT_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          repository: 'gosharo/piper-test'
+          repository: 'rookout/piper-e2e-test'
           comment: Auto-closing pull request
           delete-branch: true
       - name: Check Result
