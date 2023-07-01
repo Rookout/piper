@@ -29,9 +29,10 @@ jobs:
             docs
             chore
             revert
-
+            ci
           # Configure which scopes are allowed (newline delimited).
           scopes: |
+            core
             RK-\d+
           # Configure that a scope must always be provided.
           requireScope: false
