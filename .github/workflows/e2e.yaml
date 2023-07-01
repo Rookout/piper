@@ -79,7 +79,7 @@ jobs:
           --set rookout.token="${{ secrets.ROOKOUT_DOGFOOD_TOKEN }}" \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
-          --set piper.gitProvider.webhook.repoList={piper-test} \
+          --set piper.gitProvider.webhook.repoList={piper-e2e-test} \
           --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
@@ -91,11 +91,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: 'rookout/piper-e2e-test'
-          path: piper-test
+          path: piper-e2e-test
           ref: 'main'
-      - name: inject some changes to piper-test repo
+      - name: inject some changes to piper-e2e-test repo
         run: |
-          cd ./piper-test
+          cd ./piper-e2e-test
           echo "" >> .workflows/triggers.yaml
           git config user.name 'e2e-test'
           git config user.email 'sonario@rookout.com'
@@ -105,7 +105,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          path: piper-test
+          path: piper-e2e-test
           branch: ${{ github.head_ref }}
           title: ${{ github.head_ref }}
           delete-branch: true
@@ -121,7 +121,7 @@ jobs:
         run: |
           kubectl logs deployment/piper
           ## check if created
-          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-test)
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-e2e-test)
           [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || { echo "Workflow not exists, existing..."; exit 1; }
 
           ## check if status phase not Failed, if yes, show message
