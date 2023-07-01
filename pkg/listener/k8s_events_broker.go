@@ -1,6 +1,7 @@
 package listener
 
 import (
+	"fmt"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -52,13 +53,13 @@ func (a *K8sEventsBroker) Start() error {
 		time.Second*0,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				_ = a.Publish("created", obj)
+				_ = a.Publish(fmt.Sprintf("%s_created", a.resource), obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				_ = a.Publish("updated", oldObj)
+				_ = a.Publish(fmt.Sprintf("%s_updated", a.resource), oldObj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				_ = a.Publish("deleted", obj)
+				_ = a.Publish(fmt.Sprintf("%s_deleted", a.resource), obj)
 			},
 		},
 	)
