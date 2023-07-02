@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/Rookout/piper/compare/v1.1.3...v1.2.0) (2023-07-02)
+
+
+### Features
+
+* change commit linter - RK-19094 ([#81](https://github.com/Rookout/piper/issues/81)) ([4586284](https://github.com/Rookout/piper/commit/45862843efa124be00263619492ba97b0c21e4e5))
+
+
+### Bug Fixes
+
+* add snyk scan - RK-19072 ([#61](https://github.com/Rookout/piper/issues/61)) ([cdf6b90](https://github.com/Rookout/piper/commit/cdf6b909471bc66d70d85c329ce96d302e9a12fc))
+* e2e init - RK-19093 ([#60](https://github.com/Rookout/piper/issues/60)) ([7821785](https://github.com/Rookout/piper/commit/7821785d05c7dafce52e2946b63f9f1406996796))
+* event selection more specific - RK-19082 ([#76](https://github.com/Rookout/piper/issues/76)) ([db58bb3](https://github.com/Rookout/piper/commit/db58bb35123df023a7a0be813231968a48e5d4a6))
+
 ## [1.1.3](https://github.com/Rookout/piper/compare/v1.1.2...v1.1.3) (2023-06-27)
 
 
