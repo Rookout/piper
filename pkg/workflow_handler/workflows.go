@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/watch"
 	"log"
 
 	"github.com/rookout/piper/pkg/common"
@@ -93,6 +95,7 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
 			Labels: map[string]string{
+				"piper":  "true",
 				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
 				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
 				"user":   ConvertToValidString(workflowsBatch.Payload.User),
@@ -144,6 +147,7 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -195,4 +199,18 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 
 	log.Printf("submit workflow for branch %s repo %s commit %s", workflowsBatch.Payload.Branch, workflowsBatch.Payload.Repo, workflowsBatch.Payload.Commit)
 	return nil
+}
+
+func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, error) {
+	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
+	opts := v1.ListOptions{
+		Watch:         true,
+		LabelSelector: "piper=true",
+	}
+	watcher, err := workflowsClient.Watch(*ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return watcher, nil
 }

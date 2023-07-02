@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/common"
+	"k8s.io/apimachinery/pkg/watch"
 )
 
 type WorkflowsClient interface {
@@ -14,4 +15,5 @@ type WorkflowsClient interface {
 	Lint(wf *v1alpha1.Workflow) error
 	Submit(ctx *context.Context, wf *v1alpha1.Workflow) error
 	HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error
+	Watch(ctx *context.Context) (watch.Interface, error)
 }

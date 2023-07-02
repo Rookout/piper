@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"k8s.io/apimachinery/pkg/watch"
 	"log"
+	"strconv"
 
+	rookout "github.com/Rookout/GoSDK"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/server"
 	"github.com/rookout/piper/pkg/utils"
 	workflowHandler "github.com/rookout/piper/pkg/workflow_handler"
-
-	rookout "github.com/Rookout/GoSDK"
 )
 
 func main() {
@@ -51,10 +55,34 @@ func main() {
 		panic(err)
 	}
 
-	//err = common.Git.UnsetWebhook()
-	//if err != nil {
-	//	panic(err)
-	//}
+	ctx := context.Background()
+	watcher, err := globalClients.Workflows.Watch(&ctx)
+	if err != nil {
+		log.Panicf("Failed to watch workflow error:%s", err)
+	}
+	defer watcher.Stop()
+
+	go func() {
+		workflowEventHandler(watcher.ResultChan())
+	}()
 
 	server.Start(cfg, globalClients)
+}
+
+func workflowEventHandler(workflowChan <-chan watch.Event) {
+	for event := range workflowChan {
+		wf, ok := event.Object.(*v1alpha1.Workflow)
+		if !ok {
+			log.Printf("Workflow object is not a v1alpha1.Workflow")
+			return
+		}
+		fmt.Printf(
+			"evnet are: %s, %s phase: %s completed: %s, message: %s\n",
+			event.Type,
+			wf.GetName(),
+			wf.Status.Phase,
+			strconv.FormatBool(wf.Status.Phase.Completed()),
+			wf.Status.Message,
+		)
+	}
 }
