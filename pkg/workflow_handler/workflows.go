@@ -168,14 +168,18 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	}
 
 	globalParams := []v1alpha1.Parameter{
-		{Name: "dest_branch", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.DestBranch)},
-		{Name: "commit", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Commit)},
+		{Name: "event", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Event)},
+		{Name: "action", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Action)},
+		{Name: "repo", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Repo)},
 		{Name: "branch", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Branch)},
-		{Name: "repo_name", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Repo)},
-		{Name: "event_type", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Event)},
-		{Name: "pull_request_title", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.PullRequestTitle)},
+		{Name: "commit", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Commit)},
+		{Name: "user", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.User)},
+		{Name: "user_email", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.UserEmail)},
 		{Name: "pull_request_url", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.PullRequestURL)},
+		{Name: "pull_request_title", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.PullRequestTitle)},
+		{Name: "dest_branch", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.DestBranch)},
 	}
+
 	params = append(params, globalParams...)
 
 	spec, err := wfc.ConstructSpec(templates, params, configName)
