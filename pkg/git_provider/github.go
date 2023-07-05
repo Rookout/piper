@@ -113,7 +113,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 	if c.cfg.GitProviderConfig.OrgLevelWebhook {
 		respHook, ok := isOrgWebhookEnabled(ctx, c)
 		if !ok {
-			retHook, resp, err := c.client.Organizations.CreateHook(
+			createdHook, resp, err := c.client.Organizations.CreateHook(
 				ctx,
 				c.cfg.GitProviderConfig.OrgName,
 				hook,
@@ -124,8 +124,8 @@ func (c *GithubClientImpl) SetWebhook() error {
 			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
-			log.Printf("created webhook:%s\n", retHook.GetURL())
-			c.hooks = append(c.hooks, retHook)
+			log.Printf("edited webhook of type %s for %s :%s\n", createdHook.GetType(), c.cfg.GitProviderConfig.OrgName, createdHook.GetURL())
+			c.hooks = append(c.hooks, createdHook)
 		} else {
 			updatedHook, resp, err := c.client.Organizations.EditHook(
 				ctx,
@@ -143,7 +143,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 					resp.StatusCode,
 				)
 			}
-			log.Printf("edited webhook:%s\n", updatedHook.GetURL())
+			log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), c.cfg.GitProviderConfig.OrgName, updatedHook.GetURL())
 			c.hooks = append(c.hooks, updatedHook)
 		}
 
@@ -152,7 +152,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
 			respHook, ok := isRepoWebhookEnabled(ctx, c, repo)
 			if !ok {
-				_, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
+				createdHook, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
 				if err != nil {
 					return err
 				}
@@ -160,8 +160,8 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-				log.Printf("created webhook:%s\n", hook.GetURL())
-				c.hooks = append(c.hooks, hook)
+				log.Printf("created webhook of type %s for %s :%s\n", createdHook.GetType(), repo, createdHook.GetURL())
+				c.hooks = append(c.hooks, createdHook)
 			} else {
 				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
 				if err != nil {
@@ -170,7 +170,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != http.StatusOK {
 					return fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-				log.Printf("edited webhook:%s\n", hook.GetURL())
+				log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), repo, updatedHook.GetURL())
 				c.hooks = append(c.hooks, updatedHook)
 			}
 		}
