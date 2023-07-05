@@ -100,14 +100,12 @@ func (c *GithubClientImpl) GetFiles(ctx *context.Context, repo string, branch st
 }
 
 func (c *GithubClientImpl) SetWebhook() error {
-	// TODO: validate secret
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
 			"url":          c.cfg.GitProviderConfig.WebhookURL,
 			"content_type": "json",
-			"secret":       c.cfg.GitProviderConfig.WebhookSecret, // TODO webhook from k8s secret
-
+			"secret":       c.cfg.GitProviderConfig.WebhookSecret,
 		},
 		Events: []string{"push", "pull_request"},
 		Active: github.Bool(true),
@@ -126,6 +124,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
+			log.Printf("created webhook:%s\n", retHook.GetURL())
 			c.hooks = append(c.hooks, retHook)
 		} else {
 			updatedHook, resp, err := c.client.Organizations.EditHook(
@@ -144,6 +143,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 					resp.StatusCode,
 				)
 			}
+			log.Printf("edited webhook:%s\n", updatedHook.GetURL())
 			c.hooks = append(c.hooks, updatedHook)
 		}
 
@@ -160,6 +160,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
+				log.Printf("created webhook:%s\n", hook.GetURL())
 				c.hooks = append(c.hooks, hook)
 			} else {
 				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
@@ -169,7 +170,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != http.StatusOK {
 					return fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-
+				log.Printf("edited webhook:%s\n", hook.GetURL())
 				c.hooks = append(c.hooks, updatedHook)
 			}
 		}
@@ -178,13 +179,12 @@ func (c *GithubClientImpl) SetWebhook() error {
 	return nil
 }
 
-func (c *GithubClientImpl) UnsetWebhook() error {
-	ctx := context.Background()
+func (c *GithubClientImpl) UnsetWebhook(ctx *context.Context) error {
 
 	for _, hook := range c.hooks {
 		if c.cfg.GitProviderConfig.OrgLevelWebhook {
 
-			resp, err := c.client.Organizations.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
+			resp, err := c.client.Organizations.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
 
 			if err != nil {
 				return err
@@ -196,7 +196,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 
 		} else {
 			for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
-				resp, err := c.client.Repositories.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
+				resp, err := c.client.Repositories.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
 
 				if err != nil {
 					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", repo, resp.StatusCode, err)
@@ -207,6 +207,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 				}
 			}
 		}
+		log.Printf("removed hook:%s\n", hook.GetURL()) // INFO
 	}
 
 	return nil

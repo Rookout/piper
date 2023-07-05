@@ -46,15 +46,5 @@ func main() {
 		Workflows:   workflows,
 	}
 
-	err = globalClients.GitProvider.SetWebhook()
-	if err != nil {
-		panic(err)
-	}
-
-	//err = common.Git.UnsetWebhook()
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	server.Start(cfg, globalClients)
 }
