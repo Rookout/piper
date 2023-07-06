@@ -26,7 +26,7 @@ func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
 		for event := range watcher.ResultChan() {
 			err = handler.handle(ctx, &event)
 			if err != nil {
-				log.Panicf("[event handler] failed to handle workflow event %s", err)
+				log.Printf("[event handler] failed to handle workflow event %s", err) // ERROR
 			}
 		}
 	}()
