@@ -16,6 +16,6 @@ func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
 
 	handlerImpl := &eventHandlerImpl{}
 	go func() {
-		handlerImpl.handler(watcher.ResultChan())
+		handlerImpl.handle(watcher.ResultChan())
 	}()
 }

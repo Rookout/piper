@@ -10,7 +10,7 @@ import (
 
 type eventHandlerImpl struct{}
 
-func (eh *eventHandlerImpl) handler(workflowChan <-chan watch.Event) {
+func (eh *eventHandlerImpl) handle(workflowChan <-chan watch.Event) {
 	log.Printf("event handler started")
 	for event := range workflowChan {
 		wf, ok := event.Object.(*v1alpha1.Workflow)
