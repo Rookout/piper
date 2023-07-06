@@ -80,6 +80,10 @@ func (m *MockGitProvider) HandlePayload(request *http.Request, secret []byte) (*
 	return nil, nil
 }
 
+func (c *MockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	return nil
+}
+
 func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 	assert := assertion.New(t)
 	ctx := context.Background()

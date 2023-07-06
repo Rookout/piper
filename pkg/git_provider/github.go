@@ -276,9 +276,9 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	}
 
 	if resp.StatusCode != 201 {
-		return fmt.Errorf("failed to set status on %s %s, API call returned %d", *repo, *commit, resp.StatusCode)
+		return fmt.Errorf("failed to set status on repo:%s, commit:%s, API call returned %d", *repo, *commit, resp.StatusCode)
 	}
 
-	log.Printf("sucefully set status on %s commit %s status %s\n", *repo, *commit, *status)
+	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
 	return nil
 }

@@ -29,8 +29,8 @@ func NewGithubEventNotifier(cfg *conf.GlobalConfig, clients *clients.Clients) Ev
 	}
 }
 
-func (gn *githubNotifier) notify(ctx *context.Context, workflow v1alpha1.Workflow) error {
-	fmt.Printf("Notifing workflow, %s", workflow.GetName())
+func (gn *githubNotifier) notify(ctx *context.Context, workflow *v1alpha1.Workflow) error {
+	fmt.Printf("Notifing workflow, %s\n", workflow.GetName())
 
 	repo, ok := workflow.GetLabels()["repo"]
 	if !ok {
@@ -44,7 +44,7 @@ func (gn *githubNotifier) notify(ctx *context.Context, workflow v1alpha1.Workflo
 	// TODO: separate internal and external workflow addresses
 	workflowLink := fmt.Sprintf("%s/workflows/%s/%s", gn.cfg.WorkflowServerConfig.ArgoAddress, gn.cfg.Namespace, workflow.GetName())
 
-	status, ok := workflowTranslationToGithubMap[fmt.Sprintf("%s", workflow.Status.Phase)]
+	status, ok := workflowTranslationToGithubMap[string(workflow.Status.Phase)]
 	if !ok {
 		return fmt.Errorf("failed to translate workflow status to github stasuts for %s status: %s", workflow.GetName(), workflow.Status.Phase)
 	}
@@ -52,7 +52,7 @@ func (gn *githubNotifier) notify(ctx *context.Context, workflow v1alpha1.Workflo
 	message := workflow.Status.Message
 	err := gn.clients.GitProvider.SetStatus(ctx, &repo, &commit, &workflowLink, &status, &message)
 	if err != nil {
-		fmt.Errorf("failed to set status for workflow %s: %s", workflow.GetName(), err)
+		return fmt.Errorf("failed to set status for workflow %s: %s", workflow.GetName(), err)
 	}
 
 	return nil
