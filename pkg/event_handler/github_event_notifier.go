@@ -11,7 +11,7 @@ import (
 var workflowTranslationToGithubMap = map[string]string{
 	"":          "error",
 	"Pending":   "pending",
-	"Running":   "running",
+	"Running":   "pending",
 	"Succeeded": "success",
 	"Failed":    "failure",
 	"Error":     "error",
