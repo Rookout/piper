@@ -263,10 +263,11 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 }
 
 func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+
 	repoStatus := &github.RepoStatus{
 		State:       status, // pending, success, error, or failure.
 		TargetURL:   linkURL,
-		Description: utils.SPtr(fmt.Sprintf("Workflow is %s: %s", *status, *message)),
+		Description: utils.SPtr(fmt.Sprintf("Workflow %s %s", *status, *message)),
 		Context:     utils.SPtr("Piper/ArgoWorkflows"),
 		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
 	}
