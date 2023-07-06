@@ -150,11 +150,12 @@ func TestCreateWorkflow(t *testing.T) {
 	assert.Equal("my-repo-my-branch-", workflow.ObjectMeta.GenerateName)
 	assert.Equal(wfcImpl.cfg.Namespace, workflow.ObjectMeta.Namespace)
 	assert.Equal(map[string]string{
-		"piper":  "true",
-		"repo":   "my-repo",
-		"branch": "my-branch",
-		"user":   "my-user",
-		"commit": "my-commit",
+		"piper":        "true",
+		"piper/notify": "false",
+		"repo":         "my-repo",
+		"branch":       "my-branch",
+		"user":         "my-user",
+		"commit":       "my-commit",
 	}, workflow.ObjectMeta.Labels)
 
 	// Assert that the workflow's Spec is assigned correctly

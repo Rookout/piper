@@ -9,7 +9,7 @@ import (
 )
 
 var workflowTranslationToGithubMap = map[string]string{
-	"":          "error",
+	"":          "pending",
 	"Pending":   "pending",
 	"Running":   "pending",
 	"Succeeded": "success",
@@ -41,7 +41,6 @@ func (gn *githubNotifier) notify(ctx *context.Context, workflow *v1alpha1.Workfl
 		return fmt.Errorf("failed get commit label for workflow: %s", workflow.GetName())
 	}
 
-	// TODO: separate internal and external workflow addresses
 	workflowLink := fmt.Sprintf("%s/workflows/%s/%s", gn.cfg.WorkflowServerConfig.ArgoAddress, gn.cfg.Namespace, workflow.GetName())
 
 	status, ok := workflowTranslationToGithubMap[string(workflow.Status.Phase)]

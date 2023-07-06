@@ -16,4 +16,5 @@ type WorkflowsClient interface {
 	Submit(ctx *context.Context, wf *v1alpha1.Workflow) error
 	HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error
 	Watch(ctx *context.Context) (watch.Interface, error)
+	UpdatePiperNotifyStatus(ctx *context.Context, workflowName string, notifyStatus string) error
 }

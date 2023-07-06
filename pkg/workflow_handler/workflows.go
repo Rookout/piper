@@ -2,11 +2,13 @@ package workflow_handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/watch"
 	"log"
 
@@ -95,11 +97,12 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
 			Labels: map[string]string{
-				"piper":  "true",
-				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
-				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
-				"user":   ConvertToValidString(workflowsBatch.Payload.User),
-				"commit": ConvertToValidString(workflowsBatch.Payload.Commit),
+				"piper":        "true",
+				"piper/notify": "false",
+				"repo":         ConvertToValidString(workflowsBatch.Payload.Repo),
+				"branch":       ConvertToValidString(workflowsBatch.Payload.Branch),
+				"user":         ConvertToValidString(workflowsBatch.Payload.User),
+				"commit":       ConvertToValidString(workflowsBatch.Payload.Commit),
 			},
 		},
 		Spec: *spec,
@@ -204,8 +207,21 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, error) {
 	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
 	opts := v1.ListOptions{
-		Watch:         true,
-		LabelSelector: "piper=true",
+		Watch: true,
+		LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
+			MatchExpressions: []metav1.LabelSelectorRequirement{
+				{Key: "piper/notify",
+					Operator: metav1.LabelSelectorOpNotIn,
+					Values: []string{
+						string(v1alpha1.WorkflowSucceeded),
+						string(v1alpha1.WorkflowFailed),
+						string(v1alpha1.WorkflowError),
+					}}, // mean that there already completed and notified
+			},
+			MatchLabels: map[string]string{
+				"piper": "true",
+			},
+		}),
 	}
 	watcher, err := workflowsClient.Watch(*ctx, opts)
 	if err != nil {
@@ -213,4 +229,24 @@ func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, er
 	}
 
 	return watcher, nil
+}
+
+func (wfc *WorkflowsClientImpl) UpdatePiperNotifyStatus(ctx *context.Context, workflowName string, notifyStatus string) error {
+	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
+
+	patch, err := json.Marshal(map[string]interface{}{"metadata": metav1.ObjectMeta{
+		Labels: map[string]string{
+			"piper/notify": notifyStatus,
+		},
+	}})
+	if err != nil {
+		return err
+	}
+	_, err = workflowsClient.Patch(*ctx, workflowName, types.MergePatchType, patch, v1.PatchOptions{})
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("workflow %s labels piper/notify updated to %s\n", workflowName, notifyStatus)
+	return nil
 }
