@@ -3,6 +3,7 @@ package git_provider
 import (
 	"context"
 	"fmt"
+	"github.com/rookout/piper/pkg/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -259,4 +260,31 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 
 	return webhookPayload, nil
 
+}
+
+func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	repoStatus := &github.RepoStatus{
+		State:       status, // pending, success, error, or failure.
+		TargetURL:   linkURL,
+		Description: utils.SPtr(fmt.Sprintf("Workflow is %s %s", *status, *message)),
+		Context:     utils.SPtr("Piper/ArgoWorkflows"),
+		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
+	}
+	_, resp, err := c.client.Repositories.CreateStatus(*ctx, c.cfg.OrgName, *repo, *commit, repoStatus)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 201 {
+		return fmt.Errorf("failed to set status on %s %s, API call returned %d", *repo, *commit, resp.StatusCode)
+	}
+
+	log.Printf("sucefully set status on %s commit %s status %s\n", *repo, *commit, *status)
+	return nil
+}
+
+func (c *GithubClientImpl) GetStatus(ctx *context.Context, repo string, commit string) error {
+	opts := &github.ListOptions{}
+	c.client.Repositories.ListStatuses(*ctx, c.cfg.OrgName, repo, commit, opts)
+	return nil
 }
