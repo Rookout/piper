@@ -266,7 +266,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	repoStatus := &github.RepoStatus{
 		State:       status, // pending, success, error, or failure.
 		TargetURL:   linkURL,
-		Description: utils.SPtr(fmt.Sprintf("Workflow is %s %s", *status, *message)),
+		Description: utils.SPtr(fmt.Sprintf("Workflow is %s: %s", *status, *message)),
 		Context:     utils.SPtr("Piper/ArgoWorkflows"),
 		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
 	}
@@ -280,11 +280,5 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	}
 
 	log.Printf("sucefully set status on %s commit %s status %s\n", *repo, *commit, *status)
-	return nil
-}
-
-func (c *GithubClientImpl) GetStatus(ctx *context.Context, repo string, commit string) error {
-	opts := &github.ListOptions{}
-	c.client.Repositories.ListStatuses(*ctx, c.cfg.OrgName, repo, commit, opts)
 	return nil
 }

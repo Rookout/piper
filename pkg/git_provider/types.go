@@ -30,6 +30,5 @@ type Client interface {
 	SetWebhook() error
 	UnsetWebhook() error
 	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
-	SetStatus(ctx *context.Context, repo string, commit string, linkURL *string, status *string, message *string) error
-	GetStatus(ctx *context.Context, repo string, commit string) error
+	SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error
 }
