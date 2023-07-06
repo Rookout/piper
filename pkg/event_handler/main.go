@@ -66,7 +66,7 @@ func (weh *workflowEventHandler) handle(ctx context.Context, event *watch.Event)
 		return fmt.Errorf("error in workflow %s status patch: %s", workflow.GetName(), err)
 	}
 	log.Printf(
-		"[event handler] evnet are: %s, %s phase: %s message: %s\n",
+		"[event handler] done with event of type: %s for worklfow: %s phase: %s message: %s\n",
 		event.Type,
 		workflow.GetName(),
 		workflow.Status.Phase,

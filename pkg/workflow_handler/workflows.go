@@ -97,7 +97,6 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
 			Labels: map[string]string{
-				"piper":        "true",
 				"piper/notify": "false",
 				"repo":         ConvertToValidString(workflowsBatch.Payload.Repo),
 				"branch":       ConvertToValidString(workflowsBatch.Payload.Branch),
@@ -211,15 +210,14 @@ func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, er
 		LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
 			MatchExpressions: []metav1.LabelSelectorRequirement{
 				{Key: "piper/notify",
+					Operator: metav1.LabelSelectorOpExists},
+				{Key: "piper/notify",
 					Operator: metav1.LabelSelectorOpNotIn,
 					Values: []string{
 						string(v1alpha1.WorkflowSucceeded),
 						string(v1alpha1.WorkflowFailed),
 						string(v1alpha1.WorkflowError),
 					}}, // mean that there already completed and notified
-			},
-			MatchLabels: map[string]string{
-				"piper": "true",
 			},
 		}),
 	}
