@@ -1,0 +1,34 @@
+site_name: Piper
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - content.code.annotate
+
+repo_url: https://github.com/rookout/piper
+repo_name: rookout/piper
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+nav:
+  - Introduction: 'index.md'
+  - Getting Started:
+      - 'installation.md'
+      - 'environment_variables.md'
+  - Use piper: 'usage.md'
+  - Developers: 'CONTRIBUTING.md'
