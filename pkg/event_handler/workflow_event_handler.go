@@ -10,19 +10,19 @@ import (
 )
 
 type workflowEventHandler struct {
-	clients  *clients.Clients
-	notifier EventNotifier
+	Clients  *clients.Clients
+	Notifier EventNotifier
 }
 
-func (weh *workflowEventHandler) handle(ctx context.Context, event *watch.Event) error {
+func (weh *workflowEventHandler) Handle(ctx context.Context, event *watch.Event) error {
 	workflow, ok := event.Object.(*v1alpha1.Workflow)
 	if !ok {
 		return fmt.Errorf("event object is not a Workflow object, it's kind is: %s\n", event.DeepCopy().Object.GetObjectKind())
 	}
 
-	currentPiperNotifyLabelStatus, ok := workflow.GetLabels()["piper/notify"]
+	currentPiperNotifyLabelStatus, ok := workflow.GetLabels()["piper/Notify"]
 	if !ok {
-		return fmt.Errorf("workflow %s missing piper/notify label\n", workflow.GetName())
+		return fmt.Errorf("workflow %s missing piper/Notify label\n", workflow.GetName())
 
 	}
 
@@ -32,13 +32,13 @@ func (weh *workflowEventHandler) handle(ctx context.Context, event *watch.Event)
 	}
 
 	ctx = context.Background()
-	err := weh.notifier.notify(&ctx, workflow)
+	err := weh.Notifier.Notify(&ctx, workflow)
 	if err != nil {
-		return fmt.Errorf("failed to notify workflow to github, error:%s\n", err)
+		return fmt.Errorf("failed to Notify workflow to github, error:%s\n", err)
 
 	}
 
-	err = weh.clients.Workflows.UpdatePiperNotifyStatus(&ctx, workflow.GetName(), string(workflow.Status.Phase))
+	err = weh.Clients.Workflows.UpdatePiperNotifyStatus(&ctx, workflow.GetName(), string(workflow.Status.Phase))
 	if err != nil {
 		return fmt.Errorf("error in workflow %s status patch: %s", workflow.GetName(), err)
 	}

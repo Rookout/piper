@@ -29,7 +29,7 @@ func NewGithubEventNotifier(cfg *conf.GlobalConfig, clients *clients.Clients) Ev
 	}
 }
 
-func (gn *githubNotifier) notify(ctx *context.Context, workflow *v1alpha1.Workflow) error {
+func (gn *githubNotifier) Notify(ctx *context.Context, workflow *v1alpha1.Workflow) error {
 	fmt.Printf("Notifing workflow, %s\n", workflow.GetName())
 
 	repo, ok := workflow.GetLabels()["repo"]

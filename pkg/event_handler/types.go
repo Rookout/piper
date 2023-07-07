@@ -7,9 +7,9 @@ import (
 )
 
 type EventHandler interface {
-	handle(ctx context.Context, event *watch.Event) error
+	Handle(ctx context.Context, event *watch.Event) error
 }
 
 type EventNotifier interface {
-	notify(ctx *context.Context, workflow *v1alpha1.Workflow) error
+	Notify(ctx *context.Context, workflow *v1alpha1.Workflow) error
 }

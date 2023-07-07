@@ -263,7 +263,9 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 }
 
 func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
-
+	if !utils.ValidateHTTPFormat(*linkURL) {
+		return fmt.Errorf("invalid linkURL")
+	}
 	repoStatus := &github.RepoStatus{
 		State:       status, // pending, success, error, or failure.
 		TargetURL:   linkURL,
@@ -276,7 +278,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 		return err
 	}
 
-	if resp.StatusCode != 201 {
+	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("failed to set status on repo:%s, commit:%s, API call returned %d", *repo, *commit, resp.StatusCode)
 	}
 

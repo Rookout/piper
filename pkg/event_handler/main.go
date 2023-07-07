@@ -16,14 +16,14 @@ func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
 
 	notifier := NewGithubEventNotifier(cfg, clients)
 	handler := &workflowEventHandler{
-		clients:  clients,
-		notifier: notifier,
+		Clients:  clients,
+		Notifier: notifier,
 	}
 	go func() {
 		for event := range watcher.ResultChan() {
-			err = handler.handle(ctx, &event)
+			err = handler.Handle(ctx, &event)
 			if err != nil {
-				log.Printf("[event handler] failed to handle workflow event %s", err) // ERROR
+				log.Printf("[event handler] failed to Handle workflow event %s", err) // ERROR
 			}
 		}
 	}()
