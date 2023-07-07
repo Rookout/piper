@@ -20,9 +20,9 @@ func (weh *workflowEventHandler) Handle(ctx context.Context, event *watch.Event)
 		return fmt.Errorf("event object is not a Workflow object, it's kind is: %s\n", event.DeepCopy().Object.GetObjectKind())
 	}
 
-	currentPiperNotifyLabelStatus, ok := workflow.GetLabels()["piper/Notify"]
+	currentPiperNotifyLabelStatus, ok := workflow.GetLabels()["piper.rookout.com/notify"]
 	if !ok {
-		return fmt.Errorf("workflow %s missing piper/Notify label\n", workflow.GetName())
+		return fmt.Errorf("workflow %s missing piper.rookout.com/notify label\n", workflow.GetName())
 
 	}
 
