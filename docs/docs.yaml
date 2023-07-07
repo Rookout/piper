@@ -6,32 +6,23 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yaml'
-      - 'mkdocs.yml'
+      - 'docs/mkdocs.yml'
 
+permissions:
+  pages: write
+  contents: write|
+  pull-requests: write
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install mkdocs
-        run: pip install mkdocs-material
-      - name: Generate docs artifacts
-        run: mkdocs build -d /tmp/docs
-      - uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-          path: gh-pages
-      - name: Publish docs artifacts to gh-pages
-        run: |
-          cd gh-pages
-          shopt -s extglob
-          rm -rf !(index.yaml|LICENSE|*.tgz)
-          cp -R /tmp/docs/** .
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "Publish docs from $GITHUB_SHA"
-          git push https://github.com/$GITHUB_REPOSITORY.git gh-pages
+      - name: Checkout main
+        uses: actions/checkout@v2
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+#          CUSTOM_DOMAIN: optionaldomain.com
+          CONFIG_FILE: docs/mkdocs.yml
+          EXTRA_PACKAGES: build-base
+          REQUIREMENTS: docs/requirements.txt

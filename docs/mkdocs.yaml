@@ -1,4 +1,9 @@
 site_name: Piper
+site_description: 'Piper project for multibranch pipeline in Argo Workflows'
+site_author: 'George Dozoretz'
+docs_dir: docs/
+repo_url: https://github.com/rookout/piper
+repo_name: rookout/piper
 theme:
   name: material
   icon:
@@ -14,9 +19,6 @@ theme:
         name: Switch to light mode
   features:
     - content.code.annotate
-
-repo_url: https://github.com/rookout/piper
-repo_name: rookout/piper
 
 markdown_extensions:
   - pymdownx.highlight:
