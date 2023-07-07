@@ -218,21 +218,21 @@ age: 30
 `)
 	resultJSON3, err := ConvertYAMLToJSON(yamlString3)
 	assert.Error(err)
-	assert.Nil(t, resultJSON3)
+	assert.Nil(resultJSON3)
 }
 
 func TestSPtr(t *testing.T) {
 	assert := assertion.New(t)
 
 	sPtr := SPtr("test")
-	assert.Equal(t, *sPtr, "test")
+	assert.Equal(*sPtr, "test")
 }
 
 func TestBPtr(t *testing.T) {
 	assert := assertion.New(t)
 
 	bPtr := BPtr(false)
-	assert.Equal(t, *bPtr, false)
+	assert.Equal(*bPtr, false)
 }
 
 func TestValidateHTTPFormat(t *testing.T) {
