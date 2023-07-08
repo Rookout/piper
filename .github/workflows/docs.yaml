@@ -9,7 +9,7 @@ on:
       - 'docs/mkdocs.yml'
 
 permissions:
-  pull-requests: write
+  contents: write
 jobs:
   publish:
     runs-on: ubuntu-latest
