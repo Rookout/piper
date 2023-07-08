@@ -24,7 +24,7 @@ jobs:
         run: |
           pwd
           ls -alt
-          mkdocs build -s -f ./docs/mkdocs.yaml -d /tmp/docs
+          mkdocs build -s -f /home/runner/work/piper/piper/docs/mkdocs.yaml -d /tmp/docs
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
