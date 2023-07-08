@@ -8,20 +8,14 @@ on:
       - '.github/workflows/docs.yaml'
       - 'docs/mkdocs.yml'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
-  contents: write
+  pull-requests: write
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
         uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
       - name: Install mkdocs
         run: pip install mkdocs-material
       - name: Generate docs artifacts
@@ -36,7 +30,7 @@ jobs:
           shopt -s extglob
           rm -rf !(index.yaml|LICENSE|*.tgz)
           cp -R /tmp/docs/** .
-          git config --local user.email "gosharo@github.com"
+          git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "Publish docs from $GITHUB_SHA"
