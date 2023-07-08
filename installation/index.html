@@ -536,7 +536,7 @@
 <p>Piper should be deployed in the cluster with Argo Workflows. Piper will create a CRD that Argo Workflows will pick, so install or configure Piper to create those CRDs in the right namespace. </p>
 <p>Please check out values.yaml file of the helm chart.</p>
 <p>To add piper helm repo run:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>piper<span class="w"> </span>https://rookout.github.io/piper/
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>piper<span class="w"> </span>https://piper.rookout.com
 </code></pre></div></p>
 <p>After configuring Piper value.yaml, run the following command for installation:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>install<span class="w"> </span>piper<span class="w"> </span>piper/piper
@@ -548,7 +548,7 @@
 <p>The git token should be passed as secret in the helm chart at <code>gitProvider.github.token</code></p>
 <h3 id="webhook-creation">Webhook creation</h3>
 <p>Piper will create a webhook configuration for you, for the whole orgnization or for each repo you configure.
-First configure which git provider you are using <code>gitProvider.name</code> (Now only supports github)</p>
+First configure which git provider you are using <code>gitProvider.name</code> (Now only supports GitHub)</p>
 <p>For organization level configuration provide the following value <code>gitProvider.organization.name</code> and <code>gitProvider.webhook.orgLevel</code> to <code>true</code>.</p>
 <p>For granular repo configuration provide <code>gitProvider.organization.name</code> and <code>gitProvider.webhook.repoList</code>. </p>
 <p>When Piper will be deleted the finalizer should delete the configured webhooks for your git provider. (On development)</p>
