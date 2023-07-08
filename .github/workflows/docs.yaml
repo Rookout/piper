@@ -24,6 +24,6 @@ jobs:
         env:
 #          CUSTOM_DOMAIN: optionaldomain.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: docs/mkdocs.yaml
+          CONFIG_FILE: mkdocs.yaml
           EXTRA_PACKAGES: build-base
           REQUIREMENTS: docs/requirements.txt
