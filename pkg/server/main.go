@@ -20,8 +20,6 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 		panic(err)
 	}
 
-	log.Println("shutting down gracefully...")
-
 	gracefulShutdownHandler.shutdown(httpServer, clients)
 
 	log.Println("Server exiting")
@@ -46,6 +44,7 @@ func (s *gracefulShutdown) shutdown(httpServer *http.Server, clients *clients.Cl
 	// Restore default behavior on the interrupt signal and notify user of shutdown.
 	s.stop()
 
+	log.Println("shutting down gracefully...")
 	// The context is used to inform the server it has 10 seconds to finish
 	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
