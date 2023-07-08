@@ -3,6 +3,7 @@ package git_provider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -69,5 +70,126 @@ func TestListFiles(t *testing.T) {
 	assert := assertion.New(t)
 	assert.NotNil(t, err)
 	assert.Equal(expectedContent, actualContent)
+
+}
+
+func TestSetStatus(t *testing.T) {
+	// Prepare
+	ctx := context.Background()
+	assert := assertion.New(t)
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/repos/test/test-repo1/statuses/test-commit", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testFormValues(t, r, values{})
+
+		w.WriteHeader(http.StatusCreated)
+		jsonBytes := []byte(`{"status": "ok"}`)
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	c := GithubClientImpl{
+		client: client,
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				RepoList:        "test-repo1",
+			},
+		},
+	}
+
+	// Define test cases
+	tests := []struct {
+		name        string
+		repo        *string
+		commit      *string
+		linkURL     *string
+		status      *string
+		message     *string
+		wantedError error
+	}{
+		{
+			name:        "Notify success",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("success"),
+			message:     utils.SPtr(""),
+			wantedError: nil,
+		},
+		{
+			name:        "Notify pending",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("pending"),
+			message:     utils.SPtr(""),
+			wantedError: nil,
+		},
+		{
+			name:        "Notify error",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("error"),
+			message:     utils.SPtr("some message"),
+			wantedError: nil,
+		},
+		{
+			name:        "Notify failure",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("failure"),
+			message:     utils.SPtr(""),
+			wantedError: nil,
+		},
+		{
+			name:        "Non managed repo",
+			repo:        utils.SPtr("non-existing-repo"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("error"),
+			message:     utils.SPtr(""),
+			wantedError: errors.New("some error"),
+		},
+		{
+			name:        "Non existing commit",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("not-exists"),
+			linkURL:     utils.SPtr("https://argo"),
+			status:      utils.SPtr("error"),
+			message:     utils.SPtr(""),
+			wantedError: errors.New("some error"),
+		},
+		{
+			name:        "Wrong URL",
+			repo:        utils.SPtr("test-repo1"),
+			commit:      utils.SPtr("test-commit"),
+			linkURL:     utils.SPtr("argo"),
+			status:      utils.SPtr("error"),
+			message:     utils.SPtr(""),
+			wantedError: errors.New("some error"),
+		},
+	}
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			// Call the function being tested
+			err := c.SetStatus(&ctx, test.repo, test.commit, test.linkURL, test.status, test.message)
+
+			// Use assert to check the equality of the error
+			if test.wantedError != nil {
+				assert.Error(err)
+				assert.NotNil(err)
+			} else {
+				assert.NoError(err)
+				assert.Nil(err)
+			}
+		})
+	}
 
 }

@@ -2,10 +2,14 @@ package workflow_handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/watch"
 	"log"
 
 	"github.com/rookout/piper/pkg/common"
@@ -93,10 +97,11 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
 			Labels: map[string]string{
-				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
-				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
-				"user":   ConvertToValidString(workflowsBatch.Payload.User),
-				"commit": ConvertToValidString(workflowsBatch.Payload.Commit),
+				"piper.rookout.com/notified": "false",
+				"repo":                       ConvertToValidString(workflowsBatch.Payload.Repo),
+				"branch":                     ConvertToValidString(workflowsBatch.Payload.Branch),
+				"user":                       ConvertToValidString(workflowsBatch.Payload.User),
+				"commit":                     ConvertToValidString(workflowsBatch.Payload.Commit),
 			},
 		},
 		Spec: *spec,
@@ -144,6 +149,7 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -198,5 +204,39 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	}
 
 	log.Printf("submit workflow for branch %s repo %s commit %s", workflowsBatch.Payload.Branch, workflowsBatch.Payload.Repo, workflowsBatch.Payload.Commit)
+	return nil
+}
+
+func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context, labelSelector *metav1.LabelSelector) (watch.Interface, error) {
+	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
+	opts := v1.ListOptions{
+		Watch:         true,
+		LabelSelector: metav1.FormatLabelSelector(labelSelector),
+	}
+	watcher, err := workflowsClient.Watch(*ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return watcher, nil
+}
+
+func (wfc *WorkflowsClientImpl) UpdatePiperWorkflowLabel(ctx *context.Context, workflowName string, label string, value string) error {
+	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
+
+	patch, err := json.Marshal(map[string]interface{}{"metadata": metav1.ObjectMeta{
+		Labels: map[string]string{
+			fmt.Sprintf("piper.rookout.com/%s", label): value,
+		},
+	}})
+	if err != nil {
+		return err
+	}
+	_, err = workflowsClient.Patch(*ctx, workflowName, types.MergePatchType, patch, v1.PatchOptions{})
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("workflow %s labels piper.rookout.com/%s updated to %s\n", workflowName, label, value)
 	return nil
 }
