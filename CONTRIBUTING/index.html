@@ -467,25 +467,19 @@
     Helm Chart
   </a>
   
-    <nav class="md-nav" aria-label="Helm Chart">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#local-deployment" class="md-nav__link">
     Local deployment
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#debugging" class="md-nav__link">
     Debugging
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -560,25 +554,19 @@
     Helm Chart
   </a>
   
-    <nav class="md-nav" aria-label="Helm Chart">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#local-deployment" class="md-nav__link">
     Local deployment
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#debugging" class="md-nav__link">
     Debugging
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -653,7 +641,7 @@
 <p>Also, please make sure to run those commands locally to debug the chart before merging:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>make<span class="w"> </span>helm
 </code></pre></div>
-<h3 id="local-deployment">Local deployment</h3>
+<h2 id="local-deployment">Local deployment</h2>
 <p>To make it easy to develop locally, please run the following</p>
 <p>Prerequisites :
 1. install helm
@@ -676,7 +664,7 @@
      * deploy nginx reverse proxy in the kind cluster
      * deploy Piper with the local helm chart
 5. validate using <code>curl localhost/piper/healthz</code>.</p>
-<h3 id="debugging">Debugging</h3>
+<h2 id="debugging">Debugging</h2>
 <p>For debugging the best practice is to use Rookout. To enable this function pass a Rookout token in the chart <code>rookout.token</code> or as existing secret <code>rookout.existingSecret</code></p>
 
 
