@@ -42,9 +42,4 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 			}
 		}
 	}()
-	// Listen for the interrupt signal.
-	<-ctx.Done()
-
-	// Restore default behavior on the interrupt signal and notify user of shutdown.
-	stop()
 }
