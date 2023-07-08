@@ -6,8 +6,12 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yaml'
-      - 'docs/mkdocs.yaml'
+      - 'docs/mkdocs.yml'
 
+permissions:
+  pages: write
+  contents: write
+  pull-requests: write
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
 #          CUSTOM_DOMAIN: optionaldomain.com
-          PERSONAL_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG_FILE: mkdocs.yaml
           EXTRA_PACKAGES: build-base
           REQUIREMENTS: docs/requirements.txt
