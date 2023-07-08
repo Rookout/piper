@@ -1,4 +1,4 @@
-site_name: docs/img/favicon.ico
+site_name: Piper - Multibranch Pipeline for ArgoWorkflows
 site_description: 'Piper project for multibranch pipeline in Argo Workflows'
 site_author: 'George Dozoretz'
 docs_dir: docs/
@@ -6,8 +6,7 @@ repo_url: https://github.com/rookout/piper
 repo_name: rookout/piper
 theme:
   name: material
-  icon:
-    repo: fontawesome/brands/github
+  logo: img/favicon.ico
   palette:
     - scheme: default
       toggle:
