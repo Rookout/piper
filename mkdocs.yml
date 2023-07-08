@@ -1,4 +1,4 @@
-site_name: Piper
+site_name: docs/img/favicon.ico
 site_description: 'Piper project for multibranch pipeline in Argo Workflows'
 site_author: 'George Dozoretz'
 docs_dir: docs/
