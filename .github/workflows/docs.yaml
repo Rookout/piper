@@ -21,7 +21,7 @@ jobs:
       - name: Install mkdocs
         run: pip install mkdocs-material
       - name: Generate docs artifacts
-        run: mkdocs build -f -s ./docs/mkdocs.yaml -d /tmp/docs
+        run: mkdocs build -s -f ./docs/mkdocs.yaml -d /tmp/docs
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
