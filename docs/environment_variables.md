@@ -1,4 +1,4 @@
-## Enviorment Vraiables
+## Environment Variables
 
 * GIT_PROVIDER
   The git provider that Piper will use, possible variables: github (will support bitbucket and gitlab)

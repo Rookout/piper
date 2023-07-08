@@ -9,7 +9,6 @@ on:
       - 'docs/mkdocs.yml'
 
 permissions:
-  pages: write
   contents: write
   pull-requests: write
 jobs:
@@ -23,6 +22,6 @@ jobs:
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
 #          CUSTOM_DOMAIN: optionaldomain.com
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           EXTRA_PACKAGES: build-base
           REQUIREMENTS: docs/requirements.txt
