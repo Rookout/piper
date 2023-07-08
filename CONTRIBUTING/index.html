@@ -607,7 +607,7 @@
 <p>Deployment:
 1. make sure docker are running. 
 2. create tunnel with ngrok using <code>make ngrok</code>, save the <code>Forwarding</code> address.
-3. create <code>values.dev.yaml</code> file that contains subset of chart's <code>value.yaml</code> file. check <a href="https://github.com/Rookout/piper/tree/main/examples/.workflows/template.values.dev.yaml">example of values file</a> rename it to <code>values.dev.yaml</code> and put in root directory.
+3. create <code>values.dev.yaml</code> file that contains subset of chart's <code>value.yaml</code> file. check <a href="https://github.com/Rookout/piper/tree/main/examples/template.values.dev.yaml">example of values file</a> rename it to <code>values.dev.yaml</code> and put in root directory.
 4. use <code>make deploy</code>. it will do the following:
      * deploy a local registry as container
      * deploy a kind cluster as container with configuration
