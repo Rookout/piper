@@ -63,7 +63,7 @@ Also, please make sure to run those commands locally to debug the chart before m
 make helm
 ```
 
-### Local deployment
+## Local deployment
 
 To make it easy to develop locally, please run the following
 
@@ -84,7 +84,7 @@ brew install kind
 Deployment:
 1. make sure docker are running. 
 2. create tunnel with ngrok using `make ngrok`, save the `Forwarding` address.
-3. create `values.dev.yaml` file that contains subset of chart's `value.yaml` file. check [example of values file](../examples/template.values.dev.yaml) rename it to `values.dev.yaml` and put in root directory.
+3. create `values.dev.yaml` file that contains subset of chart's `value.yaml` file. check [example of values file](https://github.com/Rookout/piper/tree/main/examples/template.values.dev.yaml) rename it to `values.dev.yaml` and put in root directory.
 4. use `make deploy`. it will do the following:
      * deploy a local registry as container
      * deploy a kind cluster as container with configuration
@@ -92,6 +92,6 @@ Deployment:
      * deploy Piper with the local helm chart
 5. validate using `curl localhost/piper/healthz`.
 
-### Debugging
+## Debugging
 
 For debugging the best practice is to use Rookout. To enable this function pass a Rookout token in the chart `rookout.token` or as existing secret `rookout.existingSecret`

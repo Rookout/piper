@@ -1,0 +1,39 @@
+site_name: Piper - Multibranch Pipeline for ArgoWorkflows
+site_description: 'Piper project for multibranch pipeline in Argo Workflows'
+site_author: 'George Dozoretz'
+docs_dir: docs/
+repo_url: https://github.com/rookout/piper
+repo_name: rookout/piper
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+nav:
+  - Introduction: index.md
+  - Getting Started:
+      - getting_started/installation.md
+      - getting_started/environment_variables.md
+  - Use piper:
+      - usage/workflows_folder.md
+      - usage/global_variables.md
+      - usage/workflows_config.md
+  - Developers: CONTRIBUTING.md

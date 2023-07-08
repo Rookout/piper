@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - '**'
+      - '!docs/**'
   pull_request:
     branches:
       - "main"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }} # Bottleneck in ngrok tunnel, only one tunnel can exist for specific token -${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -82,6 +85,7 @@ jobs:
           --set piper.gitProvider.webhook.repoList={piper-e2e-test} \
           --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
+          --set piper.argoWorkflows.server.address="${{ env.NGROK_URL }}/argo" \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
           sleep 20 && kubectl logs deployment/piper
           kubectl wait  \

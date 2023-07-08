@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -119,4 +120,10 @@ func SPtr(str string) *string {
 
 func BPtr(b bool) *bool {
 	return &b
+}
+
+func ValidateHTTPFormat(input string) bool {
+	regex := `^(https?://)([\w-]+(\.[\w-]+)*)(:\d+)?(/[\w-./?%&=]*)?$`
+	match, _ := regexp.MatchString(regex, input)
+	return match
 }
