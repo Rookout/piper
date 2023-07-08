@@ -3,6 +3,7 @@ package git_provider
 import (
 	"context"
 	"fmt"
+	"github.com/rookout/piper/pkg/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -100,14 +101,12 @@ func (c *GithubClientImpl) GetFiles(ctx *context.Context, repo string, branch st
 }
 
 func (c *GithubClientImpl) SetWebhook() error {
-	// TODO: validate secret
 	ctx := context.Background()
 	hook := &github.Hook{
 		Config: map[string]interface{}{
 			"url":          c.cfg.GitProviderConfig.WebhookURL,
 			"content_type": "json",
-			"secret":       c.cfg.GitProviderConfig.WebhookSecret, // TODO webhook from k8s secret
-
+			"secret":       c.cfg.GitProviderConfig.WebhookSecret,
 		},
 		Events: []string{"push", "pull_request"},
 		Active: github.Bool(true),
@@ -115,7 +114,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 	if c.cfg.GitProviderConfig.OrgLevelWebhook {
 		respHook, ok := isOrgWebhookEnabled(ctx, c)
 		if !ok {
-			retHook, resp, err := c.client.Organizations.CreateHook(
+			createdHook, resp, err := c.client.Organizations.CreateHook(
 				ctx,
 				c.cfg.GitProviderConfig.OrgName,
 				hook,
@@ -126,7 +125,8 @@ func (c *GithubClientImpl) SetWebhook() error {
 			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
-			c.hooks = append(c.hooks, retHook)
+			log.Printf("edited webhook of type %s for %s :%s\n", createdHook.GetType(), c.cfg.GitProviderConfig.OrgName, createdHook.GetURL())
+			c.hooks = append(c.hooks, createdHook)
 		} else {
 			updatedHook, resp, err := c.client.Organizations.EditHook(
 				ctx,
@@ -144,6 +144,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 					resp.StatusCode,
 				)
 			}
+			log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), c.cfg.GitProviderConfig.OrgName, updatedHook.GetURL())
 			c.hooks = append(c.hooks, updatedHook)
 		}
 
@@ -152,7 +153,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
 			respHook, ok := isRepoWebhookEnabled(ctx, c, repo)
 			if !ok {
-				_, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
+				createdHook, resp, err := c.client.Repositories.CreateHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, hook)
 				if err != nil {
 					return err
 				}
@@ -160,7 +161,8 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-				c.hooks = append(c.hooks, hook)
+				log.Printf("created webhook of type %s for %s :%s\n", createdHook.GetType(), repo, createdHook.GetURL())
+				c.hooks = append(c.hooks, createdHook)
 			} else {
 				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
 				if err != nil {
@@ -169,7 +171,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != http.StatusOK {
 					return fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-
+				log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), repo, updatedHook.GetURL())
 				c.hooks = append(c.hooks, updatedHook)
 			}
 		}
@@ -178,13 +180,12 @@ func (c *GithubClientImpl) SetWebhook() error {
 	return nil
 }
 
-func (c *GithubClientImpl) UnsetWebhook() error {
-	ctx := context.Background()
+func (c *GithubClientImpl) UnsetWebhook(ctx *context.Context) error {
 
 	for _, hook := range c.hooks {
 		if c.cfg.GitProviderConfig.OrgLevelWebhook {
 
-			resp, err := c.client.Organizations.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
+			resp, err := c.client.Organizations.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.ID)
 
 			if err != nil {
 				return err
@@ -196,7 +197,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 
 		} else {
 			for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
-				resp, err := c.client.Repositories.DeleteHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
+				resp, err := c.client.Repositories.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
 
 				if err != nil {
 					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", repo, resp.StatusCode, err)
@@ -207,6 +208,7 @@ func (c *GithubClientImpl) UnsetWebhook() error {
 				}
 			}
 		}
+		log.Printf("removed hook:%s\n", hook.GetURL()) // INFO
 	}
 
 	return nil
@@ -249,8 +251,8 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Repo:             e.GetRepo().GetName(),
 			Branch:           e.GetPullRequest().GetHead().GetRef(),
 			Commit:           e.GetPullRequest().GetHead().GetSHA(),
-			User:             e.GetSender().GetName(),
-			UserEmail:        e.GetSender().GetEmail(),
+			User:             e.GetPullRequest().GetUser().GetLogin(),
+			UserEmail:        e.GetPullRequest().GetUser().GetEmail(), // Not working. GitHub missing email for PR events in payload.
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
@@ -259,4 +261,28 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 
 	return webhookPayload, nil
 
+}
+
+func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	if !utils.ValidateHTTPFormat(*linkURL) {
+		return fmt.Errorf("invalid linkURL")
+	}
+	repoStatus := &github.RepoStatus{
+		State:       status, // pending, success, error, or failure.
+		TargetURL:   linkURL,
+		Description: utils.SPtr(fmt.Sprintf("Workflow %s %s", *status, *message)),
+		Context:     utils.SPtr("Piper/ArgoWorkflows"),
+		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
+	}
+	_, resp, err := c.client.Repositories.CreateStatus(*ctx, c.cfg.OrgName, *repo, *commit, repoStatus)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		return fmt.Errorf("failed to set status on repo:%s, commit:%s, API call returned %d", *repo, *commit, resp.StatusCode)
+	}
+
+	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
+	return nil
 }

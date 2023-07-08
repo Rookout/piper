@@ -1,16 +1,15 @@
 package main
 
 import (
-	"log"
-
+	rookout "github.com/Rookout/GoSDK"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
+	"github.com/rookout/piper/pkg/event_handler"
 	"github.com/rookout/piper/pkg/git_provider"
 	"github.com/rookout/piper/pkg/server"
 	"github.com/rookout/piper/pkg/utils"
 	workflowHandler "github.com/rookout/piper/pkg/workflow_handler"
-
-	rookout "github.com/Rookout/GoSDK"
+	"log"
 )
 
 func main() {
@@ -51,10 +50,6 @@ func main() {
 		panic(err)
 	}
 
-	//err = common.Git.UnsetWebhook()
-	//if err != nil {
-	//	panic(err)
-	//}
-
+	event_handler.Start(cfg, globalClients)
 	server.Start(cfg, globalClients)
 }

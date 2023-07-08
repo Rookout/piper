@@ -72,12 +72,16 @@ func (m *MockGitProvider) SetWebhook() error {
 	return nil
 }
 
-func (m *MockGitProvider) UnsetWebhook() error {
+func (m *MockGitProvider) UnsetWebhook(ctx *context.Context) error {
 	return nil
 }
 
 func (m *MockGitProvider) HandlePayload(request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
 	return nil, nil
+}
+
+func (m *MockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	return nil
 }
 
 func TestPrepareBatchForMatchingTriggers(t *testing.T) {
