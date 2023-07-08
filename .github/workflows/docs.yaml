@@ -6,7 +6,11 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yaml'
-      - 'docs/mkdocs.yaml'
+      - 'docs/mkdocs.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   pages: write
@@ -24,7 +28,7 @@ jobs:
         run: |
           pwd
           ls -alt
-          mkdocs build -s -f /home/runner/work/piper/piper/docs/mkdocs.yaml -d /tmp/docs
+          mkdocs build -s -d /tmp/docs
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
