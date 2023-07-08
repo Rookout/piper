@@ -8,43 +8,13 @@ import (
 	"github.com/rookout/piper/pkg/server/routes"
 	"log"
 	"net/http"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
-func Init() *gin.Engine {
-	engine := gin.New()
-	engine.Use(
-		gin.LoggerWithConfig(gin.LoggerConfig{
-			SkipPaths: []string{"/healthz"},
-		}),
-		gin.Recovery(),
-	)
-	return engine
-}
+func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig, clients *clients.Clients) {
 
-func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
-	// Create context that listens for the interrupt signal from the OS.
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-
-	router := Init()
-
-	getRoutes(cfg, clients, router)
-
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
-	}
-
-	// Initializing the server in a goroutine so that
-	// it won't block the graceful shutdown handling below
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
+	srv := NewServer(cfg, clients)
+	httpServer := srv.ListenAndServe()
 
 	err := clients.GitProvider.SetWebhook()
 	if err != nil {
@@ -65,18 +35,12 @@ func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
 
 	_ = gracefulShutdownHandler(&ctx, clients)
 
-	err = srv.Shutdown(ctx)
+	err = httpServer.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("Server forced to shutdown: ", err)
 	}
 
 	log.Println("Server exiting")
-}
-
-func getRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, router *gin.Engine) {
-	v1 := router.Group("/")
-	routes.AddHealthRoutes(cfg, v1)
-	routes.AddWebhookRoutes(cfg, clients, v1)
 }
 
 func gracefulShutdownHandler(ctx *context.Context, clients *clients.Clients) error {
@@ -87,4 +51,54 @@ func gracefulShutdownHandler(ctx *context.Context, clients *clients.Clients) err
 	}
 
 	return nil
+}
+
+func NewServer(config *conf.GlobalConfig, clients *clients.Clients) *Server {
+	srv := &Server{
+		router:  gin.New(),
+		config:  config,
+		clients: clients,
+	}
+
+	return srv
+}
+
+func (s *Server) startServer() *http.Server {
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: s.router,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	return srv
+}
+
+func (s *Server) registerMiddlewares() {
+	s.router.Use(
+		gin.LoggerWithConfig(gin.LoggerConfig{
+			SkipPaths: []string{"/healthz"},
+		}),
+		gin.Recovery(),
+	)
+
+}
+
+func (s *Server) getRoutes() {
+	v1 := s.router.Group("/")
+	routes.AddHealthRoutes(v1)
+	routes.AddWebhookRoutes(s.config, s.clients, v1)
+}
+
+func (s *Server) ListenAndServe() *http.Server {
+
+	s.registerMiddlewares()
+
+	s.getRoutes()
+
+	return s.startServer()
 }

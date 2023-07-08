@@ -9,7 +9,10 @@ import (
 	"github.com/rookout/piper/pkg/server"
 	"github.com/rookout/piper/pkg/utils"
 	workflowHandler "github.com/rookout/piper/pkg/workflow_handler"
+	"golang.org/x/net/context"
 	"log"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -50,6 +53,9 @@ func main() {
 		panic(err)
 	}
 
-	event_handler.Start(cfg, globalClients)
-	server.Start(cfg, globalClients)
+	// Create context that listens for the interrupt signal from the OS.
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	event_handler.Start(ctx, stop, cfg, globalClients)
+	server.Start(ctx, stop, cfg, globalClients)
 }
