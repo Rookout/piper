@@ -29,11 +29,18 @@ As a best practice, use this file as implementation of template and reference th
 ###  parameters.yaml (convention name)
 
 This [file](../examples/.workflows/parameters.yaml) will hold a list of global parameters of the Workflow. can be referenced from any template with `{{ workflow.parameters.___ }}
-
+Also piper provided global parameters as followed:
+1. {{ workflow.parameters.event }} the event that triggered the workflow.
+2. {{ workflow.parameters.action }} }} the action that triggered the workflow.
+3. {{ workflow.parameters.dest_branch }} the destination branch for pull request.
+4. {{ workflow.parameters.commit }} the commit that triggered the workflow.
+5. {{ workflow.parameters.repo }} repository name that triggered the workflow.
+6. {{ workflow.parameters.user }} the username that triggered the workflow.
+7. {{ workflow.parameters.user_email }} the user's email that triggered the workflow.
+8. {{ workflow.parameters.pull_request_url }} the url of the pull request that triggered the workflow.
+9. {{workflow.parameters.pull_request_title }} the tile of the pull request that triggered the workflow.
 
 ## Workflow Configuration (Spec)
 
 Best to configure using helm chart in `piper.workflowsConfig` parameter.
 To support Workflow configuration (defining Workflow spec field) as presented in the [examples](../examples/config.yaml), Piper consumes a configMap named `piper-workflows-config`. This config map can have `default` Workflow spec, that will be used for any Workflow created or, create other configuration sets that have to be explicitly called on each of the [triggers](../examples/.workflows/triggers.yaml) (`config` field). Please notice that the fields `onStart` and `onExit` should not exist. Instead, `onStart` is a managed field, and `onExit` can configure a default DAG to execute when the workflow finishes.  
-
-

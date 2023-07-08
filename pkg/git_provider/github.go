@@ -250,8 +250,8 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Repo:             e.GetRepo().GetName(),
 			Branch:           e.GetPullRequest().GetHead().GetRef(),
 			Commit:           e.GetPullRequest().GetHead().GetSHA(),
-			User:             e.GetSender().GetName(),
-			UserEmail:        e.GetSender().GetEmail(),
+			User:             e.GetPullRequest().GetUser().GetLogin(),
+			UserEmail:        e.GetPullRequest().GetUser().GetEmail(), // Not working. GitHub missing email for PR events in payload.
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
