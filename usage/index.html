@@ -548,15 +548,33 @@
 <p>This <a href="https://github.com/Rookout/piper/tree/main/examples/.workflows/parameters.yaml">file</a> will hold a list of global parameters of the Workflow. can be referenced from any template with `{{ workflow.parameters.___ }}
 Also piper provided global parameters as followed:</p>
 <ol>
-<li>{{ workflow.parameters.event }} the event that triggered the workflow.</li>
-<li>{{ workflow.parameters.action }} }} the action that triggered the workflow.</li>
-<li>{{ workflow.parameters.dest_branch }} the destination branch for pull request.</li>
-<li>{{ workflow.parameters.commit }} the commit that triggered the workflow.</li>
-<li>{{ workflow.parameters.repo }} repository name that triggered the workflow.</li>
-<li>{{ workflow.parameters.user }} the username that triggered the workflow.</li>
-<li>{{ workflow.parameters.user_email }} the user's email that triggered the workflow.</li>
-<li>{{ workflow.parameters.pull_request_url }} the url of the pull request that triggered the workflow.</li>
-<li>{{workflow.parameters.pull_request_title }} the tile of the pull request that triggered the workflow.</li>
+<li>
+<p>{{ workflow.parameters.event }} the event that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.action }} }} the action that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.dest_branch }} the destination branch for pull request.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.commit }} the commit that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.repo }} repository name that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.user }} the username that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.user_email }} the user's email that triggered the workflow.</p>
+</li>
+<li>
+<p>{{ workflow.parameters.pull_request_url }} the url of the pull request that triggered the workflow.</p>
+</li>
+<li>
+<p>{{workflow.parameters.pull_request_title }} the tile of the pull request that triggered the workflow.</p>
+</li>
 </ol>
 <h2 id="workflow-configuration-spec">Workflow Configuration (Spec)</h2>
 <p>Best to configure using helm chart in <code>piper.workflowsConfig</code> parameter.
