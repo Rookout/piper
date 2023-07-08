@@ -30,6 +30,7 @@ As a best practice, use this file as implementation of template and reference th
 
 This [file](https://github.com/Rookout/piper/tree/main/examples/.workflows/parameters.yaml) will hold a list of global parameters of the Workflow. can be referenced from any template with `{{ workflow.parameters.___ }}
 Also piper provided global parameters as followed:
+
 1. {{ workflow.parameters.event }} the event that triggered the workflow.
 2. {{ workflow.parameters.action }} }} the action that triggered the workflow.
 3. {{ workflow.parameters.dest_branch }} the destination branch for pull request.
@@ -43,4 +44,4 @@ Also piper provided global parameters as followed:
 ## Workflow Configuration (Spec)
 
 Best to configure using helm chart in `piper.workflowsConfig` parameter.
-To support Workflow configuration (defining Workflow spec field) as presented in the [examples](https://github.com/Rookout/piper/tree/main/examples/.workflows/config.yaml), Piper consumes a configMap named `piper-workflows-config`. This config map can have `default` Workflow spec, that will be used for any Workflow created or, create other configuration sets that have to be explicitly called on each of the [triggers](https://github.com/Rookout/piper/tree/main/examples/.workflows/triggers.yaml) (`config` field). Please notice that the fields `onStart` and `onExit` should not exist. Instead, `onStart` is a managed field, and `onExit` can configure a default DAG to execute when the workflow finishes.  
+To support Workflow configuration (defining Workflow spec field) as presented in the [examples](https://github.com/Rookout/piper/tree/main/examples/config.yaml), Piper consumes a configMap named `piper-workflows-config`. This config map can have `default` Workflow spec, that will be used for any Workflow created or, create other configuration sets that have to be explicitly called on each of the [triggers](https://github.com/Rookout/piper/tree/main/examples/.workflows/triggers.yaml) (`config` field). Please notice that the fields `onStart` and `onExit` should not exist. Instead, `onStart` is a managed field, and `onExit` can configure a default DAG to execute when the workflow finishes.  
