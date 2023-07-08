@@ -338,6 +338,33 @@
     Environment Variables
   </a>
   
+    <nav class="md-nav" aria-label="Environment Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argo-workflows-server" class="md-nav__link">
+    Argo Workflows Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rookout" class="md-nav__link">
+    Rookout
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -414,6 +441,33 @@
     Environment Variables
   </a>
   
+    <nav class="md-nav" aria-label="Environment Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argo-workflows-server" class="md-nav__link">
+    Argo Workflows Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rookout" class="md-nav__link">
+    Rookout
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -437,10 +491,17 @@
   <h1>Environment variables</h1>
 
 <h2 id="environment-variables">Environment Variables</h2>
+<p>The environment variables used by Piper to configure its functionality.
+The helm chart populate them using <a href="https://github.com/Rookout/piper/tree/main/helm-chart/values.yaml">values.yaml</a> file</p>
+<h3 id="git">Git</h3>
 <ul>
 <li>
 <p>GIT_PROVIDER
-  The git provider that Piper will use, possible variables: github (will support bitbucket and gitlab)</p>
+  The git provider that Piper will use, possible variables: GitHub (will support bitbucket and gitlab)</p>
+</li>
+<li>
+<p>GIT_TOKEN
+  The git token that will be used.</p>
 </li>
 <li>
 <p>GIT_ORG_NAME
@@ -452,8 +513,15 @@
 </li>
 <li>
 <p>GIT_WEBHOOK_REPO_LIST
-  Comma separated list of repositories to configure webhooks to.</p>
+  List of repositories to configure webhooks to.</p>
 </li>
+<li>
+<p>GIT_WEBHOOK_URL
+  URL of piper ingress, to configure webhooks.</p>
+</li>
+</ul>
+<h3 id="argo-workflows-server">Argo Workflows Server</h3>
+<ul>
 <li>
 <p>ARGO_WORKFLOWS_TOKEN
   The token of Argo Workflows server.</p>
@@ -472,8 +540,17 @@
 </li>
 <li>
 <p>KUBE_CONFIG
-  Path to local kubernetes configuration</p>
+  Used to configure Argo Workflows client with local kube configurations.</p>
 </li>
+</ul>
+<h3 id="rookout">Rookout</h3>
+<ul>
+<li>ROOKOUT_TOKEN
+  The token used to configure Rookout agent. If not provided, will not start the agent.</li>
+<li>ROOKOUT_LABELS 
+  The labels to label instances at Rookout, default to "service:piper"</li>
+<li>ROOKOUT_REMOTE_ORIGIN
+  The repo URL for source code fetching, default:"https://github.com/Rookout/piper.git".</li>
 </ul>
 
 

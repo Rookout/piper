@@ -628,6 +628,7 @@ The key should be name <code>token</code>. Can be created using
 </code></pre></div></p>
 <h4 id="webhook-creation">Webhook creation</h4>
 <p>Piper will create a webhook configuration for you, for the whole organization or for each repo you configure.</p>
+<p>Configure <code>piper.webhook.url</code> the address of piper that exposed with ingress.</p>
 <p>For organization level configure: <code>gitProvider.webhook.orgLevel</code> to <code>true</code>.</p>
 <p>For granular repo webhook provide list of repos at: <code>gitProvider.webhook.repoList</code>. </p>
 <p>Piper implements graceful shutdown, it will delete all the webhooks when terminated. </p>
