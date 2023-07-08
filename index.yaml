@@ -31,4 +31,14 @@ entries:
     urls:
     - https://Rookout.github.io/piper/piper-v1.1.3.tgz
     version: v1.1.3
-generated: "2023-07-08T10:47:47.942750933Z"
+  - apiVersion: v2
+    appVersion: v1.1.2
+    created: "2023-07-08T10:48:25.579838244Z"
+    description: A Helm chart for Piper
+    digest: 559686ba9aeda925e15d529b86545276ec08668d54fd6446dd3717303c795afd
+    name: piper
+    type: application
+    urls:
+    - https://Rookout.github.io/piper/piper-v1.1.2.tgz
+    version: v1.1.2
+generated: "2023-07-08T10:48:25.578197949Z"
