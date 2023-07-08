@@ -28,6 +28,6 @@ type Client interface {
 	GetFile(ctx *context.Context, repo string, branch string, path string) (*CommitFile, error)
 	GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*CommitFile, error)
 	SetWebhook() error
-	UnsetWebhook() error
+	UnsetWebhook(ctx *context.Context) error
 	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
 }
