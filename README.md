@@ -15,7 +15,7 @@ Welcome to Piper! Piper is open source project that aimed at providing multibran
 Piper configures a webhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. 
 This folder should contain declarations of the templates and main DAG that will be running. 
 Finally, it will submit the Workflow as a K8s resource in the cluster. 
-To access more detailed explanations, please navigate to the [Documentation site](http://rookout.github.io/piper).
+To access more detailed explanations, please navigate to the [Documentation site](https://piper.rookout.com).
 
 ## Reporting Issues
 

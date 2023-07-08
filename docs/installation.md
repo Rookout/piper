@@ -6,7 +6,7 @@ Please check out values.yaml file of the helm chart.
 
 To add piper helm repo run:
 ```bash
-helm repo add piper https://rookout.github.io/piper/
+helm repo add piper https://piper.rookout.com
 ```
 
 After configuring Piper value.yaml, run the following command for installation:
@@ -26,7 +26,7 @@ The git token should be passed as secret in the helm chart at `gitProvider.githu
 ### Webhook creation
 
 Piper will create a webhook configuration for you, for the whole orgnization or for each repo you configure.
-First configure which git provider you are using `gitProvider.name` (Now only supports github)
+First configure which git provider you are using `gitProvider.name` (Now only supports GitHub)
 
 For organization level configuration provide the following value `gitProvider.organization.name` and `gitProvider.webhook.orgLevel` to `true`.
 
