@@ -56,7 +56,7 @@ As a best practice, use this field for template implementation and reference the
 [Example](https://github.com/Rookout/piper/tree/main/examples/.workflows/main.yaml).
 
 ### config
-configured by `piper-workflows-config` [configMap](docs/usage/workflws_config.md). 
+configured by `piper-workflows-config` [configMap](workflows_config.md). 
 Can be passed explicitly, or will use `deafault` configuration.
 
 ###  parameters.yaml (convention name)
