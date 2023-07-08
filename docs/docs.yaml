@@ -1,0 +1,28 @@
+name: docs
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yaml'
+      - 'docs/mkdocs.yml'
+
+permissions:
+  pages: write
+  contents: write|
+  pull-requests: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+#          CUSTOM_DOMAIN: optionaldomain.com
+          CONFIG_FILE: docs/mkdocs.yml
+          EXTRA_PACKAGES: build-base
+          REQUIREMENTS: docs/requirements.txt
