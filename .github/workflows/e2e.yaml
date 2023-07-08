@@ -9,7 +9,7 @@ on:
       - "main"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }} # Bottleneck in ngrok tunnel, only one tunnel can exist for specific token -${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
