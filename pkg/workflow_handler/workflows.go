@@ -203,23 +203,11 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	return nil
 }
 
-func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, error) {
+func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context, labelSelector *metav1.LabelSelector) (watch.Interface, error) {
 	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
 	opts := v1.ListOptions{
-		Watch: true,
-		LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
-			MatchExpressions: []metav1.LabelSelectorRequirement{
-				{Key: "piper.rookout.com/notified",
-					Operator: metav1.LabelSelectorOpExists},
-				{Key: "piper.rookout.com/notified",
-					Operator: metav1.LabelSelectorOpNotIn,
-					Values: []string{
-						string(v1alpha1.WorkflowSucceeded),
-						string(v1alpha1.WorkflowFailed),
-						string(v1alpha1.WorkflowError),
-					}}, // mean that there already completed and notified
-			},
-		}),
+		Watch:         true,
+		LabelSelector: metav1.FormatLabelSelector(labelSelector),
 	}
 	watcher, err := workflowsClient.Watch(*ctx, opts)
 	if err != nil {
@@ -229,12 +217,12 @@ func (wfc *WorkflowsClientImpl) Watch(ctx *context.Context) (watch.Interface, er
 	return watcher, nil
 }
 
-func (wfc *WorkflowsClientImpl) UpdatePiperNotifyStatus(ctx *context.Context, workflowName string, notifyStatus string) error {
+func (wfc *WorkflowsClientImpl) UpdatePiperWorkflowLabel(ctx *context.Context, workflowName string, label string, value string) error {
 	workflowsClient := wfc.clientSet.ArgoprojV1alpha1().Workflows(wfc.cfg.Namespace)
 
 	patch, err := json.Marshal(map[string]interface{}{"metadata": metav1.ObjectMeta{
 		Labels: map[string]string{
-			"piper.rookout.com/notified": notifyStatus,
+			fmt.Sprintf("piper.rookout.com/%s", label): value,
 		},
 	}})
 	if err != nil {
@@ -245,6 +233,6 @@ func (wfc *WorkflowsClientImpl) UpdatePiperNotifyStatus(ctx *context.Context, wo
 		return err
 	}
 
-	fmt.Printf("workflow %s labels piper.rookout.com/notified updated to %s\n", workflowName, notifyStatus)
+	fmt.Printf("workflow %s labels piper.rookout.com/%s updated to %s\n", workflowName, label, value)
 	return nil
 }

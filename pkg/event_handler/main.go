@@ -2,16 +2,32 @@ package event_handler
 
 import (
 	"context"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 )
 
 func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
-	ctx := context.Background()
-	watcher, err := clients.Workflows.Watch(&ctx)
+	ctx := context.Background() // TODO: use global context that initialized at main
+	labelSelector := &metav1.LabelSelector{
+		MatchExpressions: []metav1.LabelSelectorRequirement{
+			{Key: "piper.rookout.com/notified",
+				Operator: metav1.LabelSelectorOpExists},
+			{Key: "piper.rookout.com/notified",
+				Operator: metav1.LabelSelectorOpNotIn,
+				Values: []string{
+					string(v1alpha1.WorkflowSucceeded),
+					string(v1alpha1.WorkflowFailed),
+					string(v1alpha1.WorkflowError),
+				}}, // mean that there already completed and notified
+		},
+	}
+	watcher, err := clients.Workflows.Watch(&ctx, labelSelector)
 	if err != nil {
-		log.Panicf("Failed to watch workflow error:%s", err)
+		log.Printf("[event handler] Failed to watch workflow error:%s", err)
+		return
 	}
 
 	notifier := NewGithubEventNotifier(cfg, clients)

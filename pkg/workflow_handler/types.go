@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/common"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/watch"
 )
 
@@ -15,6 +16,6 @@ type WorkflowsClient interface {
 	Lint(wf *v1alpha1.Workflow) error
 	Submit(ctx *context.Context, wf *v1alpha1.Workflow) error
 	HandleWorkflowBatch(ctx *context.Context, workflowsBatch *common.WorkflowsBatch) error
-	Watch(ctx *context.Context) (watch.Interface, error)
-	UpdatePiperNotifyStatus(ctx *context.Context, workflowName string, notifyStatus string) error
+	Watch(ctx *context.Context, labelSelector *metav1.LabelSelector) (watch.Interface, error)
+	UpdatePiperWorkflowLabel(ctx *context.Context, workflowName string, label string, value string) error
 }
