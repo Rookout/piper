@@ -327,11 +327,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    Configuration
+  <a href="#required-configuration" class="md-nav__link">
+    Required Configuration
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
+    <nav class="md-nav" aria-label="Required Configuration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -342,8 +342,23 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#git-token" class="md-nav__link">
-    Git Token
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git-token-permissions" class="md-nav__link">
+    Git Token Permissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token" class="md-nav__link">
+    Token
   </a>
   
 </li>
@@ -356,16 +371,34 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#argo-workflow-server" class="md-nav__link">
-    Argo Workflow Server
+  <a href="#status-check" class="md-nav__link">
+    Status check
   </a>
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
-  <a href="#skip-crd-creation" class="md-nav__link">
-    Skip CRD Creation
+  <a href="#argo-workflow-server-on-development" class="md-nav__link">
+    Argo Workflow Server (On development)
   </a>
+  
+    <nav class="md-nav" aria-label="Argo Workflow Server (On development)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skip-crd-creation-on-development" class="md-nav__link">
+    Skip CRD Creation (On development)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -465,11 +498,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    Configuration
+  <a href="#required-configuration" class="md-nav__link">
+    Required Configuration
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
+    <nav class="md-nav" aria-label="Required Configuration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -480,8 +513,23 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#git-token" class="md-nav__link">
-    Git Token
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git-token-permissions" class="md-nav__link">
+    Git Token Permissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token" class="md-nav__link">
+    Token
   </a>
   
 </li>
@@ -494,16 +542,34 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#argo-workflow-server" class="md-nav__link">
-    Argo Workflow Server
+  <a href="#status-check" class="md-nav__link">
+    Status check
   </a>
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
-  <a href="#skip-crd-creation" class="md-nav__link">
-    Skip CRD Creation
+  <a href="#argo-workflow-server-on-development" class="md-nav__link">
+    Argo Workflow Server (On development)
   </a>
+  
+    <nav class="md-nav" aria-label="Argo Workflow Server (On development)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skip-crd-creation-on-development" class="md-nav__link">
+    Skip CRD Creation (On development)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -533,29 +599,46 @@
   <h1>Installation</h1>
 
 <h2 id="instalation">Instalation</h2>
-<p>Piper should be deployed in the cluster with Argo Workflows. Piper will create a CRD that Argo Workflows will pick, so install or configure Piper to create those CRDs in the right namespace. </p>
+<p>Piper should be deployed in the cluster with Argo Workflows. 
+Piper will create a CRD that Argo Workflows will pick, so install or configure Piper to create those CRDs in the right namespace. </p>
 <p>Please check out values.yaml file of the helm chart.</p>
 <p>To add piper helm repo run:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>piper<span class="w"> </span>https://piper.rookout.com
 </code></pre></div></p>
 <p>After configuring Piper value.yaml, run the following command for installation:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>install<span class="w"> </span>piper<span class="w"> </span>piper/piper
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>piper<span class="w"> </span>piper/piper<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-f<span class="w"> </span>YOUR_VALUES_FILE.yaml
 </code></pre></div></p>
-<h2 id="configuration">Configuration</h2>
+<h2 id="required-configuration">Required Configuration</h2>
 <h3 id="ingress">Ingress</h3>
 <p>Piper should listen to webhooks from your git provider. Checkout value.yaml for <code>ingress</code></p>
-<h3 id="git-token">Git Token</h3>
-<p>The git token should be passed as secret in the helm chart at <code>gitProvider.github.token</code></p>
-<h3 id="webhook-creation">Webhook creation</h3>
-<p>Piper will create a webhook configuration for you, for the whole orgnization or for each repo you configure.
-First configure which git provider you are using <code>gitProvider.name</code> (Now only supports GitHub)</p>
-<p>For organization level configuration provide the following value <code>gitProvider.organization.name</code> and <code>gitProvider.webhook.orgLevel</code> to <code>true</code>.</p>
-<p>For granular repo configuration provide <code>gitProvider.organization.name</code> and <code>gitProvider.webhook.repoList</code>. </p>
-<p>When Piper will be deleted the finalizer should delete the configured webhooks for your git provider. (On development)</p>
-<h3 id="argo-workflow-server">Argo Workflow Server</h3>
+<h3 id="git">Git</h3>
+<p>piper will use git for fetching <code>.workflows</code> folder and receiving events using webhooks.</p>
+<p>To pick which git provider you are using provide <code>gitProvider.name</code> configuration in helm chart (Now only supports GitHub).</p>
+<p>Also configure you organization name using <code>gitProvider.organization.name</code> in helm chart.</p>
+<h4 id="git-token-permissions">Git Token Permissions</h4>
+<p>The token should have access for creating webhooks and read repositories content.
+For GitHub configure <code>admin:org</code> and <code>write:org</code> permissions in Classic Token.</p>
+<h4 id="token">Token</h4>
+<p>The git token should be passed as secret in the helm chart at <code>gitProvider.token</code>. 
+Can be passed as parameter in helm install command using <code>--set piper.gitProvider.token=YOUR_GIT_TOKEN</code></p>
+<p>Alternatively, you can consume already existing secret and fill up <code>piper.gipProvider.existingSecret</code>.
+The key should be name <code>token</code>. Can be created using 
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>piper-git-token<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">token</span><span class="o">=</span>YOUR_GIT_OKEN
+</code></pre></div></p>
+<h4 id="webhook-creation">Webhook creation</h4>
+<p>Piper will create a webhook configuration for you, for the whole organization or for each repo you configure.</p>
+<p>For organization level configure: <code>gitProvider.webhook.orgLevel</code> to <code>true</code>.</p>
+<p>For granular repo webhook provide list of repos at: <code>gitProvider.webhook.repoList</code>. </p>
+<p>Piper implements graceful shutdown, it will delete all the webhooks when terminated. </p>
+<h4 id="status-check">Status check</h4>
+<p>Piper will handle status checks for you. 
+It will notify the GitProvider for the status of Workflow for specific commit that triggered the Piper.
+For linking provide valid URL of your Argo Workflows server address at: <code>argoWorkflows.server.address</code></p>
+<h3 id="argo-workflow-server-on-development">Argo Workflow Server (On development)</h3>
 <p>Piper will use REST API to communicate with Argo Workflows server for linting or for creation of workflows (ARGO_WORKFLOWS_CREATE_CRD). Please follow this <a href="https://argoproj.github.io/argo-workflows/rest-api/">configuration</a>.</p>
 <p>To lint the workflow before submitting it, please configure the internal address of Argo Workflows server (for example, <code>argo-server.workflows.svc.cluster.local</code>) in the field: <code>argoWorkflows.server.address</code>. Argo will need a <a href="https://argoproj.github.io/argo-workflows/access-token/">token</a> to authenticate. please provide the secret in <code>argoWorkflows.server.token</code>, Better to pass as a refrences to a secret in the field <code>argoWorkflows.server.token</code>.</p>
-<h3 id="skip-crd-creation">Skip CRD Creation</h3>
+<h4 id="skip-crd-creation-on-development">Skip CRD Creation (On development)</h4>
 <p>Piper can communicate directly to Argo Workflow using ARGO_WORKFLOWS_CREATE_CRD environment variable, if you want to skip the creation of CRD change <code>argoWorkflows.crdCreation</code> to <code>false</code>.</p>
 
 
