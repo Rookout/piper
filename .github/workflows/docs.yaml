@@ -22,6 +22,6 @@ jobs:
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
 #          CUSTOM_DOMAIN: optionaldomain.com
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          PERSONAL_TOKEN: ${{ secrets.GIT_TOKEN }}
           EXTRA_PACKAGES: build-base
           REQUIREMENTS: docs/requirements.txt
