@@ -72,7 +72,7 @@ func (m *MockGitProvider) SetWebhook() error {
 	return nil
 }
 
-func (m *MockGitProvider) UnsetWebhook() error {
+func (m *MockGitProvider) UnsetWebhook(ctx *context.Context) error {
 	return nil
 }
 
