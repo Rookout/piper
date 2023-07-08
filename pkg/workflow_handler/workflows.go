@@ -92,9 +92,6 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: ConvertToValidString(workflowsBatch.Payload.Repo + "-" + workflowsBatch.Payload.Branch + "-"),
 			Namespace:    wfc.cfg.Namespace,
-			Annotations: map[string]string{
-				"piper.rookout.com/created": "true",
-			},
 			Labels: map[string]string{
 				"repo":   ConvertToValidString(workflowsBatch.Payload.Repo),
 				"branch": ConvertToValidString(workflowsBatch.Payload.Branch),
