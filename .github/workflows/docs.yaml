@@ -6,7 +6,7 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yaml'
-      - 'docs/mkdocs.yml'
+      - 'mkdocs.yml'
 
 permissions:
   contents: write
