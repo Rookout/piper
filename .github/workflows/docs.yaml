@@ -22,7 +22,5 @@ jobs:
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
-#          CUSTOM_DOMAIN: optionaldomain.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG_FILE: docs/mkdocs.yaml
-          EXTRA_PACKAGES: build-base
