@@ -50,6 +50,8 @@ kubectl create secret generic piper-git-token --from-literal=token=YOUR_GIT_OKEN
 
 Piper will create a webhook configuration for you, for the whole organization or for each repo you configure.
 
+Configure `piper.webhook.url` the address of piper that exposed with ingress.
+
 For organization level configure: `gitProvider.webhook.orgLevel` to `true`.
 
 For granular repo webhook provide list of repos at: `gitProvider.webhook.repoList`. 
