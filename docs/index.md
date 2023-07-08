@@ -12,5 +12,3 @@ Piper is an open source project that aimed at providing multibranch pipeline fun
 To achieve multibranch pipeline functionality Piper will do the hard works for us.
 At initialization, it will load all configuration and create a webhook in repository or organization scope.
 Then each branch that have `.workflows` folder will create a Workflow CRD out of the files in this folder.
-
-To learn more go to, [Use piper](usage.md).
