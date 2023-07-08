@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/Rookout/piper/compare/v1.2.0...v1.3.0) (2023-07-08)
+
+
+### Features
+
+* add gracefull shutdown - RK-19184  ([#84](https://github.com/Rookout/piper/issues/84)) ([dcd514c](https://github.com/Rookout/piper/commit/dcd514c1a80ccf49dbd253f075dc8a225c5c8c35))
+* workflow status listener - RK-19190  ([#85](https://github.com/Rookout/piper/issues/85)) ([a8a470e](https://github.com/Rookout/piper/commit/a8a470e31b6a5b06ef6d75d8397ace96219b5ee6))
+
+
+### Bug Fixes
+
+* global parameters added and reorganized - RK-19161  ([#83](https://github.com/Rookout/piper/issues/83)) ([61c8fa0](https://github.com/Rookout/piper/commit/61c8fa053adb99b1423ceb4eef3b0dd465b1c5cf))
+
 ## [1.2.0](https://github.com/Rookout/piper/compare/v1.1.3...v1.2.0) (2023-07-02)
 
 
