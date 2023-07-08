@@ -37,8 +37,6 @@ jobs:
           shopt -s extglob
           rm -rf !(index.yaml|LICENSE|*.tgz)
           cp -R /tmp/docs/** .
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
           git add -A
           git commit -m "Publish docs from $GITHUB_SHA"
           git push https://github.com/$GITHUB_REPOSITORY.git gh-pages
