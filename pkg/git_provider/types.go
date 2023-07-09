@@ -22,7 +22,7 @@ type WebhookPayload struct {
 	PullRequestURL   string          `json:"pull_request_url"`
 	PullRequestTitle string          `json:"pull_request_title"`
 	DestBranch       string          `json:"dest_branch"`
-	Labels           []*github.Label `json:"event"`
+	Labels           []*github.Label `json:"Labels"`
 }
 
 type Client interface {
