@@ -20,3 +20,5 @@ The parameters taken from webhook metadata, and will be populated respectively t
 8. `{{ workflow.parameters.pull_request_url }}` the url of the pull request that triggered the workflow.
 
 9. `{{workflow.parameters.pull_request_title }}` the tile of the pull request that triggered the workflow.
+
+10. `{{workflow.parameters.pull_request_labels }}` comma seperated labels of the pull request that triggered the workflow.
