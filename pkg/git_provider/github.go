@@ -256,6 +256,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
+			Labels:           e.GetPullRequest().Labels,
 		}
 	}
 
