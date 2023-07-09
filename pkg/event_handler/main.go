@@ -9,8 +9,7 @@ import (
 	"log"
 )
 
-func Start(cfg *conf.GlobalConfig, clients *clients.Clients) {
-	ctx := context.Background() // TODO: use global context that initialized at main
+func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig, clients *clients.Clients) {
 	labelSelector := &metav1.LabelSelector{
 		MatchExpressions: []metav1.LabelSelectorRequirement{
 			{Key: "piper.rookout.com/notified",
