@@ -12,12 +12,7 @@ import (
 
 func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.RouterGroup) {
 	webhook := rg.Group("/webhook")
-
-	webhook.POST("ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "pong"})
-		return
-	})
-
+	
 	webhook.POST("", func(c *gin.Context) {
 		ctx := c.Copy().Request.Context()
 		webhookPayload, err := clients.GitProvider.HandlePayload(c.Request, []byte(cfg.GitProviderConfig.WebhookSecret))

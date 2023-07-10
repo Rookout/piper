@@ -125,7 +125,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 			if resp.StatusCode != 201 {
 				return fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
-			log.Printf("edited webhook of type %s for %s :%s\n", createdHook.GetType(), c.cfg.GitProviderConfig.OrgName, createdHook.GetURL())
+			log.Printf("edited webhook of type %s for %s name: %s\n", createdHook.GetType(), c.cfg.GitProviderConfig.OrgName, createdHook.Config["url"])
 			c.hooks = append(c.hooks, createdHook)
 		} else {
 			updatedHook, resp, err := c.client.Organizations.EditHook(
@@ -144,7 +144,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 					resp.StatusCode,
 				)
 			}
-			log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), c.cfg.GitProviderConfig.OrgName, updatedHook.GetURL())
+			log.Printf("edited webhook of type %s for %s: %s\n", updatedHook.GetType(), c.cfg.GitProviderConfig.OrgName, updatedHook.Config["url"])
 			c.hooks = append(c.hooks, updatedHook)
 		}
 
@@ -161,7 +161,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != 201 {
 					return fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-				log.Printf("created webhook of type %s for %s :%s\n", createdHook.GetType(), repo, createdHook.GetURL())
+				log.Printf("created webhook of type %s for %s: %s\n", createdHook.GetType(), repo, createdHook.Config["url"])
 				c.hooks = append(c.hooks, createdHook)
 			} else {
 				updatedHook, resp, err := c.client.Repositories.EditHook(ctx, c.cfg.GitProviderConfig.OrgName, repo, respHook.GetID(), hook)
@@ -171,7 +171,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 				if resp.StatusCode != http.StatusOK {
 					return fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", repo, resp.StatusCode)
 				}
-				log.Printf("edited webhook of type %s for %s :%s\n", updatedHook.GetType(), repo, updatedHook.GetURL())
+				log.Printf("edited webhook of type %s for %s: %s\n", updatedHook.GetType(), repo, updatedHook.Config["url"])
 				c.hooks = append(c.hooks, updatedHook)
 			}
 		}
