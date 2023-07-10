@@ -121,7 +121,10 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				}
 			}
 
-			var parameters *git_provider.CommitFile
+			parameters := &git_provider.CommitFile{
+				Path:    nil,
+				Content: nil,
+			}
 			if IsFileExists(ctx, wh, ".workflows", "parameters.yaml") {
 				parameters, err = wh.clients.GitProvider.GetFile(
 					ctx,
