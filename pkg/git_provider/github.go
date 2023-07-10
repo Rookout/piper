@@ -108,7 +108,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 			"content_type": "json",
 			"secret":       c.cfg.GitProviderConfig.WebhookSecret,
 		},
-		Events: []string{"push", "pull_request"},
+		Events: []string{"push", "pull_request", "create"},
 		Active: github.Bool(true),
 	}
 	if c.cfg.GitProviderConfig.OrgLevelWebhook {
@@ -252,11 +252,21 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Branch:           e.GetPullRequest().GetHead().GetRef(),
 			Commit:           e.GetPullRequest().GetHead().GetSHA(),
 			User:             e.GetPullRequest().GetUser().GetLogin(),
-			UserEmail:        e.GetPullRequest().GetUser().GetEmail(), // Not working. GitHub missing email for PR events in payload.
+			UserEmail:        e.GetSender().GetEmail(), // e.GetPullRequest().GetUser().GetEmail() Not working. GitHub missing email for PR events in payload.
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
 			Labels:           e.GetPullRequest().Labels,
+		}
+	case *github.CreateEvent:
+		webhookPayload = &WebhookPayload{
+			Event:     "create",
+			Action:    e.GetRefType(), // Possible values are: "repository", "branch", "tag".
+			Repo:      e.GetRepo().GetName(),
+			Branch:    e.GetRef(),
+			Commit:    e.GetRef(),
+			User:      e.GetSender().GetLogin(),
+			UserEmail: e.GetSender().GetEmail(),
 		}
 	}
 

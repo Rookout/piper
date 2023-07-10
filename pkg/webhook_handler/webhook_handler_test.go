@@ -9,6 +9,7 @@ import (
 	"github.com/rookout/piper/pkg/utils"
 	assertion "github.com/stretchr/testify/assert"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -65,7 +66,18 @@ func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch str
 }
 
 func (m *MockGitProvider) ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error) {
-	return nil, nil
+	var files []string
+
+	fullPath := fmt.Sprintf("%s/%s/%s/", repo, branch, path)
+
+	for key := range commitFileMap {
+		if strings.Contains(key, fullPath) {
+			trimmed := strings.Replace(key, fullPath, "", -1)
+			files = append(files, trimmed)
+		}
+	}
+
+	return files, nil
 }
 
 func (m *MockGitProvider) SetWebhook() error {
