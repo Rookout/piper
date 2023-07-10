@@ -83,7 +83,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				utils.AddPrefixToList(*trigger.OnStart, ".workflows/"),
 			)
 			if len(onStartFiles) == 0 {
-				return nil, fmt.Errorf("one or more of onStart: %s files found", *trigger.OnStart)
+				return nil, fmt.Errorf("one or more of onStart: %s files found in repo: %s branch %s", *trigger.OnStart, wh.Payload.Repo, wh.Payload.Branch)
 			}
 			if err != nil {
 				return nil, err
@@ -98,7 +98,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 					utils.AddPrefixToList(*trigger.OnExit, ".workflows/"),
 				)
 				if len(onExitFiles) == 0 {
-					log.Printf("onExist: %s files not found", *trigger.OnExit)
+					log.Printf("one or more of onExist: %s files not found in repo: %s branch %s", *trigger.OnExit, wh.Payload.Repo, wh.Payload.Branch)
 				}
 				if err != nil {
 					return nil, err
@@ -114,7 +114,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 					utils.AddPrefixToList(*trigger.Templates, ".workflows/"),
 				)
 				if len(templatesFiles) == 0 {
-					log.Printf("parameters: %s files not found", *trigger.Templates)
+					log.Printf("one or more of templates: %s files not found in repo: %s branch %s", *trigger.Templates, wh.Payload.Repo, wh.Payload.Branch)
 				}
 				if err != nil {
 					return nil, err
@@ -127,11 +127,11 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				wh.Payload.Branch,
 				".workflows/parameters.yaml",
 			)
-			if err != nil {
-				return nil, err
-			}
 			if parameters == nil {
 				log.Printf("parameters.yaml not found in repo: %s branch %s", wh.Payload.Repo, wh.Payload.Branch)
+			}
+			if err != nil {
+				return nil, err
 			}
 
 			workflowBatches = append(workflowBatches, &common.WorkflowsBatch{
@@ -145,7 +145,7 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 		}
 	}
 	if !triggered {
-		return nil, fmt.Errorf("no matching trigger found for %s in branch %s", wh.Payload.Event, wh.Payload.Branch)
+		return nil, fmt.Errorf("no matching trigger found for event: %s action: %s in branch :%s", wh.Payload.Event, wh.Payload.Action, wh.Payload.Branch)
 	}
 	return workflowBatches, nil
 }
