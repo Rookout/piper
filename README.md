@@ -37,5 +37,3 @@ Please check out our [Contribution guidelines for this project](docs/CONTRIBUTIN
 
 This project is licensed under the Apache License. Please see the [LICENSE](LICENSE) file for details.
 
-
-
