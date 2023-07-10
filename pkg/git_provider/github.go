@@ -263,6 +263,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Event:     "create",
 			Action:    e.GetRefType(), // Possible values are: "repository", "branch", "tag".
 			Repo:      e.GetRepo().GetName(),
+			Branch:    e.GetRef(),
 			Commit:    e.GetRef(),
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetSender().GetEmail(),
