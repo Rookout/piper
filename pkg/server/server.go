@@ -46,7 +46,7 @@ func (s *Server) registerMiddlewares() {
 
 func (s *Server) getRoutes() {
 	v1 := s.router.Group("/")
-	routes.AddHealthRoutes(v1)
+	routes.AddHealthRoutes(s.config, s.clients, v1)
 	routes.AddWebhookRoutes(s.config, s.clients, v1)
 }
 

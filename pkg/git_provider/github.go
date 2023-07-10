@@ -297,3 +297,34 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
 	return nil
 }
+
+func (c *GithubClientImpl) PingHooks(ctx *context.Context) error {
+
+	if c.cfg.OrgLevelWebhook {
+		for _, hook := range c.hooks {
+			resp, err := c.client.Organizations.PingHook(*ctx, c.cfg.OrgName, *hook.ID)
+			if err != nil {
+				return err
+			}
+
+			if resp.StatusCode == http.StatusNotFound {
+				return err
+			}
+		}
+	} else {
+		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
+			for _, hook := range c.hooks {
+				resp, err := c.client.Repositories.PingHook(*ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
+				if err != nil {
+					return err
+				}
+
+				if resp.StatusCode == http.StatusNotFound {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
