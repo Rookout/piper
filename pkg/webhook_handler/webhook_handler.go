@@ -121,17 +121,19 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 				}
 			}
 
-			parameters, err := wh.clients.GitProvider.GetFile(
-				ctx,
-				wh.Payload.Repo,
-				wh.Payload.Branch,
-				".workflows/parameters.yaml",
-			)
-			if parameters == nil {
+			var parameters *git_provider.CommitFile
+			if IsFileExists(ctx, wh, ".workflows", "parameters.yaml") {
+				parameters, err = wh.clients.GitProvider.GetFile(
+					ctx,
+					wh.Payload.Repo,
+					wh.Payload.Branch,
+					".workflows/parameters.yaml",
+				)
+				if err != nil {
+					return nil, err
+				}
+			} else {
 				log.Printf("parameters.yaml not found in repo: %s branch %s", wh.Payload.Repo, wh.Payload.Branch)
-			}
-			if err != nil {
-				return nil, err
 			}
 
 			workflowBatches = append(workflowBatches, &common.WorkflowsBatch{
