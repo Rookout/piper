@@ -12,7 +12,7 @@ import (
 
 func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.RouterGroup) {
 	webhook := rg.Group("/webhook")
-	
+
 	webhook.POST("", func(c *gin.Context) {
 		ctx := c.Copy().Request.Context()
 		webhookPayload, err := clients.GitProvider.HandlePayload(c.Request, []byte(cfg.GitProviderConfig.WebhookSecret))
@@ -45,7 +45,7 @@ func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.
 			err = clients.Workflows.HandleWorkflowBatch(&ctx, wf)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				log.Printf("failed to handle workflow, error: %v", err)
+				log.Printf("failed to handle workflow, error: %v", err) //Muli
 				return
 			}
 		}
