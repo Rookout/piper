@@ -40,5 +40,4 @@ func (h *HealthChecker) Handle(healthCheck *healthCheck) {
 	//if err != nil {
 	//	log.Printf("error in pinging hooks %s", err)
 	//}
-
 }
