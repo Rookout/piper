@@ -44,7 +44,7 @@ func (wh *WebhookHandlerImpl) RegisterTriggers(ctx *context.Context) error {
 		return fmt.Errorf("failed to get triggers content: %v", err)
 	}
 
-	log.Printf("triggers content is: \n %s \n", *triggers.Content)
+	log.Printf("triggers content is: \n %s \n", *triggers.Content) // DEBUG
 
 	err = yaml.Unmarshal([]byte(*triggers.Content), wh.Triggers)
 	if err != nil {
