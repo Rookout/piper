@@ -298,17 +298,28 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	return nil
 }
 
-func (c *GithubClientImpl) PingHooks(ctx *context.Context) error {
-
+func (c *GithubClientImpl) PingHooks(ctx *context.Context) ([]*FailedHooks, error) {
+	var failedHooks []*FailedHooks
+	foundFailedHook := false
 	if c.cfg.OrgLevelWebhook {
 		for _, hook := range c.hooks {
 			resp, err := c.client.Organizations.PingHook(*ctx, c.cfg.OrgName, *hook.ID)
 			if err != nil {
-				return err
+				failedHook := &FailedHooks{
+					Hook: hook,
+					Err:  err,
+				}
+				failedHooks = append(failedHooks, failedHook)
+				foundFailedHook = true
 			}
 
 			if resp.StatusCode == http.StatusNotFound {
-				return err
+				failedHook := &FailedHooks{
+					Hook: hook,
+					Err:  fmt.Errorf("unable to find organization webhook for hook %s", hook.Config["url"]),
+				}
+				failedHooks = append(failedHooks, failedHook)
+				foundFailedHook = true
 			}
 		}
 	} else {
@@ -316,15 +327,29 @@ func (c *GithubClientImpl) PingHooks(ctx *context.Context) error {
 			for _, hook := range c.hooks {
 				resp, err := c.client.Repositories.PingHook(*ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.ID)
 				if err != nil {
-					return err
+					failedHook := &FailedHooks{
+						Hook: hook,
+						Err:  err,
+					}
+					failedHooks = append(failedHooks, failedHook)
+					foundFailedHook = true
 				}
 
 				if resp.StatusCode == http.StatusNotFound {
-					return err
+					failedHook := &FailedHooks{
+						Hook: hook,
+						Err:  fmt.Errorf("unable to find repo webhook for repo:%s hook: %s", repo, hook.Config["url"]),
+					}
+					failedHooks = append(failedHooks, failedHook)
+					foundFailedHook = true
 				}
 			}
 		}
 	}
 
-	return nil
+	if foundFailedHook {
+		return failedHooks, fmt.Errorf("found failed hook %s", failedHooks)
+	}
+
+	return failedHooks, nil
 }

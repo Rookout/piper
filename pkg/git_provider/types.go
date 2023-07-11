@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+type FailedHooks struct {
+	Hook *github.Hook
+	Err  error
+}
+
 type CommitFile struct {
 	Path    *string `json:"path"`
 	Content *string `json:"content"`
@@ -33,5 +38,5 @@ type Client interface {
 	UnsetWebhook(ctx *context.Context) error
 	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
 	SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error
-	PingHooks(ctx *context.Context) error
+	PingHooks(ctx *context.Context) ([]*FailedHooks, error)
 }

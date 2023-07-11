@@ -1,40 +1,44 @@
 package server
 
-type Health interface {
-	check(msg healthCheck) error
-	recovery(msg healthCheck) error
-	failure(msg healthCheck) error
-}
+import (
+	"github.com/rookout/piper/pkg/clients"
+	"golang.org/x/net/context"
+)
 
 type healthCheck struct {
-	id string
+	id  int64
+	ctx *context.Context
 }
 
 type HealthChecker struct {
-	Check    chan *healthCheck
-	Recovery chan *healthCheck
-	Failure  chan *healthCheck
+	clients *clients.Clients
+	Check   chan *healthCheck
+	Failure chan *healthCheck
 }
 
-func NewHealthChecker() *HealthChecker {
+func NewHealthChecker(clients *clients.Clients) *HealthChecker {
 	return &HealthChecker{
-		Check:    make(chan *healthCheck),
-		Recovery: make(chan *healthCheck),
-		Failure:  make(chan *healthCheck),
+		clients: clients,
+		Check:   make(chan *healthCheck),
+		Failure: make(chan *healthCheck),
 	}
 }
 
-func (h *HealthChecker) check(msg *healthCheck) error {
+func (h *HealthChecker) New(msg *healthCheck) error {
 	h.Check <- msg
 	return nil
 }
 
-func (h *HealthChecker) recovery(msg *healthCheck) error {
-	h.Recovery <- msg
+func (h *HealthChecker) Fail(msg *healthCheck) error {
+	h.Failure <- msg
 	return nil
 }
 
-func (h *HealthChecker) failure(msg *healthCheck) error {
-	h.Failure <- msg
-	return nil
+func (h *HealthChecker) Handle(healthCheck *healthCheck) {
+	//log.Printf("Health check started of: %d\n", healthCheck.id)
+	//failedHooks, err := h.clients.GitProvider.PingHooks(healthCheck.ctx)
+	//if err != nil {
+	//	log.Printf("error in pinging hooks %s", err)
+	//}
+
 }

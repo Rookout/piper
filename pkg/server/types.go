@@ -19,3 +19,10 @@ type Interface interface {
 	getRoutes()
 	ListenAndServe() *http.Server
 }
+
+type Health interface {
+	Check(msg healthCheck) error
+	Recover(msg healthCheck) error
+	Fail(msg healthCheck) error
+	handler() error
+}
