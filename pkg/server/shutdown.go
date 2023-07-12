@@ -33,7 +33,7 @@ func (s *gracefulShutdown) Shutdown(httpServer *http.Server, clients *clients.Cl
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err := clients.GitProvider.UnsetWebhook(&ctx)
+	err := clients.GitProvider.UnsetWebhooks(&ctx)
 	if err != nil {
 		log.Println("Unset webhook error: ", err) // ERROR
 	}

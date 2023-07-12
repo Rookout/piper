@@ -9,14 +9,14 @@ import (
 
 func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig, clients *clients.Clients) {
 
-	srv := NewServer(cfg, clients)
-	gracefulShutdownHandler := NewGracefulShutdown(ctx, stop)
-	httpServer := srv.ListenAndServe()
-
-	err := clients.GitProvider.SetWebhook()
+	err := clients.GitProvider.SetWebhooks()
 	if err != nil {
 		panic(err)
 	}
+
+	srv := NewServer(cfg, clients)
+	gracefulShutdownHandler := NewGracefulShutdown(ctx, stop)
+	httpServer := srv.ListenAndServe()
 
 	gracefulShutdownHandler.Shutdown(httpServer, clients)
 

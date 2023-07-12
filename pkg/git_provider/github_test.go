@@ -193,3 +193,454 @@ func TestSetStatus(t *testing.T) {
 	}
 
 }
+
+func TestSetWebhook(t *testing.T) {
+	// Prepare
+	ctx := context.Background()
+	assert := assertion.New(t)
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	hookUrl := "https://url"
+	hooksList := []*github.Hook{
+		&github.Hook{
+			ID:     utils.IPtr(123),
+			Name:   utils.SPtr("web"),
+			Active: utils.BPtr(true),
+			Events: []string{"pull_request", "create", "push"},
+			Config: map[string]interface{}{
+				"url": hookUrl,
+			},
+		},
+	}
+
+	// Existing webhook org
+	mux.HandleFunc("/orgs/test/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusOK)
+			jsonBytes, _ = json.Marshal(hooksList)
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/orgs/test/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	// Not existing webhook org
+	mux.HandleFunc("/orgs/test2/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/orgs/test2/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	// Existing webhook repo
+	mux.HandleFunc("/repos/test/test-repo1/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusOK)
+			jsonBytes, _ = json.Marshal(hooksList)
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/repos/test/test-repo1/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	// Not existing webhook repo
+	mux.HandleFunc("/repos/test/test-repo2/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/repos/test/test-repo2/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	c := GithubClientImpl{
+		client: client,
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{},
+		},
+	}
+
+	// Define test cases
+	tests := []struct {
+		name        string
+		repo        *string
+		config      *conf.GitProviderConfig
+		wantedError error
+	}{
+		{
+			name: "Set repo webhook",
+			repo: utils.SPtr("test-repo1"),
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				RepoList:        "test-repo1",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Create repo webhook",
+			repo: utils.SPtr("test-repo1"),
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				RepoList:        "test-repo2",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Set org webhook",
+			repo: nil,
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: true,
+				OrgName:         "test",
+				RepoList:        "",
+				WebhookURL:      hookUrl,
+				WebhookSecret:   "test-secret",
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Create org webhook",
+			repo: nil,
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: true,
+				OrgName:         "test2",
+				RepoList:        "",
+				WebhookURL:      hookUrl,
+				WebhookSecret:   "test-secret",
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Set org with given repo",
+			repo: utils.SPtr("test-repo1"),
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: true,
+				OrgName:         "test",
+				RepoList:        "test-repo1",
+				WebhookURL:      hookUrl,
+				WebhookSecret:   "test-secret",
+			},
+			wantedError: errors.New("some error"),
+		},
+	}
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c.cfg.GitProviderConfig = *test.config
+			// Call the function being tested
+			hook, err := c.SetWebhook(&ctx, test.repo)
+
+			// Use assert to check the equality of the error
+			if test.wantedError != nil {
+				assert.NotNil(err)
+			} else {
+				assert.Nil(err)
+				assert.Equal(hookUrl, hook.Config["url"])
+			}
+		})
+	}
+
+}
+
+func TestSetWebhooks(t *testing.T) {
+	// Prepare
+	assert := assertion.New(t)
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	hookUrl := "https://url"
+	hooksList := []*github.Hook{
+		&github.Hook{
+			ID:     utils.IPtr(123),
+			Name:   utils.SPtr("web"),
+			Active: utils.BPtr(true),
+			Events: []string{"pull_request", "create", "push"},
+			Config: map[string]interface{}{
+				"url": hookUrl,
+			},
+		},
+	}
+
+	// Test-repo2 existing webhook
+	mux.HandleFunc("/repos/test/test-repo1/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusOK)
+			jsonBytes, _ = json.Marshal(hooksList)
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/repos/test/test-repo1/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	// Test-repo2 not existing webhook
+	mux.HandleFunc("/repos/test/test-repo2/hooks", func(w http.ResponseWriter, r *http.Request) {
+		var jsonBytes []byte
+		if r.Method == "POST" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusCreated)
+			jsonBytes, _ = json.Marshal(hooksList[0])
+		}
+
+		if r.Method == "GET" {
+			testFormValues(t, r, values{})
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	mux.HandleFunc("/repos/test/test-repo2/hooks/123", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "PATCH")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusOK)
+		jsonBytes, _ := json.Marshal(hooksList[0])
+		_, _ = fmt.Fprint(w, string(jsonBytes))
+	})
+
+	c := GithubClientImpl{
+		client: client,
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{},
+		},
+	}
+
+	// Define test cases
+	tests := []struct {
+		name        string
+		repo        *string
+		config      *conf.GitProviderConfig
+		wantedError error
+	}{
+		{
+			name: "Set repo webhook",
+			repo: utils.SPtr("test-repo1"),
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				RepoList:        "test-repo1,test-repo2",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Set not existing repo webhook",
+			repo: utils.SPtr("test-repo1"),
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				RepoList:        "not-exists",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: errors.New("some error"),
+		},
+	}
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c.cfg.GitProviderConfig = *test.config
+			// Call the function being tested
+			err := c.SetWebhooks()
+
+			// Use assert to check the equality of the error
+			if test.wantedError != nil {
+				assert.NotNil(err)
+			} else {
+				assert.Nil(err)
+			}
+		})
+	}
+
+}
+
+func TestPingHook(t *testing.T) {
+	// Prepare
+	ctx := context.Background()
+	assert := assertion.New(t)
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	hookUrl := "https://url"
+	orgHooksList := []*HookWithStatus{
+		{
+			Hook: &github.Hook{
+				ID:     utils.IPtr(123),
+				Name:   utils.SPtr("web"),
+				Active: utils.BPtr(true),
+				Events: []string{"pull_request", "create", "push"},
+				Config: map[string]interface{}{
+					"url": hookUrl,
+				},
+			},
+			Status:   nil,
+			RepoName: nil,
+		},
+	}
+
+	repoHooksList := []*HookWithStatus{
+		{
+			Hook: &github.Hook{
+				ID:     utils.IPtr(234),
+				Name:   utils.SPtr("web"),
+				Active: utils.BPtr(true),
+				Events: []string{"pull_request", "create", "push"},
+				Config: map[string]interface{}{
+					"url": hookUrl,
+				},
+			},
+			Status:   nil,
+			RepoName: utils.SPtr("test-repo1"),
+		},
+	}
+	// Test-repo2 existing webhook
+	mux.HandleFunc("/repos/test/test-repo1/hooks/234/pings", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusNoContent)
+		return
+	})
+
+	mux.HandleFunc("/orgs/test/hooks/123/pings", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusNoContent)
+		return
+	})
+
+	c := GithubClientImpl{
+		hooks:  []*HookWithStatus{},
+		client: client,
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{},
+		},
+	}
+
+	// Define test cases
+	tests := []struct {
+		name        string
+		repo        *string
+		hooks       []*HookWithStatus
+		config      *conf.GitProviderConfig
+		wantedError error
+	}{
+		{
+			name:  "Ping repo webhook",
+			hooks: repoHooksList,
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+			},
+			wantedError: nil,
+		},
+		{
+			name:  "Ping org webhook",
+			hooks: orgHooksList,
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: true,
+				OrgName:         "test",
+			},
+			wantedError: nil,
+		},
+	}
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c.hooks = test.hooks
+			c.cfg.GitProviderConfig = *test.config
+			// Call the function being tested
+			err := c.PingHooks(&ctx)
+
+			// Use assert to check the equality of the error
+			if test.wantedError != nil {
+				assert.NotNil(err)
+			} else {
+				assert.Nil(err)
+			}
+		})
+	}
+
+}

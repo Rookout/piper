@@ -3,6 +3,7 @@ package event_handler
 import (
 	"context"
 	"errors"
+	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/git_provider"
 	assertion "github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,11 +29,15 @@ func (m *mockGitProvider) ListFiles(ctx *context.Context, repo string, branch st
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetWebhook() error {
+func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*github.Hook, error) {
+	return nil, nil
+}
+
+func (m *mockGitProvider) SetWebhooks() error {
 	return nil
 }
 
-func (m *mockGitProvider) UnsetWebhook(ctx *context.Context) error {
+func (m *mockGitProvider) UnsetWebhooks(ctx *context.Context) error {
 	return nil
 }
 
@@ -41,6 +46,14 @@ func (m *mockGitProvider) HandlePayload(request *http.Request, secret []byte) (*
 }
 
 func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	return nil
+}
+
+func (m *mockGitProvider) PingHook(ctx *context.Context, hook git_provider.HookWithStatus) error {
+	return nil
+}
+
+func (m *mockGitProvider) PingHooks(ctx *context.Context) error {
 	return nil
 }
 
