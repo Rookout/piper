@@ -7,9 +7,9 @@ import (
 )
 
 type HookWithStatus struct {
-	Hook     *github.Hook
-	Status   error
-	RepoName *string
+	Hook         *github.Hook
+	HealthStatus bool
+	RepoName     *string
 }
 
 type CommitFile struct {
@@ -28,7 +28,8 @@ type WebhookPayload struct {
 	PullRequestURL   string          `json:"pull_request_url"`
 	PullRequestTitle string          `json:"pull_request_title"`
 	DestBranch       string          `json:"dest_branch"`
-	Labels           []*github.Label `json:"Labels"`
+	Labels           []*github.Label `json:"labels"`
+	HookID           int64           `json:"hookID"`
 }
 
 type Client interface {
@@ -42,4 +43,5 @@ type Client interface {
 	SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error
 	PingHook(ctx *context.Context, hook HookWithStatus) error
 	PingHooks(ctx *context.Context) error
+	GetHooks() []*HookWithStatus
 }

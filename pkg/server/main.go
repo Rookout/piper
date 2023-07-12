@@ -13,10 +13,10 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 	if err != nil {
 		panic(err)
 	}
-
 	srv := NewServer(cfg, clients)
 	gracefulShutdownHandler := NewGracefulShutdown(ctx, stop)
 	httpServer := srv.ListenAndServe()
+	srv.webhookReconcile.ServeAndListen(ctx)
 
 	gracefulShutdownHandler.Shutdown(httpServer, clients)
 

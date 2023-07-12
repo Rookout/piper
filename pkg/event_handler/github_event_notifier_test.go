@@ -57,6 +57,10 @@ func (m *mockGitProvider) PingHooks(ctx *context.Context) error {
 	return nil
 }
 
+func (m *mockGitProvider) GetHooks() []*git_provider.HookWithStatus {
+	return nil
+}
+
 func TestNotify(t *testing.T) {
 	assert := assertion.New(t)
 	ctx := context.Background()

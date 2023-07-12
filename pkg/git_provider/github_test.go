@@ -556,8 +556,8 @@ func TestPingHook(t *testing.T) {
 					"url": hookUrl,
 				},
 			},
-			Status:   nil,
-			RepoName: nil,
+			HealthStatus: true,
+			RepoName:     nil,
 		},
 	}
 
@@ -572,8 +572,8 @@ func TestPingHook(t *testing.T) {
 					"url": hookUrl,
 				},
 			},
-			Status:   nil,
-			RepoName: utils.SPtr("test-repo1"),
+			HealthStatus: true,
+			RepoName:     utils.SPtr("test-repo1"),
 		},
 	}
 	// Test-repo2 existing webhook
@@ -581,14 +581,12 @@ func TestPingHook(t *testing.T) {
 		testMethod(t, r, "POST")
 		testFormValues(t, r, values{})
 		w.WriteHeader(http.StatusNoContent)
-		return
 	})
 
 	mux.HandleFunc("/orgs/test/hooks/123/pings", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 		testFormValues(t, r, values{})
 		w.WriteHeader(http.StatusNoContent)
-		return
 	})
 
 	c := GithubClientImpl{

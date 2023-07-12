@@ -163,7 +163,7 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				return nil, fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", *repo, resp.StatusCode)
 			}
 			log.Printf("created webhook of type %s for %s: %s\n", createdHook.GetType(), *repo, createdHook.Config["url"])
-			c.hooks = append(c.hooks, &HookWithStatus{Hook: createdHook, Status: nil, RepoName: repo})
+			c.hooks = append(c.hooks, &HookWithStatus{Hook: createdHook, HealthStatus: true, RepoName: repo})
 			return createdHook, nil
 		} else {
 			updatedHook, resp, err := c.client.Repositories.EditHook(*ctx, c.cfg.GitProviderConfig.OrgName, *repo, respHook.GetID(), hookConf)
@@ -178,8 +178,6 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 		}
 
 	}
-
-	return nil, fmt.Errorf("didn't set any hook with unknown reason")
 }
 
 func (c *GithubClientImpl) SetWebhooks() error {
@@ -191,7 +189,7 @@ func (c *GithubClientImpl) SetWebhooks() error {
 		}
 
 		log.Printf("edited webhook of type %s for %s name: %s\n", hook.GetType(), c.cfg.GitProviderConfig.OrgName, hook.Config["url"])
-		c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, Status: nil})
+		c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, HealthStatus: true})
 		return nil
 	} else {
 		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
@@ -200,7 +198,7 @@ func (c *GithubClientImpl) SetWebhooks() error {
 				return err
 			}
 			log.Printf("edited webhook of type %s for %s: %s\n", hook.GetType(), repo, hook.Config["url"])
-			c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, Status: nil, RepoName: &repo})
+			c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, HealthStatus: true, RepoName: &repo})
 
 		}
 	}
@@ -259,8 +257,9 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 	switch e := event.(type) {
 	case *github.PingEvent:
 		webhookPayload = &WebhookPayload{
-			Event: "ping",
-			Repo:  e.GetRepo().GetFullName(),
+			Event:  "ping",
+			Repo:   e.GetRepo().GetFullName(),
+			HookID: e.GetHookID(),
 		}
 	case *github.PushEvent:
 		webhookPayload = &WebhookPayload{
@@ -362,4 +361,8 @@ func (c *GithubClientImpl) PingHooks(ctx *context.Context) error {
 	}
 
 	return nil
+}
+
+func (c *GithubClientImpl) GetHooks() []*HookWithStatus {
+	return c.hooks
 }

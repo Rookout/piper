@@ -5,15 +5,17 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/server/routes"
+	"github.com/rookout/piper/pkg/webhook_reconcile"
 	"log"
 	"net/http"
 )
 
 func NewServer(config *conf.GlobalConfig, clients *clients.Clients) *Server {
 	srv := &Server{
-		router:  gin.New(),
-		config:  config,
-		clients: clients,
+		router:           gin.New(),
+		config:           config,
+		clients:          clients,
+		webhookReconcile: webhook_reconcile.NewWebhookReconcile(config, clients),
 	}
 
 	return srv
@@ -46,8 +48,8 @@ func (s *Server) registerMiddlewares() {
 
 func (s *Server) getRoutes() {
 	v1 := s.router.Group("/")
-	routes.AddHealthRoutes(s.config, s.clients, v1)
-	routes.AddWebhookRoutes(s.config, s.clients, v1)
+	routes.AddHealthRoutes(s.config, s.clients, v1, s.webhookReconcile)
+	routes.AddWebhookRoutes(s.config, s.clients, v1, s.webhookReconcile)
 }
 
 func (s *Server) ListenAndServe() *http.Server {
