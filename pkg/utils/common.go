@@ -122,6 +122,10 @@ func BPtr(b bool) *bool {
 	return &b
 }
 
+func IPtr(i int64) *int64 {
+	return &i
+}
+
 func ValidateHTTPFormat(input string) bool {
 	regex := `^(https?://)([\w-]+(\.[\w-]+)*)(:\d+)?(/[\w-./?%&=]*)?$`
 	match, _ := regexp.MatchString(regex, input)

@@ -48,11 +48,6 @@ func main() {
 		Workflows:   workflows,
 	}
 
-	err = globalClients.GitProvider.SetWebhook()
-	if err != nil {
-		panic(err)
-	}
-
 	// Create context that listens for the interrupt signal from the OS.
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

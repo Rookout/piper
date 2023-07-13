@@ -67,16 +67,16 @@ spec:
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 10
-            timeoutSeconds: 1
-            periodSeconds: 4
+            timeoutSeconds: 10
+            periodSeconds: 60
             successThreshold: 1
             failureThreshold: 4
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /readyz
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 10
+            initialDelaySeconds: 2
             timeoutSeconds: 1
             periodSeconds: 4
             successThreshold: 1
