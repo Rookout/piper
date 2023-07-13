@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/Rookout/piper/compare/v1.3.0...v1.4.0) (2023-07-13)
+
+
+### Features
+
+* add tag handler - RK-19248  ([#92](https://github.com/Rookout/piper/issues/92)) ([925dbc5](https://github.com/Rookout/piper/commit/925dbc5ebb8ab59f1d5a821235dade36f6f47a33))
+
+
+### Bug Fixes
+
+* add labels as comma seprated list in global parameters - RK-19217  ([#89](https://github.com/Rookout/piper/issues/89)) ([88e1126](https://github.com/Rookout/piper/commit/88e11267b8e6878b99ce9261b29967100c219657))
+* pull request url to html url ([#97](https://github.com/Rookout/piper/issues/97)) ([4c5f6fd](https://github.com/Rookout/piper/commit/4c5f6fd23dc37fe23a781da59c3723b79ac2dc88))
+* retry and resumbit notifiction fix ([#96](https://github.com/Rookout/piper/issues/96)) ([4d6c815](https://github.com/Rookout/piper/commit/4d6c8152cc5456d6c55b3f1843029259cd23c7fb))
+* server managing improvements - RK-19210  ([#88](https://github.com/Rookout/piper/issues/88)) ([af763d4](https://github.com/Rookout/piper/commit/af763d4e1411e29f96c0d22a90099e87ea5e526c))
+
 ## [1.3.0](https://github.com/Rookout/piper/compare/v1.2.0...v1.3.0) (2023-07-08)
 
 
