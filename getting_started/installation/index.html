@@ -671,11 +671,12 @@ Piper will create a CRD that Argo Workflows will pick, so install or configure P
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>piper<span class="w"> </span>piper/piper<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-f<span class="w"> </span>YOUR_VALUES_FILE.yaml
 </code></pre></div></p>
+<hr />
 <h2 id="required-configuration">Required Configuration</h2>
 <h3 id="ingress">Ingress</h3>
 <p>Piper should listen to webhooks from your git provider. Checkout <a href="https://github.com/Rookout/piper/tree/main/helm-chart/values.yaml">values.yaml</a> for <code>ingress</code></p>
 <h3 id="git">Git</h3>
-<p>piper will use git for fetching <code>.workflows</code> folder and receiving events using webhooks.</p>
+<p>Piper will use git for fetching <code>.workflows</code> folder and receiving events using webhooks.</p>
 <p>To pick which git provider you are using provide <code>gitProvider.name</code> configuration in helm chart (Now only supports GitHub).</p>
 <p>Also configure you organization name using <code>gitProvider.organization.name</code> in helm chart.</p>
 <h4 id="git-token-permissions">Git Token Permissions</h4>
@@ -698,6 +699,7 @@ The key should be name <code>token</code>. Can be created using
 <p>Piper will handle status checks for you. 
 It will notify the GitProvider for the status of Workflow for specific commit that triggered the Piper.
 For linking provide valid URL of your Argo Workflows server address at: <code>argoWorkflows.server.address</code></p>
+<hr />
 <h3 id="argo-workflow-server-on-development">Argo Workflow Server (On development)</h3>
 <p>Piper will use REST API to communicate with Argo Workflows server for linting or for creation of workflows (ARGO_WORKFLOWS_CREATE_CRD). Please follow this <a href="https://argoproj.github.io/argo-workflows/rest-api/">configuration</a>.</p>
 <p>To lint the workflow before submitting it, please configure the internal address of Argo Workflows server (for example, <code>argo-server.workflows.svc.cluster.local</code>) in the field: <code>argoWorkflows.server.address</code>. Argo will need a <a href="https://argoproj.github.io/argo-workflows/access-token/">token</a> to authenticate. please provide the secret in <code>argoWorkflows.server.token</code>, Better to pass as a references to a secret in the field <code>argoWorkflows.server.token</code>.</p>

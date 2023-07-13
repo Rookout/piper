@@ -463,8 +463,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#helm-chart" class="md-nav__link">
-    Helm Chart
+  <a href="#helm-chart-development" class="md-nav__link">
+    Helm Chart Development
   </a>
   
 </li>
@@ -550,8 +550,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#helm-chart" class="md-nav__link">
-    Helm Chart
+  <a href="#helm-chart-development" class="md-nav__link">
+    Helm Chart Development
   </a>
   
 </li>
@@ -636,7 +636,7 @@
 <li>Add new packages only if necessary and already existing one, can't be used.</li>
 <li>Add tests for new features or modification.</li>
 </ul>
-<h2 id="helm-chart">Helm Chart</h2>
+<h2 id="helm-chart-development">Helm Chart Development</h2>
 <p>To make sure that the documentation is updated use <a href="https://github.com/norwoodj/helm-docs">helm-docs</a> comment convention. The pipeline will execute <code>helm-docs</code> command and update the version of the chart.</p>
 <p>Also, please make sure to run those commands locally to debug the chart before merging:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>make<span class="w"> </span>helm
@@ -645,15 +645,20 @@
 <p>To make it easy to develop locally, please run the following</p>
 <p>Prerequisites :
 1. install helm
-2. install kubectl
-3. isntall docker
-4. install ngrok
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>brew<span class="w"> </span>install<span class="w"> </span>ngrok
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>brew<span class="w"> </span>install<span class="w"> </span>helm
 </code></pre></div>
-5. install docker
-6. install kind
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>brew<span class="w"> </span>install<span class="w"> </span>kind
-</code></pre></div></p>
+2. install kubectl
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>brew<span class="w"> </span>install<span class="w"> </span>kubectl
+</code></pre></div>
+3. isntall docker</p>
+<ol>
+<li>install ngrok
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>brew<span class="w"> </span>install<span class="w"> </span>ngrok
+</code></pre></div></li>
+<li>install 5
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>brew<span class="w"> </span>install<span class="w"> </span>kind
+</code></pre></div></li>
+</ol>
 <p>Deployment:
 1. make sure docker are running. 
 2. create tunnel with ngrok using <code>make ngrok</code>, save the <code>Forwarding</code> address.

@@ -553,11 +553,11 @@
   <h1>Workflows config</h1>
 
 <h2 id="workflow-configuration">Workflow Configuration</h2>
-<p>Piper can inject configuration for Workflows Piper will create.</p>
+<p>Piper can inject configuration for Workflows that Piper creates.</p>
 <p><code>default</code> config used as a convention for all Workflows that piper will create, even if not explicitly mentioned in triggers.yaml file.</p>
 <h3 id="configmap">ConfigMap</h3>
 <p>Piper will mount a configMap when helm used.
-<code>piper.workflowsConfig</code> will create a configMap that hold set of configuration for Piper.
+<code>piper.workflowsConfig</code> variable in helm chart, will create a configMap that hold set of configuration for Piper.
 Here is an <a href="https://github.com/Rookout/piper/tree/main/examples/config.yaml">examples</a> of such configuration.</p>
 <h3 id="spec">Spec</h3>
 <p>This will be injected to Workflow spec field. can hold all configuration of the Workflow. </p>
