@@ -91,33 +91,3 @@ package webhook_creator
 //	return nil, fmt.Errorf("hook with hoodID:%d not found", *hookID)
 //}
 //
-
-//
-//func (wr *WebhookReconcileImpl) ServeAndListen(ctx context.Context) {
-//	defer close(wr.hookIDHealthChan)
-//	defer close(wr.hookIDRecoverChan)
-//	defer wr.Stop()
-//	go func() {
-//		for {
-//			select {
-//			case <-ctx.Done():
-//				return
-//			case <-wr.stopCh:
-//				return
-//			case hookID := <-wr.hookIDHealthChan:
-//				if hookID != nil {
-//					log.Printf("set health status for hook id: %d", hookID)
-//					wr.Healthy(hookID)
-//				}
-//			case hookID := <-wr.hookIDRecoverChan:
-//				if hookID != nil {
-//					log.Printf("recover health for hook id: %d", hookID)
-//					err := wr.RecoverHook(hookID)
-//					if err != nil {
-//						return
-//					}
-//				}
-//			}
-//		}
-//	}()
-//}
