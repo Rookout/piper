@@ -28,11 +28,6 @@ func NewWebhookReconcile(cfg *conf.GlobalConfig, clients *clients.Clients) *Webh
 	return wr
 }
 
-func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig, clients *clients.Clients) {
-	wr := NewWebhookReconcile(cfg, clients)
-	go wr.ServeAndListen(ctx)
-}
-
 func (wr *WebhookReconcileImpl) RecoverHook(hookID *int64) error {
 	ctx := context.Background()
 	hook, err := wr.getHook(hookID)
