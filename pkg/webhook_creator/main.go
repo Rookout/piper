@@ -7,19 +7,22 @@ import (
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
 	"golang.org/x/net/context"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type WebhookCreatorImpl struct {
 	clients *clients.Clients
 	cfg     *conf.GlobalConfig
-	hooks   []*git_provider.HookWithStatus
+	hooks   map[int64]*git_provider.HookWithStatus
 }
 
 func NewWebhookCreator(cfg *conf.GlobalConfig, clients *clients.Clients) *WebhookCreatorImpl {
 	wr := &WebhookCreatorImpl{
 		clients: clients,
 		cfg:     cfg,
+		hooks:   make(map[int64]*git_provider.HookWithStatus, 0),
 	}
 
 	err := wr.setWebhooks()
@@ -48,7 +51,7 @@ func (wc *WebhookCreatorImpl) SetHealth(status bool, hookID *int64) error {
 	for _, hook := range wc.hooks {
 		if *hook.HookID == *hookID {
 			hook.HealthStatus = status
-			log.Printf("set health status to %b for hook id: %d", status, *hookID)
+			log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
 			return nil
 		}
 	}
@@ -65,7 +68,7 @@ func (wc *WebhookCreatorImpl) setWebhooks() error {
 		if err != nil {
 			return err
 		}
-		wc.hooks = append(wc.hooks, hook)
+		wc.hooks[*hook.HookID] = hook
 	}
 
 	return nil
@@ -90,16 +93,17 @@ func (wc *WebhookCreatorImpl) Stop(ctx *context.Context) {
 }
 
 func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
+	log.Printf("Starting webhook diagnostics")
 	wc.setAllHooksHealth(false)
 	wc.pingHooks(ctx)
-	for _, hook := range wc.hooks {
+	wc.checkHooksHealth(5 * time.Second)
+	for hookID, hook := range wc.hooks {
 		if !hook.HealthStatus {
-			log.Printf("Trying to recover hook %d", hook.HookID)
+			log.Printf("Trying to recover hook %d", hookID)
 			err := wc.recoverHook(ctx, hook.HookID)
 			if err != nil {
 				return err
 			}
-			return fmt.Errorf("failed webhook diagnosis: hook %d is not healthy", hook.HookID)
 		}
 	}
 	log.Print("Successful webhook diagnosis")
@@ -107,14 +111,14 @@ func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
 }
 
 func (wc *WebhookCreatorImpl) pingHooks(ctx *context.Context) {
-	for _, hook := range wc.hooks {
+	for hookID, hook := range wc.hooks {
 		err := wc.clients.GitProvider.PingHook(ctx, hook)
 		if err != nil {
 			log.Printf("failed to ping hook: %v", err)
-			log.Printf("Trying to recover hook %d", hook.HookID)
-			err = wc.recoverHook(ctx, hook.HookID)
+			log.Printf("Trying to recover from ping hook %d", hookID)
+			err = wc.recoverHook(ctx, &hookID)
 			if err != nil {
-				log.Printf("failed recover hookID:%d got error:%s", hook.HookID, err)
+				log.Printf("failed recover hookID:%d got error:%s", hookID, err)
 			}
 		}
 	}
@@ -123,5 +127,31 @@ func (wc *WebhookCreatorImpl) setAllHooksHealth(status bool) {
 	for _, hook := range wc.hooks {
 		hook.HealthStatus = status
 	}
-	log.Printf("set all hooks health status for to %b", status)
+	log.Printf("set all hooks health status for to %s", strconv.FormatBool(status))
+}
+
+func (wc *WebhookCreatorImpl) checkHooksHealth(timeout time.Duration) bool {
+	startTime := time.Now()
+
+	for {
+		allHealthy := true
+		for _, hook := range wc.hooks {
+			if !hook.HealthStatus {
+				allHealthy = false
+				break
+			}
+		}
+
+		if allHealthy {
+			return true
+		}
+
+		if time.Since(startTime) >= timeout {
+			break
+		}
+
+		time.Sleep(1 * time.Second) // Adjust the sleep duration as per your requirement
+	}
+
+	return false
 }

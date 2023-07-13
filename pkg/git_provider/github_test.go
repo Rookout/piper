@@ -411,110 +411,86 @@ func TestSetWebhook(t *testing.T) {
 
 }
 
-//
-//func TestPingHook(t *testing.T) {
-//	// Prepare
-//	ctx := context.Background()
-//	assert := assertion.New(t)
-//	client, mux, _, teardown := setup()
-//	defer teardown()
-//
-//	//hookUrl := "https://url"
-//	orgHooksList := []*HookWithStatus{
-//		{
-//			HookID: utils.IPtr(123),
-//			//Hook: &github.Hook{
-//			//	ID:     utils.IPtr(123),
-//			//	Name:   utils.SPtr("web"),
-//			//	Active: utils.BPtr(true),
-//			//	Events: []string{"pull_request", "create", "push"},
-//			//	Config: map[string]interface{}{
-//			//		"url": hookUrl,
-//			//	},
-//			//},
-//			HealthStatus: true,
-//			RepoName:     nil,
-//		},
-//	}
-//
-//	repoHooksList := []*HookWithStatus{
-//		{
-//			HookID: utils.IPtr(234),
-//			//Hook: &github.Hook{
-//			//	ID:     utils.IPtr(234),
-//			//	Name:   utils.SPtr("web"),
-//			//	Active: utils.BPtr(true),
-//			//	Events: []string{"pull_request", "create", "push"},
-//			//	Config: map[string]interface{}{
-//			//		"url": hookUrl,
-//			//	},
-//			//},
-//			HealthStatus: true,
-//			RepoName:     utils.SPtr("test-repo1"),
-//		},
-//	}
-//	// Test-repo2 existing webhook
-//	mux.HandleFunc("/repos/test/test-repo1/hooks/234/pings", func(w http.ResponseWriter, r *http.Request) {
-//		testMethod(t, r, "POST")
-//		testFormValues(t, r, values{})
-//		w.WriteHeader(http.StatusNoContent)
-//	})
-//
-//	mux.HandleFunc("/orgs/test/hooks/123/pings", func(w http.ResponseWriter, r *http.Request) {
-//		testMethod(t, r, "POST")
-//		testFormValues(t, r, values{})
-//		w.WriteHeader(http.StatusNoContent)
-//	})
-//
-//	c := GithubClientImpl{
-//		client: client,
-//		cfg: &conf.GlobalConfig{
-//			GitProviderConfig: conf.GitProviderConfig{},
-//		},
-//	}
-//
-//	// Define test cases
-//	tests := []struct {
-//		name        string
-//		repo        *string
-//		hooks       []*HookWithStatus
-//		config      *conf.GitProviderConfig
-//		wantedError error
-//	}{
-//		{
-//			name:  "Ping repo webhook",
-//			hooks: repoHooksList,
-//			config: &conf.GitProviderConfig{
-//				OrgLevelWebhook: false,
-//				OrgName:         "test",
-//			},
-//			wantedError: nil,
-//		},
-//		{
-//			name:  "Ping org webhook",
-//			hooks: orgHooksList,
-//			config: &conf.GitProviderConfig{
-//				OrgLevelWebhook: true,
-//				OrgName:         "test",
-//			},
-//			wantedError: nil,
-//		},
-//	}
-//	// Run test cases
-//	for _, test := range tests {
-//		t.Run(test.name, func(t *testing.T) {
-//			c.hooks = test.hooks
-//			c.cfg.GitProviderConfig = *test.config
-//			// Call the function being tested
-//			err := c.PingHooks(&ctx)
-//
-//			// Use assert to check the equality of the error
-//			if test.wantedError != nil {
-//				assert.NotNil(err)
-//			} else {
-//				assert.Nil(err)
-//			}
-//		})
-//	}
-//
-//}
+func TestPingHook(t *testing.T) {
+	// Prepare
+	ctx := context.Background()
+	assert := assertion.New(t)
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	hookUrl := "https://url"
+
+	// Test-repo2 existing webhook
+	mux.HandleFunc("/repos/test/test-repo1/hooks/234/pings", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	mux.HandleFunc("/orgs/test/hooks/123/pings", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		testFormValues(t, r, values{})
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	c := GithubClientImpl{
+		client: client,
+		cfg: &conf.GlobalConfig{
+			GitProviderConfig: conf.GitProviderConfig{},
+		},
+	}
+
+	// Define test cases
+	tests := []struct {
+		name        string
+		repo        *string
+		hook        *HookWithStatus
+		config      *conf.GitProviderConfig
+		wantedError error
+	}{
+		{
+			name: "Ping repo webhook",
+			hook: &HookWithStatus{
+				HookID:       utils.IPtr(234),
+				HealthStatus: true,
+				RepoName:     utils.SPtr("test-repo1"),
+			},
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: false,
+				OrgName:         "test",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: nil,
+		},
+		{
+			name: "Ping org webhook",
+			hook: &HookWithStatus{
+				HookID:       utils.IPtr(123),
+				HealthStatus: true,
+				RepoName:     nil,
+			},
+			config: &conf.GitProviderConfig{
+				OrgLevelWebhook: true,
+				OrgName:         "test",
+				WebhookURL:      hookUrl,
+			},
+			wantedError: nil,
+		},
+	}
+	// Run test cases
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c.cfg.GitProviderConfig = *test.config
+			// Call the function being tested
+			err := c.PingHook(&ctx, test.hook)
+
+			// Use assert to check the equality of the error
+			if test.wantedError != nil {
+				assert.NotNil(err)
+			} else {
+				assert.Nil(err)
+			}
+		})
+	}
+
+}
