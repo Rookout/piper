@@ -5,5 +5,7 @@ import "golang.org/x/net/context"
 type WebhookCreator interface {
 	Stop(ctx *context.Context)
 	Start()
-	SetToHealthy(hookID *int64) error
+	SetHealth(status bool, hookID *int64) error
+	RunDiagnosis() error
+	ReportHookStatus(healthy bool, hookID *int64) error
 }

@@ -296,7 +296,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	return nil
 }
 
-func (c *GithubClientImpl) PingHook(ctx *context.Context, hook HookWithStatus) error {
+func (c *GithubClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) error {
 	if c.cfg.OrgLevelWebhook && hook.RepoName != nil {
 		return fmt.Errorf("trying to ping repo scope webhook while configured for org level webhook. repo: %s", *hook.RepoName)
 	}

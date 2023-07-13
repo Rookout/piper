@@ -44,11 +44,7 @@ func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *
 	return nil
 }
 
-func (m *mockGitProvider) PingHook(ctx *context.Context, hook git_provider.HookWithStatus) error {
-	return nil
-}
-
-func (m *mockGitProvider) PingHooks(ctx *context.Context) error {
+func (m *mockGitProvider) PingHook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
 	return nil
 }
 
