@@ -1,12 +1,12 @@
 ## Workflow Configuration
 
-Piper can inject configuration for Workflows Piper will create.
+Piper can inject configuration for Workflows that Piper creates.
 
 `default` config used as a convention for all Workflows that piper will create, even if not explicitly mentioned in triggers.yaml file.
 
 ### ConfigMap
 Piper will mount a configMap when helm used.
-`piper.workflowsConfig` will create a configMap that hold set of configuration for Piper.
+`piper.workflowsConfig` variable in helm chart, will create a configMap that hold set of configuration for Piper.
 Here is an [examples](https://github.com/Rookout/piper/tree/main/examples/config.yaml) of such configuration.
 
 ### Spec

@@ -61,6 +61,6 @@ Can be passed explicitly, or will use `deafault` configuration.
 
 ###  parameters.yaml (convention name)
 Will hold a list of global parameters of the Workflow. 
-can be referenced from any template with `{{ workflow.parameters.___ }}.
+can be referenced from any template with `{{ workflow.parameters.___ }}.`
 
 [Example](https://github.com/Rookout/piper/tree/main/examples/.workflows/parameters.yaml)

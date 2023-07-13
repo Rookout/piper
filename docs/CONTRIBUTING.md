@@ -53,7 +53,7 @@ To maintain a consistent codebase and ensure readability, we follow a set of cod
 * Add new packages only if necessary and already existing one, can't be used.
 * Add tests for new features or modification.
 
-## Helm Chart 
+## Helm Chart Development
 
 To make sure that the documentation is updated use [helm-docs](https://github.com/norwoodj/helm-docs) comment convention. The pipeline will execute `helm-docs` command and update the version of the chart.
 
@@ -69,14 +69,20 @@ To make it easy to develop locally, please run the following
 
 Prerequisites :
 1. install helm
+```bash
+brew install helm
+```
 2. install kubectl
+```bash
+brew install kubectl
+```
 3. isntall docker
+
 4. install ngrok
 ```bash
 brew install ngrok
 ```
-5. install docker
-6. install kind
+6. install 5
 ```bash
 brew install kind
 ```
