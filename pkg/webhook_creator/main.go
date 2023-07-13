@@ -25,12 +25,15 @@ func NewWebhookCreator(cfg *conf.GlobalConfig, clients *clients.Clients) *Webhoo
 		hooks:   make(map[int64]*git_provider.HookWithStatus, 0),
 	}
 
-	err := wr.setWebhooks()
+	return wr
+}
+
+func (wc *WebhookCreatorImpl) Start() {
+	err := wc.setWebhooks()
 	if err != nil {
 		log.Print(err)
 		panic("failed in initializing webhooks")
 	}
-	return wr
 }
 
 func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID *int64) error {
@@ -48,13 +51,22 @@ func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID *int64) e
 }
 
 func (wc *WebhookCreatorImpl) SetHealth(status bool, hookID *int64) error {
-	hook, ok := wc.hooks[*hookID]
-	if !ok {
-		return fmt.Errorf("unable to set health status for hookID %d", *hookID)
+	//hook, ok := wc.hooks[*hookID]
+	//if !ok {
+	//	return fmt.Errorf("unable to find hookID: %d in internal hooks map %v", *hookID, wc.hooks)
+	//}
+	//hook.HealthStatus = status
+	//log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
+	//return nil
+
+	for _, hook := range wc.hooks {
+		if *hook.HookID == *hookID {
+			hook.HealthStatus = status
+			log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
+			return nil
+		}
 	}
-	hook.HealthStatus = status
-	log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
-	return nil
+	return fmt.Errorf("unable to find hookID: %d in internal hooks map %v", *hookID, wc.hooks)
 }
 
 func (wc *WebhookCreatorImpl) setWebhooks() error {
