@@ -7,24 +7,23 @@ import (
 	"github.com/rookout/piper/pkg/git_provider"
 	"golang.org/x/net/context"
 	"log"
-	"time"
 )
 
 type WebhookReconcileImpl struct {
-	clients     *clients.Clients
-	cfg         *conf.GlobalConfig
-	healthChan  chan *git_provider.HookWithStatus
-	recoverChan chan *git_provider.HookWithStatus
-	stopCh      chan struct{}
+	clients           *clients.Clients
+	cfg               *conf.GlobalConfig
+	hookIDHealthChan  chan *int64
+	hookIDRecoverChan chan *int64
+	stopCh            chan struct{}
 }
 
 func NewWebhookReconcile(cfg *conf.GlobalConfig, clients *clients.Clients) *WebhookReconcileImpl {
 	wr := &WebhookReconcileImpl{
-		clients:     clients,
-		cfg:         cfg,
-		healthChan:  make(chan *git_provider.HookWithStatus),
-		recoverChan: make(chan *git_provider.HookWithStatus),
-		stopCh:      make(chan struct{}),
+		clients:           clients,
+		cfg:               cfg,
+		hookIDHealthChan:  make(chan *int64),
+		hookIDRecoverChan: make(chan *int64),
+		stopCh:            make(chan struct{}),
 	}
 	return wr
 }
@@ -34,8 +33,12 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 	go wr.ServeAndListen(ctx)
 }
 
-func (wr *WebhookReconcileImpl) RecoverHook(hook *git_provider.HookWithStatus) error {
+func (wr *WebhookReconcileImpl) RecoverHook(hookID *int64) error {
 	ctx := context.Background()
+	hook, err := wr.getHook(hookID)
+	if err != nil {
+		return err
+	}
 	if hook.HealthStatus {
 		return nil
 	}
@@ -54,17 +57,17 @@ func (wr *WebhookReconcileImpl) RunTest() error {
 		hook.HealthStatus = false
 		err := wr.clients.GitProvider.PingHook(&ctx, *hook)
 		if err != nil {
+			log.Printf("[webhook tests] error: %s", err)
 			log.Printf("[webhook tests] sending %v to recoveryChan", hook)
-			wr.recoverChan <- hook
+			wr.hookIDRecoverChan <- hook.Hook.ID
 		}
 	}
-	time.Sleep(5 * time.Second) // wait for results
+
 	for _, hook := range wr.clients.GitProvider.GetHooks() {
 		if !hook.HealthStatus {
 			return fmt.Errorf("[webhook tests] hook %v is not healthy", hook)
 		}
 	}
-
 	return nil
 }
 
@@ -73,18 +76,27 @@ func (wr *WebhookReconcileImpl) Stop() {
 }
 
 func (wr *WebhookReconcileImpl) Healthy(hookID *int64) error {
+	hook, err := wr.getHook(hookID)
+	if err != nil {
+		return err
+	}
+
+	hook.HealthStatus = true
+	return nil
+}
+
+func (wr *WebhookReconcileImpl) getHook(hookID *int64) (*git_provider.HookWithStatus, error) {
 	for _, hook := range wr.clients.GitProvider.GetHooks() {
 		if *hook.Hook.ID == *hookID {
-			hook.HealthStatus = true
-			return nil
+			return hook, nil
 		}
 	}
-	return fmt.Errorf("hook not found for hookdID %d", hookID)
+	return nil, fmt.Errorf("hook with hoodID:%d not found", *hookID)
 }
 
 func (wr *WebhookReconcileImpl) ServeAndListen(ctx context.Context) {
-	defer close(wr.healthChan)
-	defer close(wr.recoverChan)
+	defer close(wr.hookIDHealthChan)
+	defer close(wr.hookIDRecoverChan)
 	defer wr.Stop()
 	go func() {
 		for {
@@ -93,16 +105,15 @@ func (wr *WebhookReconcileImpl) ServeAndListen(ctx context.Context) {
 				return
 			case <-wr.stopCh:
 				return
-			case event := <-wr.healthChan:
-				if event != nil {
-					log.Printf("set health status: %v", event)
-					event.HealthStatus = true
+			case hookID := <-wr.hookIDHealthChan:
+				if hookID != nil {
+					log.Printf("set health status for hook id: %d", hookID)
+					wr.Healthy(hookID)
 				}
-
-			case event := <-wr.recoverChan:
-				if event != nil {
-					log.Printf("recover health for: %v", event)
-					err := wr.RecoverHook(event)
+			case hookID := <-wr.hookIDRecoverChan:
+				if hookID != nil {
+					log.Printf("recover health for hook id: %d", hookID)
+					err := wr.RecoverHook(hookID)
 					if err != nil {
 						return
 					}
