@@ -9,16 +9,15 @@ import (
 
 func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig, clients *clients.Clients) {
 
-	err := clients.GitProvider.SetWebhooks()
-	if err != nil {
-		panic(err)
-	}
 	srv := NewServer(cfg, clients)
 	gracefulShutdownHandler := NewGracefulShutdown(ctx, stop)
 	httpServer := srv.ListenAndServe()
-	srv.webhookReconcile.ServeAndListen(ctx)
+	err := srv.webhookCreator.SetWebhooks()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	gracefulShutdownHandler.Shutdown(httpServer, clients)
+	gracefulShutdownHandler.Shutdown(httpServer, srv.webhookCreator)
 
 	log.Println("Server exiting")
 }

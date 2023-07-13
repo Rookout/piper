@@ -3,7 +3,6 @@ package webhook_handler
 import (
 	"context"
 	"fmt"
-	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/common"
 	"github.com/rookout/piper/pkg/git_provider"
@@ -81,15 +80,11 @@ func (m *mockGitProvider) ListFiles(ctx *context.Context, repo string, branch st
 	return files, nil
 }
 
-func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*github.Hook, error) {
+func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*git_provider.HookWithStatus, error) {
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetWebhooks() error {
-	return nil
-}
-
-func (m *mockGitProvider) UnsetWebhooks(ctx *context.Context) error {
+func (m *mockGitProvider) UnsetWebhook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
 	return nil
 }
 

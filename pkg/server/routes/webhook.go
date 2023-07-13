@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"github.com/rookout/piper/pkg/webhook_reconcile"
 	"log"
 	"net/http"
 
@@ -11,7 +10,7 @@ import (
 	webhookHandler "github.com/rookout/piper/pkg/webhook_handler"
 )
 
-func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.RouterGroup, wr *webhook_reconcile.WebhookReconcileImpl) {
+func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.RouterGroup) {
 	webhook := rg.Group("/webhook")
 
 	webhook.POST("", func(c *gin.Context) {
@@ -24,11 +23,6 @@ func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.
 		}
 
 		if webhookPayload.Event == "ping" {
-			err = wr.Healthy(&webhookPayload.HookID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
-				return
-			}
 			c.JSON(http.StatusOK, gin.H{"status": "ok"})
 			return
 		}

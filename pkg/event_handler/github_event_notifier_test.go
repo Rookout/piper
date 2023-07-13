@@ -3,7 +3,6 @@ package event_handler
 import (
 	"context"
 	"errors"
-	"github.com/google/go-github/v52/github"
 	"github.com/rookout/piper/pkg/git_provider"
 	assertion "github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -29,15 +28,11 @@ func (m *mockGitProvider) ListFiles(ctx *context.Context, repo string, branch st
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*github.Hook, error) {
+func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*git_provider.HookWithStatus, error) {
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetWebhooks() error {
-	return nil
-}
-
-func (m *mockGitProvider) UnsetWebhooks(ctx *context.Context) error {
+func (m *mockGitProvider) UnsetWebhook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
 	return nil
 }
 
@@ -197,12 +192,12 @@ func TestNotify(t *testing.T) {
 			Namespace:   "test-namespace",
 		},
 	}
-	clients := &clients.Clients{
+	globalClients := &clients.Clients{
 		GitProvider: &mockGitProvider{},
 	}
 
 	// Create a new githubNotifier instance
-	gn := NewGithubEventNotifier(cfg, clients)
+	gn := NewGithubEventNotifier(cfg, globalClients)
 
 	// Call the Notify method
 

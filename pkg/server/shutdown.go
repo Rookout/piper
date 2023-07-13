@@ -1,26 +1,26 @@
 package server
 
 import (
-	"github.com/rookout/piper/pkg/clients"
+	"github.com/rookout/piper/pkg/webhook_creator"
 	"golang.org/x/net/context"
 	"log"
 	"net/http"
 	"time"
 )
 
-type gracefulShutdown struct {
+type GracefulShutdown struct {
 	ctx  context.Context
 	stop context.CancelFunc
 }
 
-func NewGracefulShutdown(ctx context.Context, stop context.CancelFunc) *gracefulShutdown {
-	return &gracefulShutdown{
+func NewGracefulShutdown(ctx context.Context, stop context.CancelFunc) *GracefulShutdown {
+	return &GracefulShutdown{
 		ctx:  ctx,
 		stop: stop,
 	}
 }
 
-func (s *gracefulShutdown) Shutdown(httpServer *http.Server, clients *clients.Clients) {
+func (s *GracefulShutdown) Shutdown(httpServer *http.Server, webhookCreator *webhook_creator.WebhookCreatorImpl) {
 	// Listen for the interrupt signal.
 	<-s.ctx.Done()
 
@@ -33,9 +33,9 @@ func (s *gracefulShutdown) Shutdown(httpServer *http.Server, clients *clients.Cl
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err := clients.GitProvider.UnsetWebhooks(&ctx)
+	err := webhookCreator.UnsetWebhooks()
 	if err != nil {
-		log.Println("Unset webhook error: ", err) // ERROR
+		log.Printf("failed to unset webhooks")
 	}
 
 	err = httpServer.Shutdown(ctx)

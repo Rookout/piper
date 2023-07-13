@@ -16,7 +16,6 @@ import (
 type GithubClientImpl struct {
 	client *github.Client
 	cfg    *conf.GlobalConfig
-	hooks  []*HookWithStatus
 }
 
 func NewGithubClient(cfg *conf.GlobalConfig) (Client, error) {
@@ -31,7 +30,6 @@ func NewGithubClient(cfg *conf.GlobalConfig) (Client, error) {
 	return &GithubClientImpl{
 		client: client,
 		cfg:    cfg,
-		hooks:  []*HookWithStatus{},
 	}, err
 }
 
@@ -100,7 +98,7 @@ func (c *GithubClientImpl) GetFiles(ctx *context.Context, repo string, branch st
 	return commitFiles, nil
 }
 
-func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*github.Hook, error) {
+func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*HookWithStatus, error) {
 	if c.cfg.OrgLevelWebhook && repo != nil {
 		return nil, fmt.Errorf("trying to set repo scope. repo: %s", *repo)
 	}
@@ -130,7 +128,8 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				return nil, fmt.Errorf("failed to create org level webhhok, API returned %d", resp.StatusCode)
 			}
 			log.Printf("edited webhook of type %s for %s name: %s\n", createdHook.GetType(), c.cfg.GitProviderConfig.OrgName, createdHook.Config["url"])
-			return createdHook, nil
+			hookID := createdHook.GetID()
+			return &HookWithStatus{HookID: &hookID, HealthStatus: true, RepoName: repo}, nil
 		} else {
 			updatedHook, resp, err := c.client.Organizations.EditHook(
 				*ctx,
@@ -149,7 +148,8 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				)
 			}
 			log.Printf("edited webhook of type %s for %s: %s\n", updatedHook.GetType(), c.cfg.GitProviderConfig.OrgName, updatedHook.Config["url"])
-			return updatedHook, nil
+			hookID := updatedHook.GetID()
+			return &HookWithStatus{HookID: &hookID, HealthStatus: true, RepoName: repo}, nil
 		}
 	} else {
 		respHook, ok := isRepoWebhookEnabled(*ctx, c, *repo)
@@ -163,7 +163,8 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				return nil, fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", *repo, resp.StatusCode)
 			}
 			log.Printf("created webhook of type %s for %s: %s\n", createdHook.GetType(), *repo, createdHook.Config["url"])
-			return createdHook, nil
+			hookID := createdHook.GetID()
+			return &HookWithStatus{HookID: &hookID, HealthStatus: true, RepoName: repo}, nil
 		} else {
 			updatedHook, resp, err := c.client.Repositories.EditHook(*ctx, c.cfg.GitProviderConfig.OrgName, *repo, respHook.GetID(), hookConf)
 			if err != nil {
@@ -173,67 +174,38 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				return nil, fmt.Errorf("failed to update repo level webhhok for %s, API returned %d", *repo, resp.StatusCode)
 			}
 			log.Printf("edited webhook of type %s for %s: %s\n", updatedHook.GetType(), *repo, updatedHook.Config["url"])
-			return updatedHook, nil
+			hookID := updatedHook.GetID()
+			return &HookWithStatus{HookID: &hookID, HealthStatus: true, RepoName: repo}, nil
 		}
 
 	}
 }
 
-func (c *GithubClientImpl) SetWebhooks() error {
-	ctx := context.Background()
-	if c.cfg.GitProviderConfig.OrgLevelWebhook {
-		hook, err := c.SetWebhook(&ctx, nil)
+func (c *GithubClientImpl) UnsetWebhook(ctx *context.Context, hook *HookWithStatus) error {
+
+	if hook.RepoName == nil {
+
+		resp, err := c.client.Organizations.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.HookID)
+
 		if err != nil {
 			return err
 		}
 
-		log.Printf("edited webhook of type %s for %s name: %s\n", hook.GetType(), c.cfg.GitProviderConfig.OrgName, hook.Config["url"])
-		c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, HealthStatus: true})
-		return nil
+		if resp.StatusCode != 204 {
+			return fmt.Errorf("failed to delete org level webhhok, API call returned %d", resp.StatusCode)
+		}
+		log.Printf("removed org webhook, hookID :%d\n", *hook.HookID) // INFO
 	} else {
-		for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
-			hook, err := c.SetWebhook(&ctx, &repo)
-			if err != nil {
-				return err
-			}
-			log.Printf("edited webhook of type %s for %s: %s\n", hook.GetType(), repo, hook.Config["url"])
-			c.hooks = append(c.hooks, &HookWithStatus{Hook: hook, HealthStatus: true, RepoName: &repo})
+		resp, err := c.client.Repositories.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.RepoName, *hook.HookID)
 
+		if err != nil {
+			return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", *hook.RepoName, resp.StatusCode, err)
 		}
-	}
 
-	return nil
-}
-
-func (c *GithubClientImpl) UnsetWebhooks(ctx *context.Context) error {
-
-	for _, hook := range c.hooks {
-		if c.cfg.GitProviderConfig.OrgLevelWebhook {
-
-			resp, err := c.client.Organizations.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.Hook.ID)
-
-			if err != nil {
-				return err
-			}
-
-			if resp.StatusCode != 204 {
-				return fmt.Errorf("failed to delete org level webhhok, API call returned %d", resp.StatusCode)
-			}
-
-		} else {
-			for _, repo := range strings.Split(c.cfg.GitProviderConfig.RepoList, ",") {
-				resp, err := c.client.Repositories.DeleteHook(*ctx, c.cfg.GitProviderConfig.OrgName, repo, *hook.Hook.ID)
-
-				if err != nil {
-					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d. %s", repo, resp.StatusCode, err)
-				}
-
-				if resp.StatusCode != 204 {
-					return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d", repo, resp.StatusCode)
-				}
-			}
+		if resp.StatusCode != 204 {
+			return fmt.Errorf("failed to delete repo level webhhok for %s, API call returned %d", *hook.RepoName, resp.StatusCode)
 		}
-		log.Printf("removed hook:%s\n", hook.Hook.GetURL()) // INFO
+		log.Printf("removed repo webhook, repo:%s hookID :%d\n", *hook.RepoName, *hook.HookID) // INFO
 	}
 
 	return nil
@@ -329,39 +301,24 @@ func (c *GithubClientImpl) PingHook(ctx *context.Context, hook HookWithStatus) e
 		return fmt.Errorf("trying to ping repo scope webhook while configured for org level webhook. repo: %s", *hook.RepoName)
 	}
 	if hook.RepoName == nil {
-		resp, err := c.client.Organizations.PingHook(*ctx, c.cfg.OrgName, *hook.Hook.ID)
+		resp, err := c.client.Organizations.PingHook(*ctx, c.cfg.OrgName, *hook.HookID)
 		if err != nil {
 			return err
 		}
 
 		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("unable to find organization webhook for hook %s", hook.Hook.Config["url"])
+			return fmt.Errorf("unable to find organization webhook for hookID: %d", *hook.HookID)
 		}
 	} else {
-		resp, err := c.client.Repositories.PingHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.RepoName, *hook.Hook.ID)
+		resp, err := c.client.Repositories.PingHook(*ctx, c.cfg.GitProviderConfig.OrgName, *hook.RepoName, *hook.HookID)
 		if err != nil {
 			return err
 		}
 
 		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("unable to find repo webhook for repo:%s hook: %s", *hook.RepoName, hook.Hook.Config["url"])
+			return fmt.Errorf("unable to find repo webhook for repo:%s hookID: %d", *hook.RepoName, *hook.HookID)
 		}
 	}
 
 	return nil
-}
-
-func (c *GithubClientImpl) PingHooks(ctx *context.Context) error {
-	for _, hook := range c.hooks {
-		err := c.PingHook(ctx, *hook)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (c *GithubClientImpl) GetHooks() []*HookWithStatus {
-	return c.hooks
 }
