@@ -163,7 +163,6 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*gith
 				return nil, fmt.Errorf("failed to create repo level webhhok for %s, API returned %d", *repo, resp.StatusCode)
 			}
 			log.Printf("created webhook of type %s for %s: %s\n", createdHook.GetType(), *repo, createdHook.Config["url"])
-			c.hooks = append(c.hooks, &HookWithStatus{Hook: createdHook, HealthStatus: true, RepoName: repo})
 			return createdHook, nil
 		} else {
 			updatedHook, resp, err := c.client.Repositories.EditHook(*ctx, c.cfg.GitProviderConfig.OrgName, *repo, respHook.GetID(), hookConf)

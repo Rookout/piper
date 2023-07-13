@@ -17,7 +17,6 @@ func AddHealthRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.R
 		err := wr.RunTest()
 		if err != nil {
 			log.Printf("failed health check: %s", err)
-			return
 		}
 		c.JSON(http.StatusOK, "healthy")
 	})
