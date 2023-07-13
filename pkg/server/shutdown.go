@@ -33,12 +33,9 @@ func (s *GracefulShutdown) Shutdown(httpServer *http.Server, webhookCreator *web
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err := webhookCreator.UnsetWebhooks()
-	if err != nil {
-		log.Printf("failed to unset webhooks")
-	}
+	webhookCreator.Shutdown()
 
-	err = httpServer.Shutdown(ctx)
+	err := httpServer.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("Server forced to shutdown: ", err)
 	}

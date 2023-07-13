@@ -2,6 +2,7 @@ package webhook_creator
 
 import (
 	"fmt"
+	"github.com/emicklei/go-restful/v3/log"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
@@ -53,4 +54,11 @@ func (wc *WebhookCreatorImpl) UnsetWebhooks() error {
 	}
 
 	return nil
+}
+
+func (wc *WebhookCreatorImpl) Shutdown() {
+	err := wc.UnsetWebhooks()
+	if err != nil {
+		log.Printf("Failed to unset webhooks, error: %v", err)
+	}
 }
