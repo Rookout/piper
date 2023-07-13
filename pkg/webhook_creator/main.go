@@ -39,12 +39,6 @@ func (wc *WebhookCreatorImpl) Start() {
 		for {
 			select {
 			case <-wc.stopChan.C:
-				log.Printf("Deleting webhooks")
-				close(wc.hookIDHealthChan)
-				err := wc.unsetWebhooks()
-				if err != nil {
-					log.Printf("Failed to unset webhooks, error: %v", err)
-				}
 				return
 			case hookID := <-wc.hookIDHealthChan:
 				if hookID != nil {
@@ -54,6 +48,16 @@ func (wc *WebhookCreatorImpl) Start() {
 			}
 		}
 	}()
+}
+
+func (wc *WebhookCreatorImpl) SetToHealthy(hookID *int64) error {
+	for _, hook := range wc.hooks {
+		if *hook.HookID == *hookID {
+			hook.HealthStatus = true
+			return nil
+		}
+	}
+	return fmt.Errorf("unable to set health status for hookID %d", hookID)
 }
 
 func (wc *WebhookCreatorImpl) setWebhooks() error {
@@ -72,22 +76,22 @@ func (wc *WebhookCreatorImpl) setWebhooks() error {
 	return nil
 }
 
-func (wc *WebhookCreatorImpl) unsetWebhooks() error {
-	ctx := context.Background()
-	if wc.cfg.GitProviderConfig.OrgLevelWebhook && len(wc.cfg.GitProviderConfig.RepoList) != 0 {
-		return fmt.Errorf("org level webhook wanted but provided repositories list")
-	}
-	for _, repo := range strings.Split(wc.cfg.GitProviderConfig.RepoList, ",") {
-		hook, err := wc.clients.GitProvider.SetWebhook(&ctx, &repo)
+func (wc *WebhookCreatorImpl) unsetWebhooks(ctx *context.Context) error {
+	for _, hook := range wc.hooks {
+		err := wc.clients.GitProvider.UnsetWebhook(ctx, hook)
 		if err != nil {
 			return err
 		}
-		wc.hooks = append(wc.hooks, hook)
 	}
 
 	return nil
 }
 
-func (wc *WebhookCreatorImpl) Stop() {
+func (wc *WebhookCreatorImpl) Stop(ctx *context.Context) {
 	wc.stopChan.C <- struct{}{}
+	close(wc.hookIDHealthChan)
+	err := wc.unsetWebhooks(ctx)
+	if err != nil {
+		log.Printf("Failed to unset webhooks, error: %v", err)
+	}
 }

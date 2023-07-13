@@ -33,7 +33,7 @@ func (s *GracefulShutdown) Shutdown(httpServer *http.Server, webhookCreator *web
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	webhookCreator.Stop()
+	webhookCreator.Stop(&ctx)
 
 	err := httpServer.Shutdown(ctx)
 	if err != nil {
