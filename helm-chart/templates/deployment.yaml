@@ -67,7 +67,7 @@ spec:
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             periodSeconds: 60
             successThreshold: 1
             failureThreshold: 4
@@ -76,7 +76,7 @@ spec:
               path: /readyz
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             timeoutSeconds: 1
             periodSeconds: 4
             successThreshold: 1

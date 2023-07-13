@@ -48,14 +48,13 @@ func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID *int64) e
 }
 
 func (wc *WebhookCreatorImpl) SetHealth(status bool, hookID *int64) error {
-	for _, hook := range wc.hooks {
-		if *hook.HookID == *hookID {
-			hook.HealthStatus = status
-			log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
-			return nil
-		}
+	hook, ok := wc.hooks[*hookID]
+	if !ok {
+		return fmt.Errorf("unable to set health status for hookID %d", *hookID)
 	}
-	return fmt.Errorf("unable to set health status for hookID %d", *hookID)
+	hook.HealthStatus = status
+	log.Printf("set health status to %s for hook id: %d", strconv.FormatBool(status), *hookID)
+	return nil
 }
 
 func (wc *WebhookCreatorImpl) setWebhooks() error {
@@ -96,7 +95,7 @@ func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
 	log.Printf("Starting webhook diagnostics")
 	wc.setAllHooksHealth(false)
 	wc.pingHooks(ctx)
-	wc.checkHooksHealth(5 * time.Second)
+	wc.checkHooksHealth(10 * time.Second)
 	for hookID, hook := range wc.hooks {
 		if !hook.HealthStatus {
 			log.Printf("Trying to recover hook %d", hookID)
