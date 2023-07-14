@@ -24,7 +24,7 @@ func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.
 		}
 
 		if webhookPayload.Event == "ping" {
-			err = wc.SetHealth(true, &webhookPayload.HookID)
+			err = wc.SetWebhookHealth(webhookPayload.HookID, true)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			}
