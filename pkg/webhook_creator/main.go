@@ -48,7 +48,11 @@ func (wc *WebhookCreatorImpl) setWebhook(hookID int64, healthStatus bool, repoNa
 func (wc *WebhookCreatorImpl) getWebhook(hookID int64) *git_provider.HookWithStatus {
 	wc.mu.Lock()
 	defer wc.mu.Unlock()
-	return wc.hooks[hookID]
+	hook, ok := wc.hooks[hookID]
+	if !ok {
+		return nil
+	}
+	return hook
 }
 
 func (wc *WebhookCreatorImpl) deleteWebhook(hookID int64) {
@@ -101,8 +105,6 @@ func (wc *WebhookCreatorImpl) Stop(ctx *context.Context) {
 }
 
 func (wc *WebhookCreatorImpl) deleteWebhooks(ctx *context.Context) error {
-	wc.mu.Lock()
-	defer wc.mu.Unlock()
 
 	for hookID, hook := range wc.hooks {
 		err := wc.clients.GitProvider.UnsetWebhook(ctx, hook)
@@ -144,35 +146,42 @@ func (wc *WebhookCreatorImpl) checkHooksHealth(timeout time.Duration) bool {
 func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID int64) error {
 
 	log.Printf("started recover of hook %d", hookID)
-	newHook, err := wc.clients.GitProvider.SetWebhook(ctx, wc.getWebhook(hookID).RepoName)
+	hook := wc.getWebhook(hookID)
+	if hook == nil {
+		return fmt.Errorf("failed to recover hook, hookID %d not found", hookID)
+	}
+	newHook, err := wc.clients.GitProvider.SetWebhook(ctx, hook.RepoName)
 	if err != nil {
 		return err
 	}
-	wc.setWebhook(*newHook.HookID, newHook.HealthStatus, *newHook.RepoName)
 	wc.deleteWebhook(hookID)
+	wc.setWebhook(*newHook.HookID, newHook.HealthStatus, *newHook.RepoName)
 	log.Printf("successful recover recover of hook %d", hookID)
 	return nil
 
 }
 
-func (wc *WebhookCreatorImpl) pingHooks(ctx *context.Context) {
+func (wc *WebhookCreatorImpl) pingHooks(ctx *context.Context) error {
 	for hookID, hook := range wc.hooks {
 		err := wc.clients.GitProvider.PingHook(ctx, hook)
 		if err != nil {
-			log.Printf("failed to ping hook: %v", err)
-
+			log.Printf("recovering beacuse failed to ping hook: %v...", err)
 			err = wc.recoverHook(ctx, hookID)
 			if err != nil {
-				log.Printf("failed recover hookID:%d got error:%s", hookID, err)
+				return fmt.Errorf("failed recover hookID:%d got error:%s", hookID, err)
 			}
 		}
 	}
+	return nil
 }
 
 func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
 	log.Printf("Starting webhook diagnostics")
 	wc.setAllHooksHealth(false)
-	wc.pingHooks(ctx)
+	err := wc.pingHooks(ctx)
+	if err != nil {
+		return err
+	}
 	if !wc.checkHooksHealth(5 * time.Second) {
 		for hookID, hook := range wc.hooks {
 			if !hook.HealthStatus {
