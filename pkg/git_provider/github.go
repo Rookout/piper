@@ -256,7 +256,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetHTMLURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
-			Labels:           e.GetPullRequest().Labels,
+			Labels:           c.extractLabelNames(e.GetPullRequest().Labels),
 		}
 	case *github.CreateEvent:
 		webhookPayload = &WebhookPayload{
@@ -296,4 +296,12 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 
 	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
 	return nil
+}
+
+func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
+	var returnLabelsList []string
+	for _, label := range labels {
+		returnLabelsList = append(returnLabelsList, *label.Name)
+	}
+	return returnLabelsList
 }
