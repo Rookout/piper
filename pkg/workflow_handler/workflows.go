@@ -103,6 +103,7 @@ func (wfc *WorkflowsClientImpl) CreateWorkflow(spec *v1alpha1.WorkflowSpec, work
 				"branch":                     ConvertToValidString(workflowsBatch.Payload.Branch),
 				"user":                       ConvertToValidString(workflowsBatch.Payload.User),
 				"commit":                     ConvertToValidString(workflowsBatch.Payload.Commit),
+				"triggerName":                ConvertToValidString(workflowsBatch.TriggerName),
 			},
 		},
 		Spec: *spec,

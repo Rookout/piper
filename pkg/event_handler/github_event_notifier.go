@@ -40,6 +40,10 @@ func (gn *githubNotifier) Notify(ctx *context.Context, workflow *v1alpha1.Workfl
 	if !ok {
 		return fmt.Errorf("failed get commit label for workflow: %s", workflow.GetName())
 	}
+	triggerName, ok := workflow.GetLabels()["triggerName"]
+	if !ok {
+		return fmt.Errorf("failed get triggerName label for workflow: %s", workflow.GetName())
+	}
 
 	workflowLink := fmt.Sprintf("%s/workflows/%s/%s", gn.cfg.WorkflowServerConfig.ArgoAddress, gn.cfg.Namespace, workflow.GetName())
 
@@ -49,7 +53,7 @@ func (gn *githubNotifier) Notify(ctx *context.Context, workflow *v1alpha1.Workfl
 	}
 
 	message := workflow.Status.Message
-	err := gn.clients.GitProvider.SetStatus(ctx, &repo, &commit, &workflowLink, &status, &message)
+	err := gn.clients.GitProvider.SetStatus(ctx, &repo, &commit, &workflowLink, &status, &message, &triggerName)
 	if err != nil {
 		return fmt.Errorf("failed to set status for workflow %s: %s", workflow.GetName(), err)
 	}

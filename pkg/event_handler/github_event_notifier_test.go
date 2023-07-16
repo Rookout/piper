@@ -40,7 +40,7 @@ func (m *mockGitProvider) HandlePayload(request *http.Request, secret []byte) (*
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string, contextSuffix *string) error {
 	return nil
 }
 
@@ -60,8 +60,9 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo":   "test-repo",
-						"commit": "test-commit",
+						"repo":        "test-repo",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -77,8 +78,9 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo":   "test-repo",
-						"commit": "test-commit",
+						"repo":        "test-repo",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -94,8 +96,9 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo":   "test-repo",
-						"commit": "test-commit",
+						"repo":        "test-repo",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -111,8 +114,9 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo":   "test-repo",
-						"commit": "test-commit",
+						"repo":        "test-repo",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -128,8 +132,9 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo":   "test-repo",
-						"commit": "test-commit",
+						"repo":        "test-repo",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -145,7 +150,8 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"commit": "test-commit",
+						"commit":      "test-commit",
+						"triggerName": "trigger-name",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{
@@ -161,7 +167,25 @@ func TestNotify(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "test-workflow",
 					Labels: map[string]string{
-						"repo": "test-repo",
+						"repo":        "test-repo",
+						"triggerName": "trigger-name",
+					},
+				},
+				Status: v1alpha1.WorkflowStatus{
+					Phase:   v1alpha1.WorkflowSucceeded,
+					Message: "something",
+				},
+			},
+			wantedError: errors.New("some error"),
+		},
+		{
+			name: "Missing trigger name",
+			workflow: &v1alpha1.Workflow{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test-workflow",
+					Labels: map[string]string{
+						"repo":   "test-repo",
+						"commit": "test-commit",
 					},
 				},
 				Status: v1alpha1.WorkflowStatus{

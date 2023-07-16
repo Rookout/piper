@@ -140,12 +140,13 @@ func (wh *WebhookHandlerImpl) PrepareBatchForMatchingTriggers(ctx *context.Conte
 			}
 
 			workflowBatches = append(workflowBatches, &common.WorkflowsBatch{
-				OnStart:    onStartFiles,
-				OnExit:     onExitFiles,
-				Templates:  templatesFiles,
-				Parameters: parameters,
-				Config:     &trigger.Config,
-				Payload:    wh.Payload,
+				OnStart:     onStartFiles,
+				OnExit:      onExitFiles,
+				Templates:   templatesFiles,
+				Parameters:  parameters,
+				Config:      &trigger.Config,
+				Payload:     wh.Payload,
+				TriggerName: trigger.Name, // could be empty string
 			})
 		}
 	}

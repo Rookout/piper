@@ -155,6 +155,7 @@ func TestCreateWorkflow(t *testing.T) {
 		"branch":                     "my-branch",
 		"user":                       "my-user",
 		"commit":                     "my-commit",
+		"triggerName":                "",
 	}, workflow.ObjectMeta.Labels)
 
 	// Assert that the workflow's Spec is assigned correctly

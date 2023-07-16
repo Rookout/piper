@@ -274,7 +274,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 
 }
 
-func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string, contextSuffix *string) error {
 	if !utils.ValidateHTTPFormat(*linkURL) {
 		return fmt.Errorf("invalid linkURL")
 	}
@@ -282,7 +282,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 		State:       status, // pending, success, error, or failure.
 		TargetURL:   linkURL,
 		Description: utils.SPtr(fmt.Sprintf("Workflow %s %s", *status, *message)),
-		Context:     utils.SPtr("Piper/ArgoWorkflows"),
+		Context:     utils.SPtr("Piper/ArgoWorkflows" + *contextSuffix),
 		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
 	}
 	_, resp, err := c.client.Repositories.CreateStatus(*ctx, c.cfg.OrgName, *repo, *commit, repoStatus)

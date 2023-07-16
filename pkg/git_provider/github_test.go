@@ -102,76 +102,94 @@ func TestSetStatus(t *testing.T) {
 
 	// Define test cases
 	tests := []struct {
-		name        string
-		repo        *string
-		commit      *string
-		linkURL     *string
-		status      *string
-		message     *string
-		wantedError error
+		name          string
+		repo          *string
+		commit        *string
+		linkURL       *string
+		status        *string
+		message       *string
+		contextSuffix *string
+		wantedError   error
 	}{
 		{
-			name:        "Notify success",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("success"),
-			message:     utils.SPtr(""),
-			wantedError: nil,
+			name:          "Notify success",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("success"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   nil,
 		},
 		{
-			name:        "Notify pending",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("pending"),
-			message:     utils.SPtr(""),
-			wantedError: nil,
+			name:          "Notify pending",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("pending"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   nil,
 		},
 		{
-			name:        "Notify error",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("error"),
-			message:     utils.SPtr("some message"),
-			wantedError: nil,
+			name:          "Notify error",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("error"),
+			message:       utils.SPtr("some message"),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   nil,
 		},
 		{
-			name:        "Notify failure",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("failure"),
-			message:     utils.SPtr(""),
-			wantedError: nil,
+			name:          "Notify failure",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("failure"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   nil,
 		},
 		{
-			name:        "Non managed repo",
-			repo:        utils.SPtr("non-existing-repo"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("error"),
-			message:     utils.SPtr(""),
-			wantedError: errors.New("some error"),
+			name:          "Non managed repo",
+			repo:          utils.SPtr("non-existing-repo"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("error"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   errors.New("some error"),
 		},
 		{
-			name:        "Non existing commit",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("not-exists"),
-			linkURL:     utils.SPtr("https://argo"),
-			status:      utils.SPtr("error"),
-			message:     utils.SPtr(""),
-			wantedError: errors.New("some error"),
+			name:          "Non existing commit",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("not-exists"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("error"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   errors.New("some error"),
 		},
 		{
-			name:        "Wrong URL",
-			repo:        utils.SPtr("test-repo1"),
-			commit:      utils.SPtr("test-commit"),
-			linkURL:     utils.SPtr("argo"),
-			status:      utils.SPtr("error"),
-			message:     utils.SPtr(""),
-			wantedError: errors.New("some error"),
+			name:          "Wrong URL",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("argo"),
+			status:        utils.SPtr("error"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr(""),
+			wantedError:   errors.New("some error"),
+		},
+		{
+			name:          "Notify success with suffix",
+			repo:          utils.SPtr("test-repo1"),
+			commit:        utils.SPtr("test-commit"),
+			linkURL:       utils.SPtr("https://argo"),
+			status:        utils.SPtr("success"),
+			message:       utils.SPtr(""),
+			contextSuffix: utils.SPtr("hi"),
+			wantedError:   nil,
 		},
 	}
 	// Run test cases
@@ -179,7 +197,7 @@ func TestSetStatus(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			// Call the function being tested
-			err := c.SetStatus(&ctx, test.repo, test.commit, test.linkURL, test.status, test.message)
+			err := c.SetStatus(&ctx, test.repo, test.commit, test.linkURL, test.status, test.message, test.contextSuffix)
 
 			// Use assert to check the equality of the error
 			if test.wantedError != nil {

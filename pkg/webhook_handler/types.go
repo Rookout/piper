@@ -12,6 +12,7 @@ type Trigger struct {
 	Templates *[]string `yaml:"templates"`
 	OnExit    *[]string `yaml:"onExit"`
 	Config    string    `yaml:"config" default:"default"`
+	Name      string    `yaml:"name" default:""`
 }
 
 type WebhookHandler interface {

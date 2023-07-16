@@ -92,7 +92,7 @@ func (m *MockGitProvider) HandlePayload(request *http.Request, secret []byte) (*
 	return nil, nil
 }
 
-func (m *MockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+func (m *MockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string, contextSuffix *string) error {
 	return nil
 }
 
