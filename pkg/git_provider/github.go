@@ -252,9 +252,9 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			User:             e.GetPullRequest().GetUser().GetLogin(),
 			UserEmail:        e.GetSender().GetEmail(), // e.GetPullRequest().GetUser().GetEmail() Not working. GitHub missing email for PR events in payload.
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
-			PullRequestURL:   e.GetPullRequest().GetURL(),
+			PullRequestURL:   e.GetPullRequest().GetHTMLURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
-			Labels:           e.GetPullRequest().Labels,
+			Labels:           c.extractLabelNames(e.GetPullRequest().Labels),
 		}
 	case *github.CreateEvent:
 		webhookPayload = &WebhookPayload{
@@ -296,6 +296,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	return nil
 }
 
+
 func (c *GithubClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) error {
 	if c.cfg.OrgLevelWebhook && hook.RepoName != nil {
 		return fmt.Errorf("trying to ping repo scope webhook while configured for org level webhook. repo: %s", *hook.RepoName)
@@ -321,4 +322,12 @@ func (c *GithubClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) 
 	}
 
 	return nil
+}
+
+func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
+	var returnLabelsList []string
+	for _, label := range labels {
+		returnLabelsList = append(returnLabelsList, *label.Name)
+	}
+	return returnLabelsList
 }

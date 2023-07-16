@@ -2,7 +2,6 @@ package git_provider
 
 import (
 	"context"
-	"github.com/google/go-github/v52/github"
 	"net/http"
 )
 

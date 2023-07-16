@@ -2,7 +2,6 @@ package event_handler
 
 import (
 	"context"
-	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,13 +13,6 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 		MatchExpressions: []metav1.LabelSelectorRequirement{
 			{Key: "piper.rookout.com/notified",
 				Operator: metav1.LabelSelectorOpExists},
-			{Key: "piper.rookout.com/notified",
-				Operator: metav1.LabelSelectorOpNotIn,
-				Values: []string{
-					string(v1alpha1.WorkflowSucceeded),
-					string(v1alpha1.WorkflowFailed),
-					string(v1alpha1.WorkflowError),
-				}}, // mean that there already completed and notified
 		},
 	}
 	watcher, err := clients.Workflows.Watch(&ctx, labelSelector)

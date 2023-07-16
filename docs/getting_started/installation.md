@@ -16,6 +16,8 @@ helm upgrade --install piper piper/piper \
 -f YOUR_VALUES_FILE.yaml
 ```
 
+---
+
 ## Required Configuration
 
 ### Ingress
@@ -24,7 +26,7 @@ Piper should listen to webhooks from your git provider. Checkout [values.yaml](h
 
 ### Git
 
-piper will use git for fetching `.workflows` folder and receiving events using webhooks.
+Piper will use git for fetching `.workflows` folder and receiving events using webhooks.
 
 To pick which git provider you are using provide `gitProvider.name` configuration in helm chart (Now only supports GitHub).
 
@@ -63,6 +65,8 @@ Piper implements graceful shutdown, it will delete all the webhooks when termina
 Piper will handle status checks for you. 
 It will notify the GitProvider for the status of Workflow for specific commit that triggered the Piper.
 For linking provide valid URL of your Argo Workflows server address at: `argoWorkflows.server.address`
+
+---
 
 ### Argo Workflow Server (On development)
 
