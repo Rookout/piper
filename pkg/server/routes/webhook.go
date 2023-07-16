@@ -15,7 +15,7 @@ func AddWebhookRoutes(cfg *conf.GlobalConfig, clients *clients.Clients, rg *gin.
 
 	webhook.POST("", func(c *gin.Context) {
 		ctx := c.Copy().Request.Context()
-		webhookPayload, err := clients.GitProvider.HandlePayload(c.Request, []byte(cfg.GitProviderConfig.WebhookSecret))
+		webhookPayload, err := clients.GitProvider.HandlePayload(&ctx, c.Request, []byte(cfg.GitProviderConfig.WebhookSecret))
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
