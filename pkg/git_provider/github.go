@@ -109,7 +109,7 @@ func (c *GithubClientImpl) SetWebhook(ctx *context.Context, repo *string) (*Hook
 			"content_type": "json",
 			"secret":       c.cfg.GitProviderConfig.WebhookSecret,
 		},
-		Events: []string{"push", "pull_request", "create"},
+		Events: []string{"push", "pull_request", "create", "release"},
 		Active: github.Bool(true),
 	}
 
@@ -211,8 +211,7 @@ func (c *GithubClientImpl) UnsetWebhook(ctx *context.Context, hook *HookWithStat
 	return nil
 }
 
-func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
-
+func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error) {
 	var webhookPayload *WebhookPayload
 
 	payload, err := github.ValidatePayload(request, secret)
@@ -266,6 +265,20 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetSender().GetEmail(),
 		}
+	case *github.ReleaseEvent:
+		commitSHA, _err := c.refToSHA(ctx, e.GetRelease().GetName(), e.GetRepo().GetName())
+		if _err != nil {
+			return webhookPayload, _err
+		}
+		webhookPayload = &WebhookPayload{
+			Event:     "release",
+			Action:    e.GetAction(), // "created", "edited", "deleted", or "prereleased".
+			Repo:      e.GetRepo().GetName(),
+			Branch:    e.GetRelease().GetTagName(),
+			Commit:    *commitSHA,
+			User:      e.GetSender().GetLogin(),
+			UserEmail: e.GetSender().GetEmail(),
+		}
 	}
 
 	return webhookPayload, nil
@@ -283,6 +296,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 		Context:     utils.SPtr("Piper/ArgoWorkflows"),
 		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
 	}
+
 	_, resp, err := c.client.Repositories.CreateStatus(*ctx, c.cfg.OrgName, *repo, *commit, repoStatus)
 	if err != nil {
 		return err
@@ -295,7 +309,6 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
 	return nil
 }
-
 
 func (c *GithubClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) error {
 	if c.cfg.OrgLevelWebhook && hook.RepoName != nil {
@@ -322,6 +335,20 @@ func (c *GithubClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) 
 	}
 
 	return nil
+}
+
+func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo string) (*string, error) {
+	respSHA, resp, err := c.client.Repositories.GetCommitSHA1(*ctx, c.cfg.OrgName, repo, ref, "")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to set status on repo:%s, commit:%s, API call returned %d", repo, ref, resp.StatusCode)
+	}
+
+	log.Printf("resolved ref: %s to SHA: %s", ref, respSHA)
+	return &respSHA, nil
 }
 
 func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
