@@ -174,11 +174,6 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 		}
 	}
 
-	var prLabels []string
-	for _, label := range workflowsBatch.Payload.Labels {
-		prLabels = append(prLabels, label.GetName())
-	}
-
 	globalParams := []v1alpha1.Parameter{
 		{Name: "event", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Event)},
 		{Name: "action", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.Action)},
@@ -190,7 +185,7 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 		{Name: "pull_request_url", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.PullRequestURL)},
 		{Name: "pull_request_title", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.PullRequestTitle)},
 		{Name: "dest_branch", Value: v1alpha1.AnyStringPtr(workflowsBatch.Payload.DestBranch)},
-		{Name: "pull_request_labels", Value: v1alpha1.AnyStringPtr(strings.Join(prLabels, ","))},
+		{Name: "pull_request_labels", Value: v1alpha1.AnyStringPtr(strings.Join(workflowsBatch.Payload.Labels, ","))},
 	}
 
 	params = append(params, globalParams...)

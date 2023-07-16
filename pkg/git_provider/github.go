@@ -255,7 +255,7 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetHTMLURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
-			Labels:           e.GetPullRequest().Labels,
+			Labels:           c.extractLabelNames(e.GetPullRequest().Labels),
 		}
 	case *github.CreateEvent:
 		webhookPayload = &WebhookPayload{
@@ -312,6 +312,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	return nil
 }
 
+
 func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo string) (*string, error) {
 	respSHA, resp, err := c.client.Repositories.GetCommitSHA1(*ctx, c.cfg.OrgName, repo, ref, "")
 	if err != nil {
@@ -324,4 +325,10 @@ func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo strin
 
 	log.Printf("resolved ref: %s to SHA: %s", ref, respSHA)
 	return &respSHA, nil
-}
+
+func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
+	var returnLabelsList []string
+	for _, label := range labels {
+		returnLabelsList = append(returnLabelsList, *label.Name)
+	}
+	return returnLabelsList
