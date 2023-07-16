@@ -2,7 +2,6 @@ package git_provider
 
 import (
 	"context"
-	"github.com/google/go-github/v52/github"
 	"net/http"
 )
 
@@ -12,17 +11,17 @@ type CommitFile struct {
 }
 
 type WebhookPayload struct {
-	Event            string          `json:"event"`
-	Action           string          `json:"action"`
-	Repo             string          `json:"repoName"`
-	Branch           string          `json:"branch"`
-	Commit           string          `json:"commit"`
-	User             string          `json:"user"`
-	UserEmail        string          `json:"user_email"`
-	PullRequestURL   string          `json:"pull_request_url"`
-	PullRequestTitle string          `json:"pull_request_title"`
-	DestBranch       string          `json:"dest_branch"`
-	Labels           []*github.Label `json:"Labels"`
+	Event            string   `json:"event"`
+	Action           string   `json:"action"`
+	Repo             string   `json:"repoName"`
+	Branch           string   `json:"branch"`
+	Commit           string   `json:"commit"`
+	User             string   `json:"user"`
+	UserEmail        string   `json:"user_email"`
+	PullRequestURL   string   `json:"pull_request_url"`
+	PullRequestTitle string   `json:"pull_request_title"`
+	DestBranch       string   `json:"dest_branch"`
+	Labels           []string `json:"Labels"`
 }
 
 type Client interface {
@@ -31,6 +30,6 @@ type Client interface {
 	GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*CommitFile, error)
 	SetWebhook() error
 	UnsetWebhook(ctx *context.Context) error
-	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
 	SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string, contextSuffix *string) error
+	HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error)
 }

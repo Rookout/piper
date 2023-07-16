@@ -108,7 +108,7 @@ func (c *GithubClientImpl) SetWebhook() error {
 			"content_type": "json",
 			"secret":       c.cfg.GitProviderConfig.WebhookSecret,
 		},
-		Events: []string{"push", "pull_request", "create"},
+		Events: []string{"push", "pull_request", "create", "release"},
 		Active: github.Bool(true),
 	}
 	if c.cfg.GitProviderConfig.OrgLevelWebhook {
@@ -214,8 +214,7 @@ func (c *GithubClientImpl) UnsetWebhook(ctx *context.Context) error {
 	return nil
 }
 
-func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error) {
-
+func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error) {
 	var webhookPayload *WebhookPayload
 
 	payload, err := github.ValidatePayload(request, secret)
@@ -256,7 +255,7 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			PullRequestTitle: e.GetPullRequest().GetTitle(),
 			PullRequestURL:   e.GetPullRequest().GetHTMLURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
-			Labels:           e.GetPullRequest().Labels,
+			Labels:           c.extractLabelNames(e.GetPullRequest().Labels),
 		}
 	case *github.CreateEvent:
 		webhookPayload = &WebhookPayload{
@@ -265,6 +264,20 @@ func (c *GithubClientImpl) HandlePayload(request *http.Request, secret []byte) (
 			Repo:      e.GetRepo().GetName(),
 			Branch:    e.GetRef(),
 			Commit:    e.GetRef(),
+			User:      e.GetSender().GetLogin(),
+			UserEmail: e.GetSender().GetEmail(),
+		}
+	case *github.ReleaseEvent:
+		commitSHA, _err := c.refToSHA(ctx, e.GetRelease().GetName(), e.GetRepo().GetName())
+		if _err != nil {
+			return webhookPayload, _err
+		}
+		webhookPayload = &WebhookPayload{
+			Event:     "release",
+			Action:    e.GetAction(), // "created", "edited", "deleted", or "prereleased".
+			Repo:      e.GetRepo().GetName(),
+			Branch:    e.GetRelease().GetTagName(),
+			Commit:    *commitSHA,
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetSender().GetEmail(),
 		}
@@ -285,6 +298,7 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 		Context:     utils.SPtr("Piper/ArgoWorkflows" + *contextSuffix),
 		AvatarURL:   utils.SPtr("https://argoproj.github.io/argo-workflows/assets/logo.png"),
 	}
+
 	_, resp, err := c.client.Repositories.CreateStatus(*ctx, c.cfg.OrgName, *repo, *commit, repoStatus)
 	if err != nil {
 		return err
@@ -296,4 +310,26 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 
 	log.Printf("successfully set status on repo:%s commit: %s to status: %s\n", *repo, *commit, *status)
 	return nil
+}
+
+func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo string) (*string, error) {
+	respSHA, resp, err := c.client.Repositories.GetCommitSHA1(*ctx, c.cfg.OrgName, repo, ref, "")
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to set status on repo:%s, commit:%s, API call returned %d", repo, ref, resp.StatusCode)
+	}
+
+	log.Printf("resolved ref: %s to SHA: %s", ref, respSHA)
+	return &respSHA, nil
+}
+
+func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
+	var returnLabelsList []string
+	for _, label := range labels {
+		returnLabelsList = append(returnLabelsList, *label.Name)
+	}
+	return returnLabelsList
 }
