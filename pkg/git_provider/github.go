@@ -312,7 +312,6 @@ func (c *GithubClientImpl) SetStatus(ctx *context.Context, repo *string, commit 
 	return nil
 }
 
-
 func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo string) (*string, error) {
 	respSHA, resp, err := c.client.Repositories.GetCommitSHA1(*ctx, c.cfg.OrgName, repo, ref, "")
 	if err != nil {
@@ -325,6 +324,7 @@ func (c *GithubClientImpl) refToSHA(ctx *context.Context, ref string, repo strin
 
 	log.Printf("resolved ref: %s to SHA: %s", ref, respSHA)
 	return &respSHA, nil
+}
 
 func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
 	var returnLabelsList []string
@@ -332,3 +332,4 @@ func (c *GithubClientImpl) extractLabelNames(labels []*github.Label) []string {
 		returnLabelsList = append(returnLabelsList, *label.Name)
 	}
 	return returnLabelsList
+}
