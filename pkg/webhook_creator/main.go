@@ -156,7 +156,7 @@ func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID int64) er
 	}
 	wc.deleteWebhook(hookID)
 	wc.setWebhook(*newHook.HookID, newHook.HealthStatus, *newHook.RepoName)
-	log.Printf("successful recover recover of hook %d", hookID)
+	log.Printf("successful recover of hook %d", hookID)
 	return nil
 
 }
