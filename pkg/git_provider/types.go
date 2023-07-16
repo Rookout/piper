@@ -17,18 +17,18 @@ type CommitFile struct {
 }
 
 type WebhookPayload struct {
-	Event            string          `json:"event"`
-	Action           string          `json:"action"`
-	Repo             string          `json:"repoName"`
-	Branch           string          `json:"branch"`
-	Commit           string          `json:"commit"`
-	User             string          `json:"user"`
-	UserEmail        string          `json:"user_email"`
-	PullRequestURL   string          `json:"pull_request_url"`
-	PullRequestTitle string          `json:"pull_request_title"`
-	DestBranch       string          `json:"dest_branch"`
-	Labels           []*github.Label `json:"labels"`
-	HookID           int64           `json:"hookID"`
+	Event            string   `json:"event"`
+	Action           string   `json:"action"`
+	Repo             string   `json:"repoName"`
+	Branch           string   `json:"branch"`
+	Commit           string   `json:"commit"`
+	User             string   `json:"user"`
+	UserEmail        string   `json:"user_email"`
+	PullRequestURL   string   `json:"pull_request_url"`
+	PullRequestTitle string   `json:"pull_request_title"`
+	DestBranch       string   `json:"dest_branch"`
+	Labels           []string `json:"labels"`
+	HookID           int64    `json:"hookID"`
 }
 
 type Client interface {
