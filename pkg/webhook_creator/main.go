@@ -42,7 +42,7 @@ func (wc *WebhookCreatorImpl) Start() {
 func (wc *WebhookCreatorImpl) setWebhook(hookID int64, healthStatus bool, repoName string) {
 	wc.mu.Lock()
 	defer wc.mu.Unlock()
-	wc.hooks[hookID] = &git_provider.HookWithStatus{HookID: &hookID, HealthStatus: healthStatus, RepoName: &repoName}
+	wc.hooks[hookID] = &git_provider.HookWithStatus{HookID: hookID, HealthStatus: healthStatus, RepoName: &repoName}
 }
 
 func (wc *WebhookCreatorImpl) getWebhook(hookID int64) *git_provider.HookWithStatus {
@@ -91,7 +91,7 @@ func (wc *WebhookCreatorImpl) initWebhooks() error {
 		if err != nil {
 			return err
 		}
-		wc.setWebhook(*hook.HookID, hook.HealthStatus, *hook.RepoName)
+		wc.setWebhook(hook.HookID, hook.HealthStatus, *hook.RepoName)
 	}
 
 	return nil
@@ -155,7 +155,7 @@ func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID int64) er
 		return err
 	}
 	wc.deleteWebhook(hookID)
-	wc.setWebhook(*newHook.HookID, newHook.HealthStatus, *newHook.RepoName)
+	wc.setWebhook(newHook.HookID, newHook.HealthStatus, *newHook.RepoName)
 	log.Printf("successful recover of hook %d", hookID)
 	return nil
 

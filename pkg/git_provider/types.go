@@ -6,7 +6,7 @@ import (
 )
 
 type HookWithStatus struct {
-	HookID       *int64
+	HookID       int64
 	HealthStatus bool
 	RepoName     *string
 }

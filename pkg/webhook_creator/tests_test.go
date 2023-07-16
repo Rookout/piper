@@ -5,7 +5,6 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
-	"github.com/rookout/piper/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/context"
 	"math/rand"
@@ -32,7 +31,7 @@ func TestWebhookCreatorImpl_GetWebhook(t *testing.T) {
 
 	// Verify that the retrieved webhook matches the added webhook
 	assertion.NotNil(hook)
-	assertion.Equal(hookID1, *hook.HookID)
+	assertion.Equal(hookID1, hook.HookID)
 	assertion.Equal(true, hook.HealthStatus)
 	assertion.Equal(repoName1, *hook.RepoName)
 
@@ -58,7 +57,7 @@ func TestWebhookCreatorImpl_SetWebhook(t *testing.T) {
 	hook := wc.getWebhook(hookID)
 
 	assertion.NotNil(hook, "Webhook not set")
-	assertion.Equal(hookID, *hook.HookID, "Webhook HookID incorrect")
+	assertion.Equal(hookID, hook.HookID, "Webhook HookID incorrect")
 	assertion.True(hook.HealthStatus, "Webhook HealthStatus incorrect")
 	assertion.Equal(repoName, *hook.RepoName, "Webhook RepoName incorrect")
 
@@ -132,7 +131,7 @@ func TestWebhookCreatorImpl_InitWebhooks(t *testing.T) {
 		SetWebhookFunc: func(ctx context.Context, repoName *string) (*git_provider.HookWithStatus, error) {
 			// Simulate setting a new webhook
 			return &git_provider.HookWithStatus{
-				HookID:       utils.IPtr(rand.Int63()),
+				HookID:       rand.Int63(),
 				HealthStatus: true,
 				RepoName:     repoName,
 			}, nil
@@ -264,7 +263,7 @@ func TestWebhookCreatorImpl_RecoverHook(t *testing.T) {
 		SetWebhookFunc: func(ctx context.Context, repoName *string) (*git_provider.HookWithStatus, error) {
 			// Simulate setting a new webhook
 			return &git_provider.HookWithStatus{
-				HookID:       &hookID,
+				HookID:       hookID,
 				HealthStatus: true,
 				RepoName:     repoName,
 			}, nil
@@ -304,7 +303,7 @@ func TestWebhookCreatorImpl_PingHooks(t *testing.T) {
 	// Mock the necessary methods of the GitProvider client
 	mockClient := &MockGitProviderClient{
 		PingHookFunc: func(ctx context.Context, hook *git_provider.HookWithStatus) error {
-			if *hook.HookID == 2 {
+			if hook.HookID == 2 {
 				// Simulate a failure when pinging a specific webhook
 				return errors.New("ping failed")
 			}
@@ -313,7 +312,7 @@ func TestWebhookCreatorImpl_PingHooks(t *testing.T) {
 		SetWebhookFunc: func(ctx context.Context, repoName *string) (*git_provider.HookWithStatus, error) {
 			// Simulate setting a new webhook
 			return &git_provider.HookWithStatus{
-				HookID:       utils.IPtr(4),
+				HookID:       4,
 				HealthStatus: true,
 				RepoName:     repoName,
 			}, nil
@@ -351,7 +350,7 @@ func TestWebhookCreatorImpl_RunDiagnosis(t *testing.T) {
 		SetWebhookFunc: func(ctx context.Context, repoName *string) (*git_provider.HookWithStatus, error) {
 			// Simulate setting a new webhook
 			return &git_provider.HookWithStatus{
-				HookID:       &hookID,
+				HookID:       hookID,
 				HealthStatus: true,
 				RepoName:     repoName,
 			}, nil

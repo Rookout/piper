@@ -451,7 +451,7 @@ func TestPingHook(t *testing.T) {
 		{
 			name: "Ping repo webhook",
 			hook: &HookWithStatus{
-				HookID:       utils.IPtr(234),
+				HookID:       234,
 				HealthStatus: true,
 				RepoName:     utils.SPtr("test-repo1"),
 			},
@@ -465,7 +465,7 @@ func TestPingHook(t *testing.T) {
 		{
 			name: "Ping org webhook",
 			hook: &HookWithStatus{
-				HookID:       utils.IPtr(123),
+				HookID:       123,
 				HealthStatus: true,
 				RepoName:     nil,
 			},
