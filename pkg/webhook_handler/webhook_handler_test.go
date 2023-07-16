@@ -88,8 +88,7 @@ func (m *mockGitProvider) UnsetWebhook(ctx *context.Context, hook *git_provider.
 	return nil
 }
 
-
-func (m *MockGitProvider) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
+func (m *mockGitProvider) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
 	return nil, nil
 }
 

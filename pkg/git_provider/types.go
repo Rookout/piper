@@ -37,7 +37,6 @@ type Client interface {
 	GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*CommitFile, error)
 	SetWebhook(ctx *context.Context, repo *string) (*HookWithStatus, error)
 	UnsetWebhook(ctx *context.Context, hook *HookWithStatus) error
-	HandlePayload(request *http.Request, secret []byte) (*WebhookPayload, error)
 	HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error)
 	SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error
 	PingHook(ctx *context.Context, hook *HookWithStatus) error

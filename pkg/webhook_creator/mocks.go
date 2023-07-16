@@ -53,7 +53,7 @@ func (m *MockGitProviderClient) UnsetWebhook(ctx *context.Context, hook *git_pro
 	return errors.New("unimplemented")
 }
 
-func (m *MockGitProviderClient) HandlePayload(request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
+func (m *MockGitProviderClient) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
 	if m.HandlePayloadFunc != nil {
 		return m.HandlePayloadFunc(request, secret)
 	}
