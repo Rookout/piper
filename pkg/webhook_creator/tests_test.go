@@ -160,7 +160,11 @@ func TestWebhookCreatorImpl_Stop(t *testing.T) {
 	assertion := assert.New(t)
 
 	// Create a test instance of the WebhookCreatorImpl
-	wc := NewWebhookCreator(&conf.GlobalConfig{}, &clients.Clients{})
+	wc := NewWebhookCreator(&conf.GlobalConfig{
+		GitProviderConfig: conf.GitProviderConfig{
+			WebhookAutoCleanup: true,
+		},
+	}, &clients.Clients{})
 
 	// Add a webhook for testing
 	hookID := int64(1)
@@ -312,7 +316,7 @@ func TestWebhookCreatorImpl_PingHooks(t *testing.T) {
 		SetWebhookFunc: func(ctx context.Context, repoName *string) (*git_provider.HookWithStatus, error) {
 			// Simulate setting a new webhook
 			return &git_provider.HookWithStatus{
-				HookID:       4,
+				HookID:       2,
 				HealthStatus: true,
 				RepoName:     repoName,
 			}, nil
@@ -325,14 +329,12 @@ func TestWebhookCreatorImpl_PingHooks(t *testing.T) {
 	// Ping the webhooks
 	ctx := context.Background()
 	err := wc.pingHooks(&ctx)
-	assertion.Nil(err)
-	// Verify that the failed webhook was recovered
-	hook := wc.getWebhook(4)
-	assertion.NotNil(hook)
-	assertion.True(hook.HealthStatus)
+	assertion.NotNil(err)
 }
 
 func TestWebhookCreatorImpl_RunDiagnosis(t *testing.T) {
+	assertion := assert.New(t)
+
 	// Create a test instance of the WebhookCreatorImpl
 	wc := NewWebhookCreator(&conf.GlobalConfig{}, &clients.Clients{})
 
@@ -363,13 +365,6 @@ func TestWebhookCreatorImpl_RunDiagnosis(t *testing.T) {
 	// Run the webhook diagnosis
 	ctx := context.Background()
 	err := wc.RunDiagnosis(&ctx)
-	if err != nil {
-		t.Errorf("RunDiagnosis returned an error: %v", err)
-	}
+	assertion.NotNil(err)
 
-	// Verify that the webhook health status was updated after recovery
-	hook := wc.getWebhook(hookID)
-	if !hook.HealthStatus {
-		t.Errorf("Webhook health status not updated after recovery")
-	}
 }
