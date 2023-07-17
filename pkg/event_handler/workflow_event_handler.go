@@ -18,8 +18,8 @@ func (weh *workflowEventHandler) Handle(ctx context.Context, event *watch.Event)
 	workflow, ok := event.Object.(*v1alpha1.Workflow)
 	if !ok {
 		return fmt.Errorf(
-			"event object is not a Workflow object, it's kind is: %s\n",
-			event.DeepCopy().Object.GetObjectKind(),
+			"event object is not a Workflow object, got: %v\n",
+			event.DeepCopy().Object,
 		)
 	}
 
