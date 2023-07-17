@@ -33,5 +33,8 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 				log.Printf("[event handler] failed to Handle workflow event %s", err) // ERROR
 			}
 		}
+		stop()
+		watcher.Stop()
+		log.Print("[event handler] stopped work, closing watcher")
 	}()
 }
