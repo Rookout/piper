@@ -87,6 +87,7 @@ jobs:
           --set image.repository=localhost:5001 \
           --set piper.argoWorkflows.server.address="${{ env.NGROK_URL }}/argo" \
           --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
+          --set env\[1\].name=GIT_WEBHOOK_AUTO_CLEANUP,env\[1\].value='true' && \
           sleep 20 && kubectl logs deployment/piper
           kubectl wait  \
           --for=condition=ready pod \

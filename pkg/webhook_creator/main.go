@@ -98,9 +98,11 @@ func (wc *WebhookCreatorImpl) initWebhooks() error {
 }
 
 func (wc *WebhookCreatorImpl) Stop(ctx *context.Context) {
-	err := wc.deleteWebhooks(ctx)
-	if err != nil {
-		log.Printf("Failed to delete webhooks, error: %v", err)
+	if wc.cfg.GitProviderConfig.WebhookAutoCleanup {
+		err := wc.deleteWebhooks(ctx)
+		if err != nil {
+			log.Printf("Failed to delete webhooks, error: %v", err)
+		}
 	}
 }
 
@@ -162,14 +164,10 @@ func (wc *WebhookCreatorImpl) recoverHook(ctx *context.Context, hookID int64) er
 }
 
 func (wc *WebhookCreatorImpl) pingHooks(ctx *context.Context) error {
-	for hookID, hook := range wc.hooks {
+	for _, hook := range wc.hooks {
 		err := wc.clients.GitProvider.PingHook(ctx, hook)
 		if err != nil {
-			log.Printf("recovering beacuse failed to ping hook: %v...", err)
-			err = wc.recoverHook(ctx, hookID)
-			if err != nil {
-				return fmt.Errorf("failed recover hookID:%d got error:%s", hookID, err)
-			}
+			return err
 		}
 	}
 	return nil
@@ -185,11 +183,7 @@ func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
 	if !wc.checkHooksHealth(5 * time.Second) {
 		for hookID, hook := range wc.hooks {
 			if !hook.HealthStatus {
-				log.Printf("Trying to recover hook %d", hookID)
-				err := wc.recoverHook(ctx, hookID)
-				if err != nil {
-					return err
-				}
+				return fmt.Errorf("hook %d is not healthy", hookID)
 			}
 		}
 	}
