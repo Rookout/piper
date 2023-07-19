@@ -53,11 +53,19 @@ func (s *Server) getRoutes() {
 	routes.AddWebhookRoutes(s.config, s.clients, v1, s.webhookCreator)
 }
 
+func (s *Server) startServices() {
+	s.webhookCreator.Start()
+}
+
 func (s *Server) ListenAndServe() *http.Server {
 
 	s.registerMiddlewares()
 
 	s.getRoutes()
 
-	return s.startServer()
+	srv := s.startServer()
+
+	s.startServices()
+
+	return srv
 }
