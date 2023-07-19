@@ -119,7 +119,7 @@ func (wc *WebhookCreatorImpl) deleteWebhooks(ctx *context.Context) error {
 	return nil
 }
 
-func (wc *WebhookCreatorImpl) checkHooksHealth(timeout time.Duration) bool {
+func (wc *WebhookCreatorImpl) checkHooksHealth(timeoutSeconds time.Duration) bool {
 	startTime := time.Now()
 
 	for {
@@ -135,7 +135,7 @@ func (wc *WebhookCreatorImpl) checkHooksHealth(timeout time.Duration) bool {
 			return true
 		}
 
-		if time.Since(startTime) >= timeout {
+		if time.Since(startTime) >= timeoutSeconds {
 			break
 		}
 
