@@ -17,6 +17,8 @@ This folder should contain declarations of the templates and main DAG that will 
 Finally, it will submit the Workflow as a K8s resource in the cluster. 
 To access more detailed explanations, please navigate to the [Documentation site](https://piper.rookout.com).
 
+https://github.com/Rookout/piper/assets/106976988/09b3a5d8-3428-4bdc-9146-3034d81164bf
+
 ## Reporting Issues
 
 If you encounter any issues or bugs while using Piper, please help us improve by reporting them. Follow these steps to report an issue:
