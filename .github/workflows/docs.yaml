@@ -17,7 +17,9 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v2
       - name: Install mkdocs
-        run: pip install mkdocs-material
+        run: |
+          pip install mkdocs-material
+          pip install mkdocs-video
       - name: Generate docs artifacts
         run: mkdocs build -s -d /tmp/docs
       - uses: actions/checkout@v2
