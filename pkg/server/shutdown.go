@@ -1,10 +1,8 @@
 package server
 
 import (
-	"github.com/rookout/piper/pkg/webhook_creator"
 	"golang.org/x/net/context"
 	"log"
-	"net/http"
 	"time"
 )
 
@@ -20,7 +18,11 @@ func NewGracefulShutdown(ctx context.Context, stop context.CancelFunc) *Graceful
 	}
 }
 
-func (s *GracefulShutdown) Shutdown(httpServer *http.Server, webhookCreator *webhook_creator.WebhookCreatorImpl) {
+func (s *GracefulShutdown) StopServices(ctx *context.Context, server *Server) {
+	server.webhookCreator.Stop(ctx)
+}
+
+func (s *GracefulShutdown) Shutdown(server *Server) {
 	// Listen for the interrupt signal.
 	<-s.ctx.Done()
 
@@ -33,9 +35,9 @@ func (s *GracefulShutdown) Shutdown(httpServer *http.Server, webhookCreator *web
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	webhookCreator.Stop(&ctx)
+	s.StopServices(&ctx, server)
 
-	err := httpServer.Shutdown(ctx)
+	err := server.httpServer.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("Server forced to shutdown: ", err)
 	}

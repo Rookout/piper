@@ -13,11 +13,12 @@ type Server struct {
 	config         *conf.GlobalConfig
 	clients        *clients.Clients
 	webhookCreator *webhook_creator.WebhookCreatorImpl
+	httpServer     *http.Server
 }
 
 type Interface interface {
 	startServer() *http.Server
 	registerMiddlewares()
 	getRoutes()
-	ListenAndServe() *http.Server
+	Start() *http.Server
 }

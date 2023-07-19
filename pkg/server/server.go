@@ -57,15 +57,14 @@ func (s *Server) startServices() {
 	s.webhookCreator.Start()
 }
 
-func (s *Server) ListenAndServe() *http.Server {
+func (s *Server) Start() {
 
 	s.registerMiddlewares()
 
 	s.getRoutes()
 
-	srv := s.startServer()
+	s.httpServer = s.startServer()
 
 	s.startServices()
 
-	return srv
 }
