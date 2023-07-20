@@ -79,15 +79,13 @@ jobs:
         run: |
           helm upgrade --install piper ./helm-chart \
           -f ./examples/template.values.dev.yaml \
-          --set rookout.token="${{ secrets.ROOKOUT_DOGFOOD_TOKEN }}" \
           --set piper.gitProvider.token="${{ secrets.GIT_TOKEN }}" \
           --set piper.gitProvider.webhook.url="${{ env.NGROK_URL }}/piper/webhook" \
           --set piper.gitProvider.webhook.repoList={piper-e2e-test} \
           --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
           --set piper.argoWorkflows.server.address="${{ env.NGROK_URL }}/argo" \
-          --set env\[0\].name=ROOKOUT_CONTROLLER_HOST,env\[0\].value=wss://dogfood.control.rookout.com && \
-          --set env\[1\].name=GIT_WEBHOOK_AUTO_CLEANUP,env\[1\].value='true' && \
+          --set env\[0\].name=GIT_WEBHOOK_AUTO_CLEANUP,env\[0\].value="true" && \
           sleep 20 && kubectl logs deployment/piper
           kubectl wait  \
           --for=condition=ready pod \
