@@ -85,7 +85,7 @@ jobs:
           --set piper.gitProvider.organization.name="rookout" \
           --set image.repository=localhost:5001 \
           --set piper.argoWorkflows.server.address="${{ env.NGROK_URL }}/argo" \
-          --set env\[0\].name=GIT_WEBHOOK_AUTO_CLEANUP,env\[0\].value='true' && \
+          --set env\[0\].name=GIT_WEBHOOK_AUTO_CLEANUP,env\[0\].value=`true` && \
           sleep 20 && kubectl logs deployment/piper
           kubectl wait  \
           --for=condition=ready pod \
