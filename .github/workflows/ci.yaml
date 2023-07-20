@@ -33,6 +33,7 @@ jobs:
   lint:
     name: Go Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -41,6 +42,7 @@ jobs:
           cache: true
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        args: --timeout=10m
         with:
           version: v1.53
           only-new-issues: true
@@ -48,6 +50,7 @@ jobs:
   helm:
     name: Helm Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
         with:
