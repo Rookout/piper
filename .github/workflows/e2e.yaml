@@ -111,8 +111,8 @@ jobs:
         with:
           token: ${{ secrets.GIT_TOKEN }}
           path: piper-e2e-test
-          branch: ${{ github.head_ref }}
-          title: ${{ github.head_ref }}
+          branch: ${{ github.head_ref }}-test
+          title: ${{ github.head_ref }}-test
           delete-branch: true
       - name: Close Pull Request
         uses: peter-evans/close-pull@v3
@@ -126,10 +126,10 @@ jobs:
         run: |
           kubectl logs deployment/piper
           ## check if created
-          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }} --no-headers | grep piper-e2e-test)
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}-test --no-headers | grep piper-e2e-test)
           [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || { echo "Workflow not exists, existing..."; exit 1; }
 
           ## check if status phase not Failed, if yes, show message
-          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.phase")
-          MESSAGE=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}  --no-headers -o custom-columns="Status:status.message")
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}-test  --no-headers -o custom-columns="Status:status.phase")
+          MESSAGE=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}-test  --no-headers -o custom-columns="Status:status.message")
           [ ! "$RESULT" == "Failed"  ] && echo "CRD created $MESSAGE" || { echo "Workflow Failed $MESSAGE, existing..."; exit 1; }
