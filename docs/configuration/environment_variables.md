@@ -23,6 +23,10 @@ The helm chart populate them using [values.yaml](https://github.com/Rookout/pipe
 * GIT_WEBHOOK_URL
   URL of piper ingress, to configure webhooks.
 
+* GIT_WEBHOOK_AUTO_CLEANUP
+  Will cleanup all webhook that were created with piper. 
+  Notice that there will be a race conditions between pod that being terminated and the new one. 
+
 ### Argo Workflows Server
 * ARGO_WORKFLOWS_TOKEN
   The token of Argo Workflows server.

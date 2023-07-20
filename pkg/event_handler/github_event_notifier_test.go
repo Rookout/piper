@@ -28,11 +28,11 @@ func (m *mockGitProvider) ListFiles(ctx *context.Context, repo string, branch st
 	return nil, nil
 }
 
-func (m *mockGitProvider) SetWebhook() error {
-	return nil
+func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*git_provider.HookWithStatus, error) {
+	return nil, nil
 }
 
-func (m *mockGitProvider) UnsetWebhook(ctx *context.Context) error {
+func (m *mockGitProvider) UnsetWebhook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
 	return nil
 }
 
@@ -41,6 +41,14 @@ func (m *mockGitProvider) HandlePayload(ctx *context.Context, request *http.Requ
 }
 
 func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	return nil
+}
+
+func (m *mockGitProvider) PingHook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
+	return nil
+}
+
+func (m *mockGitProvider) GetHooks() []*git_provider.HookWithStatus {
 	return nil
 }
 
@@ -180,12 +188,12 @@ func TestNotify(t *testing.T) {
 			Namespace:   "test-namespace",
 		},
 	}
-	clients := &clients.Clients{
+	globalClients := &clients.Clients{
 		GitProvider: &mockGitProvider{},
 	}
 
 	// Create a new githubNotifier instance
-	gn := NewGithubEventNotifier(cfg, clients)
+	gn := NewGithubEventNotifier(cfg, globalClients)
 
 	// Call the Notify method
 

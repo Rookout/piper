@@ -29,9 +29,9 @@ markdown_extensions:
 
 nav:
   - Introduction: index.md
-  - Getting Started:
-      - getting_started/installation.md
-      - getting_started/environment_variables.md
+  - Getting Started: getting_started/installation.md
+  - Configuration:
+      - Configuration/environment_variables.md
   - Use piper:
       - usage/workflows_folder.md
       - usage/global_variables.md

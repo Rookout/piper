@@ -5,15 +5,17 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/server/routes"
+	"github.com/rookout/piper/pkg/webhook_creator"
 	"log"
 	"net/http"
 )
 
 func NewServer(config *conf.GlobalConfig, clients *clients.Clients) *Server {
 	srv := &Server{
-		router:  gin.New(),
-		config:  config,
-		clients: clients,
+		router:         gin.New(),
+		config:         config,
+		clients:        clients,
+		webhookCreator: webhook_creator.NewWebhookCreator(config, clients),
 	}
 
 	return srv
@@ -37,7 +39,7 @@ func (s *Server) startServer() *http.Server {
 func (s *Server) registerMiddlewares() {
 	s.router.Use(
 		gin.LoggerWithConfig(gin.LoggerConfig{
-			SkipPaths: []string{"/healthz"},
+			SkipPaths: []string{"/healthz", "/readyz"},
 		}),
 		gin.Recovery(),
 	)
@@ -46,15 +48,23 @@ func (s *Server) registerMiddlewares() {
 
 func (s *Server) getRoutes() {
 	v1 := s.router.Group("/")
-	routes.AddHealthRoutes(v1)
-	routes.AddWebhookRoutes(s.config, s.clients, v1)
+	routes.AddReadyRoutes(v1)
+	routes.AddHealthRoutes(v1, s.webhookCreator)
+	routes.AddWebhookRoutes(s.config, s.clients, v1, s.webhookCreator)
 }
 
-func (s *Server) ListenAndServe() *http.Server {
+func (s *Server) startServices() {
+	s.webhookCreator.Start()
+}
+
+func (s *Server) Start() {
 
 	s.registerMiddlewares()
 
 	s.getRoutes()
 
-	return s.startServer()
+	s.httpServer = s.startServer()
+
+	s.startServices()
+
 }

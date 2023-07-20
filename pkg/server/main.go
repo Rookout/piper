@@ -11,14 +11,9 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 
 	srv := NewServer(cfg, clients)
 	gracefulShutdownHandler := NewGracefulShutdown(ctx, stop)
-	httpServer := srv.ListenAndServe()
+	srv.Start()
 
-	err := clients.GitProvider.SetWebhook()
-	if err != nil {
-		panic(err)
-	}
-
-	gracefulShutdownHandler.Shutdown(httpServer, clients)
+	gracefulShutdownHandler.Shutdown(srv)
 
 	log.Println("Server exiting")
 }

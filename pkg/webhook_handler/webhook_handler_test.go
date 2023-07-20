@@ -38,10 +38,10 @@ var commitFileMap = map[string]*git_provider.CommitFile{
 	},
 }
 
-// MockGitProvider is a mock implementation of the git_provider.Client interface.
-type MockGitProvider struct{}
+// mockGitProvider is a mock implementation of the git_provider.Client interface.
+type mockGitProvider struct{}
 
-func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
+func (m *mockGitProvider) GetFile(ctx *context.Context, repo string, branch string, path string) (*git_provider.CommitFile, error) {
 
 	fullPath := fmt.Sprintf("%s/%s/%s", repo, branch, path)
 	if fileInfo, ok := commitFileMap[fullPath]; ok {
@@ -50,7 +50,7 @@ func (m *MockGitProvider) GetFile(ctx *context.Context, repo string, branch stri
 	return &git_provider.CommitFile{}, nil
 }
 
-func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*git_provider.CommitFile, error) {
+func (m *mockGitProvider) GetFiles(ctx *context.Context, repo string, branch string, paths []string) ([]*git_provider.CommitFile, error) {
 	var commitFiles []*git_provider.CommitFile
 
 	for _, path := range paths {
@@ -65,7 +65,7 @@ func (m *MockGitProvider) GetFiles(ctx *context.Context, repo string, branch str
 
 }
 
-func (m *MockGitProvider) ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error) {
+func (m *mockGitProvider) ListFiles(ctx *context.Context, repo string, branch string, path string) ([]string, error) {
 	var files []string
 
 	fullPath := fmt.Sprintf("%s/%s/%s/", repo, branch, path)
@@ -80,19 +80,23 @@ func (m *MockGitProvider) ListFiles(ctx *context.Context, repo string, branch st
 	return files, nil
 }
 
-func (m *MockGitProvider) SetWebhook() error {
-	return nil
-}
-
-func (m *MockGitProvider) UnsetWebhook(ctx *context.Context) error {
-	return nil
-}
-
-func (m *MockGitProvider) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
+func (m *mockGitProvider) SetWebhook(ctx *context.Context, repo *string) (*git_provider.HookWithStatus, error) {
 	return nil, nil
 }
 
-func (m *MockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+func (m *mockGitProvider) UnsetWebhook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
+	return nil
+}
+
+func (m *mockGitProvider) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*git_provider.WebhookPayload, error) {
+	return nil, nil
+}
+
+func (m *mockGitProvider) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
+	return nil
+}
+
+func (m *mockGitProvider) PingHook(ctx *context.Context, hook *git_provider.HookWithStatus) error {
 	return nil
 }
 
@@ -490,7 +494,7 @@ func TestPrepareBatchForMatchingTriggers(t *testing.T) {
 				Triggers: test.triggers,
 				Payload:  test.payload,
 				clients: &clients.Clients{
-					GitProvider: &MockGitProvider{},
+					GitProvider: &mockGitProvider{},
 				},
 			}
 			WorkflowsBatches, err := wh.PrepareBatchForMatchingTriggers(&ctx)
