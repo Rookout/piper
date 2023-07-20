@@ -42,11 +42,11 @@ jobs:
           cache: true
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
-        args: --timeout=10m
         with:
           version: v1.53
           only-new-issues: true
           skip-pkg-cache: true
+          args: --timeout=10m
   helm:
     name: Helm Lint
     runs-on: ubuntu-latest
