@@ -6,16 +6,22 @@ import (
 	"fmt"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+	"github.com/argoproj/argo-workflows/v3/util/kubeconfig"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/client-go/tools/clientcmd"
 	"log"
+	"os"
 	"strings"
 
+	workflowapliclient "github.com/argoproj/argo-workflows/v3/pkg/apiclient"
+	workflowpkg "github.com/argoproj/argo-workflows/v3/pkg/apiclient/workflow"
 	"github.com/rookout/piper/pkg/common"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/utils"
+	restclient "k8s.io/client-go/rest"
 )
 
 const (
@@ -24,8 +30,9 @@ const (
 )
 
 type WorkflowsClientImpl struct {
-	clientSet *wfClientSet.Clientset
-	cfg       *conf.GlobalConfig
+	clientSet         *wfClientSet.Clientset
+	workflowAPIClient workflowpkg.WorkflowServiceClient
+	cfg               *conf.GlobalConfig
 }
 
 func NewWorkflowsClient(cfg *conf.GlobalConfig) (WorkflowsClient, error) {
@@ -35,10 +42,56 @@ func NewWorkflowsClient(cfg *conf.GlobalConfig) (WorkflowsClient, error) {
 	}
 
 	clientSet := wfClientSet.NewForConfigOrDie(restClientConfig) //.ArgoprojV1alpha1().Workflows(namespace)
+	opts := workflowapliclient.Opts{
+		ArgoServerOpts: workflowapliclient.ArgoServerOpts{
+			URL:                "",
+			Path:               "",
+			Secure:             false,
+			InsecureSkipVerify: false,
+			HTTP1:              false,
+			Headers:            nil,
+		},
+		InstanceID: cfg.ArgoAddress,
+		AuthSupplier: func() string {
+			return GetArgoAuthString(cfg)
+		},
+		ClientConfigSupplier: func() clientcmd.ClientConfig { return GetConfig() },
+		Offline:              false,
+		OfflineFiles:         nil,
+		Context:              nil,
+	}
+	_, workflowServerClients, err := workflowapliclient.NewClientFromOpts(opts)
+	if err != nil {
+		return nil, err
+	}
 	return &WorkflowsClientImpl{
-		clientSet: clientSet,
-		cfg:       cfg,
+		clientSet:         clientSet,
+		workflowAPIClient: workflowServerClients.NewWorkflowServiceClient(),
+		cfg:               cfg,
 	}, nil
+}
+
+func GetConfig() clientcmd.ClientConfig {
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	loadingRules.DefaultClientConfig = &clientcmd.DefaultClientConfig
+	return clientcmd.NewInteractiveDeferredLoadingClientConfig(loadingRules, &clientcmd.ConfigOverrides{}, os.Stdin)
+}
+
+func GetArgoAuthString(cfg *conf.GlobalConfig) string {
+	if cfg.ArgoToken != "" {
+		return cfg.ArgoToken
+	}
+
+	restConfig, err := utils.GetClientConfig(cfg.WorkflowServerConfig.KubeConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	restConfig = restclient.AddUserAgent(restConfig, "piper")
+	authString, err := kubeconfig.GetAuthString(restConfig, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return authString
 }
 
 func (wfc *WorkflowsClientImpl) ConstructTemplates(workflowsBatch *common.WorkflowsBatch, configName string) ([]v1alpha1.Template, error) {
@@ -141,6 +194,7 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 
 func (wfc *WorkflowsClientImpl) Lint(wf *v1alpha1.Workflow) error {
 	//TODO implement me
+	wfc.workflowAPIClient.LintWorkflow(context.Background(), wf)
 	panic("implement me")
 }
 
