@@ -27,6 +27,9 @@ The helm chart populate them using [values.yaml](https://github.com/Rookout/pipe
   Will cleanup all webhook that were created with piper. 
   Notice that there will be a race conditions between pod that being terminated and the new one. 
 
+* GIT_ENFORCE_ORG_BELONGING
+  Boolean variable, whether to enforce organizational belonging of git event creator. default `false`
+
 ### Argo Workflows Server
 * ARGO_WORKFLOWS_TOKEN
   The token of Argo Workflows server.
