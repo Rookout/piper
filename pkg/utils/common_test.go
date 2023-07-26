@@ -303,3 +303,25 @@ func TestValidateHTTPFormat(t *testing.T) {
 	}
 
 }
+
+func TestTrimString(t *testing.T) {
+	assert := assertion.New(t)
+
+	// Test cases
+	testCases := []struct {
+		input     string
+		maxLength int
+		expected  string
+	}{
+		{"This is a sample string.", 10, "This is a "},
+		{"Short", 10, "Short"},
+		{"Longer string for testing.", 5, "Longe"},
+		{"", 10, ""},
+	}
+
+	// Perform tests
+	for _, tc := range testCases {
+		result := TrimString(tc.input, tc.maxLength)
+		assert.Equal(tc.expected, result)
+	}
+}
