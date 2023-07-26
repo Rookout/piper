@@ -21,7 +21,6 @@ theme:
     - content.code.annotate
 plugins:
   - mkdocs-video:
-      is_video: True
       video_loop: True
       video_muted: True
       video_autoplay: True

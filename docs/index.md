@@ -18,4 +18,4 @@ To achieve multibranch pipeline functionality Piper will do the hard works for u
 At initialization, it will load all configuration and create a webhook in repository or organization scope.
 Then each branch that have `.workflows` folder will create a Workflow CRD out of the files in this folder.
 
-![type:video](./img/piper-demo-1080.mov)
+![type:video](./img/piper-demo-1080.mp4)
