@@ -145,39 +145,6 @@
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-    
     
       <div class="md-header__source">
         <a href="https://github.com/rookout/piper" title="Go to repository" class="md-source" data-md-component="source">
@@ -659,18 +626,18 @@
 
   <h1>Getting Started</h1>
 
-<h2 id="instalation">Instalation</h2>
+<div><h2 id="instalation">Instalation</h2>
 <p>Piper should be deployed in the cluster with Argo Workflows. 
 Piper will create a CRD that Argo Workflows will pick, so install or configure Piper to create those CRDs in the right namespace. </p>
 <p>Please check out <a href="https://github.com/Rookout/piper/tree/main/helm-chart/values.yaml">values.yaml</a> file of the helm chart configurations.</p>
 <p>To add piper helm repo run:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>piper<span class="w"> </span>https://piper.rookout.com
-</code></pre></div></p>
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>piper<span class="w"> </span>https://piper.rookout.com
+</code></pre></div>
 <p>After configuring Piper <a href="https://github.com/Rookout/piper/tree/main/helm-chart/values.yaml">values.yaml</a>, run the following command for installation:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>piper<span class="w"> </span>piper/piper<span class="w"> </span><span class="se">\</span>
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>piper<span class="w"> </span>piper/piper<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-f<span class="w"> </span>YOUR_VALUES_FILE.yaml
-</code></pre></div></p>
-<hr />
+</code></pre></div>
+<hr>
 <h2 id="required-configuration">Required Configuration</h2>
 <h3 id="ingress">Ingress</h3>
 <p>Piper should listen to webhooks from your git provider. Checkout <a href="https://github.com/Rookout/piper/tree/main/helm-chart/values.yaml">values.yaml</a> for <code>ingress</code></p>
@@ -686,8 +653,8 @@ For GitHub configure <code>admin:org</code> and <code>write:org</code> permissio
 Can be passed as parameter in helm install command using <code>--set piper.gitProvider.token=YOUR_GIT_TOKEN</code></p>
 <p>Alternatively, you can consume already existing secret and fill up <code>piper.gipProvider.existingSecret</code>.
 The key should be name <code>token</code>. Can be created using 
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>piper-git-token<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">token</span><span class="o">=</span>YOUR_GIT_OKEN
-</code></pre></div></p>
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>piper-git-token<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">token</span><span class="o">=</span>YOUR_GIT_OKEN
+</code></pre></div>
 <h4 id="webhook-creation">Webhook creation</h4>
 <p>Piper will create a webhook configuration for you, for the whole organization or for each repo you configure.</p>
 <p>Configure <code>piper.webhook.url</code> the address of piper that exposed with ingress.</p>
@@ -698,12 +665,12 @@ The key should be name <code>token</code>. Can be created using
 <p>Piper will handle status checks for you. 
 It will notify the GitProvider for the status of Workflow for specific commit that triggered the Piper.
 For linking provide valid URL of your Argo Workflows server address at: <code>argoWorkflows.server.address</code></p>
-<hr />
+<hr>
 <h3 id="argo-workflow-server-on-development">Argo Workflow Server (On development)</h3>
 <p>Piper will use REST API to communicate with Argo Workflows server for linting or for creation of workflows (ARGO_WORKFLOWS_CREATE_CRD). Please follow this <a href="https://argoproj.github.io/argo-workflows/rest-api/">configuration</a>.</p>
 <p>To lint the workflow before submitting it, please configure the internal address of Argo Workflows server (for example, <code>argo-server.workflows.svc.cluster.local</code>) in the field: <code>argoWorkflows.server.address</code>. Argo will need a <a href="https://argoproj.github.io/argo-workflows/access-token/">token</a> to authenticate. please provide the secret in <code>argoWorkflows.server.token</code>, Better to pass as a references to a secret in the field <code>argoWorkflows.server.token</code>.</p>
 <h4 id="skip-crd-creation-on-development">Skip CRD Creation (On development)</h4>
-<p>Piper can communicate directly to Argo Workflow using ARGO_WORKFLOWS_CREATE_CRD environment variable, if you want to skip the creation of CRD change <code>argoWorkflows.crdCreation</code> to <code>false</code>.</p>
+<p>Piper can communicate directly to Argo Workflow using ARGO_WORKFLOWS_CREATE_CRD environment variable, if you want to skip the creation of CRD change <code>argoWorkflows.crdCreation</code> to <code>false</code>.</p></div>
 
 
 
