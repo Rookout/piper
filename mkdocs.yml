@@ -21,11 +21,7 @@ theme:
     - content.code.annotate
 plugins:
   - mkdocs-video:
-      is_video: True
-      video_loop: True
-      video_muted: True
       video_type: mov
-      video_autoplay: True
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
