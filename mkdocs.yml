@@ -19,7 +19,8 @@ theme:
         name: Switch to light mode
   features:
     - content.code.annotate
-
+plugins:
+  - mkdocs-video
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
