@@ -38,7 +38,7 @@ func NewGithubClient(cfg *conf.GlobalConfig) (Client, error) {
 
 	cfg.OrgID = user.GetID()
 
-	fmt.Printf("Org ID is: %d\n", cfg.OrgID)
+	log.Printf("Org ID is: %d\n", cfg.OrgID)
 
 	return &GithubClientImpl{
 		client: client,
