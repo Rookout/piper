@@ -131,3 +131,10 @@ func ValidateHTTPFormat(input string) bool {
 	match, _ := regexp.MatchString(regex, input)
 	return match
 }
+
+func TrimString(s string, maxLength int) string {
+	if maxLength >= len(s) {
+		return s
+	}
+	return s[:maxLength]
+}
