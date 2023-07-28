@@ -299,7 +299,7 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 		}
 	}
 
-	if c.cfg.EnforceOrgBelonging && webhookPayload.OwnerID != c.cfg.OrgID {
+	if c.cfg.EnforceOrgBelonging && (webhookPayload.OwnerID == 0 || webhookPayload.OwnerID != c.cfg.OrgID) {
 		return nil, fmt.Errorf("webhook send from non organizational member")
 	}
 	return webhookPayload, nil
