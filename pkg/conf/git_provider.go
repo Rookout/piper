@@ -15,6 +15,7 @@ type GitProviderConfig struct {
 	WebhookURL         string `envconfig:"GIT_WEBHOOK_URL" required:"false"`
 	WebhookSecret      string `envconfig:"GIT_WEBHOOK_SECRET" required:"false"`
 	WebhookAutoCleanup bool   `envconfig:"GIT_WEBHOOK_AUTO_CLEANUP" default:"false" required:"false"`
+	BaseURL            string `envconfig:"GIT_BASE_URL" required:"false"`
 }
 
 func (cfg *GitProviderConfig) GitConfLoad() error {
