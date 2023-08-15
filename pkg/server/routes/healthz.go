@@ -19,7 +19,7 @@ func AddHealthRoutes(rg *gin.RouterGroup, wc *webhook_creator.WebhookCreatorImpl
 		defer cancel()
 		err := wc.RunDiagnosis(&ctx2)
 		if err != nil {
-			log.Printf("error from healthz endpint:%s\n", err)
+			log.Printf("error from healthz endpoint:%s\n", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}

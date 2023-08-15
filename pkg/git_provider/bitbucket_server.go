@@ -13,7 +13,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 )
 
 type BitbucketServerClientImpl struct {
@@ -30,7 +29,7 @@ func NewBitbucketServerClient(cfg *conf.GlobalConfig) (Client, error) {
 	bitbucketConfig.AddDefaultHeader("x-atlassian-token", "no-check")
 	bitbucketConfig.AddDefaultHeader("x-requested-with", "XMLHttpRequest")
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx := context.Background() // context.WithTimeout(context.Background(), 10*time.Second)
 
 	ctx = context.WithValue(ctx, bitbucket.ContextAccessToken, cfg.GitProviderConfig.Token)
 	client := bitbucket.NewAPIClient(ctx, bitbucketConfig)
@@ -143,8 +142,21 @@ func (b BitbucketServerClientImpl) SetStatus(ctx *context.Context, repo *string,
 }
 
 func (b BitbucketServerClientImpl) PingHook(ctx *context.Context, hook *HookWithStatus) error {
-	//TODO implement me
-	panic("implement me")
+
+	body := map[string]interface{}{
+		"url": b.cfg.GitProviderConfig.WebhookURL,
+	}
+
+	apiResponse, err := b.client.DefaultApi.TestWebhook(b.cfg.GitProviderConfig.OrgName, *hook.RepoName, body)
+	if err != nil {
+		return err
+	}
+
+	if apiResponse.StatusCode != http.StatusOK {
+		return fmt.Errorf("webhook of repo %s test returned %s", *hook.RepoName, apiResponse.Message)
+	}
+
+	return nil
 }
 
 func (b BitbucketServerClientImpl) isRepoWebhookExists(ctx context.Context, repo string) (*bitbucket.Webhook, bool) {
@@ -169,7 +181,7 @@ func (b BitbucketServerClientImpl) isRepoWebhookExists(ctx context.Context, repo
 	}
 
 	for _, hook := range hooks {
-		if hook.Name == "piper" && hook.Url == b.cfg.GitProviderConfig.WebhookURL {
+		if hook.Name == "Piper" && hook.Url == b.cfg.GitProviderConfig.WebhookURL {
 			return &hook, true
 		}
 	}
