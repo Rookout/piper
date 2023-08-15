@@ -1,12 +1,16 @@
 package git_provider
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	bitbucket "github.com/gfleury/go-bitbucket-v1"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rookout/piper/pkg/conf"
 	"golang.org/x/net/context"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -26,8 +30,7 @@ func NewBitbucketServerClient(cfg *conf.GlobalConfig) (Client, error) {
 	bitbucketConfig.AddDefaultHeader("x-atlassian-token", "no-check")
 	bitbucketConfig.AddDefaultHeader("x-requested-with", "XMLHttpRequest")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	ctx = context.WithValue(ctx, bitbucket.ContextAccessToken, cfg.GitProviderConfig.Token)
 	client := bitbucket.NewAPIClient(ctx, bitbucketConfig)
@@ -124,8 +127,14 @@ func (b BitbucketServerClientImpl) UnsetWebhook(ctx *context.Context, hook *Hook
 }
 
 func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error) {
-	//TODO implement me
-	panic("implement me")
+	var webhookPayload *WebhookPayload
+
+	_, err := b.validatRequest(request, secret)
+	if err != nil {
+		return nil, err
+	}
+
+	return webhookPayload, nil
 }
 
 func (b BitbucketServerClientImpl) SetStatus(ctx *context.Context, repo *string, commit *string, linkURL *string, status *string, message *string) error {
@@ -142,7 +151,7 @@ func (b BitbucketServerClientImpl) isRepoWebhookExists(ctx context.Context, repo
 	emptyHook := bitbucket.Webhook{}
 	apiResponse, err := b.client.DefaultApi.FindWebhooks(b.cfg.GitProviderConfig.OrgName, repo, nil)
 	if err != nil {
-		log.Errorf(ctx, "failed to list existing hooks to check for duplicates for repository %s", repo)
+		log.Printf("failed to list existing hooks for repository %s. error:%s", repo, err)
 		return &emptyHook, false
 	}
 	if apiResponse.StatusCode != 200 {
@@ -151,7 +160,7 @@ func (b BitbucketServerClientImpl) isRepoWebhookExists(ctx context.Context, repo
 
 	hooks, err := bitbucket.GetWebhooksResponse(apiResponse)
 	if err != nil {
-		log.Errorf(ctx, "failed to convert the list of webhooks for repository %s", repo)
+		log.Printf("failed to convert the list of webhooks for repository %s. error:%s", repo, err)
 		return &emptyHook, false
 	}
 
@@ -166,4 +175,26 @@ func (b BitbucketServerClientImpl) isRepoWebhookExists(ctx context.Context, repo
 	}
 
 	return &emptyHook, false
+}
+
+func (b *BitbucketServerClientImpl) validatRequest(request *http.Request, secret []byte) ([]byte, error) {
+	body, err := io.ReadAll(request.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse request body, %w", err)
+	}
+
+	signature := request.Header.Get("X-Hub-Signature")
+	if len(signature) == 0 {
+		return nil, fmt.Errorf("missing signature header")
+	}
+
+	mac := hmac.New(sha256.New, secret)
+	_, _ = mac.Write(body)
+	expectedMAC := hex.EncodeToString(mac.Sum(nil))
+
+	if !hmac.Equal([]byte(signature[7:]), []byte(expectedMAC)) {
+		return nil, fmt.Errorf("hmac verification failed")
+	}
+
+	return body, nil
 }
