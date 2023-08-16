@@ -175,16 +175,23 @@ func (wc *WebhookCreatorImpl) pingHooks(ctx *context.Context) error {
 
 func (wc *WebhookCreatorImpl) RunDiagnosis(ctx *context.Context) error {
 	log.Printf("Starting webhook diagnostics")
-	wc.setAllHooksHealth(false)
-	err := wc.pingHooks(ctx)
-	if err != nil {
-		return err
-	}
-	if !wc.checkHooksHealth(5 * time.Second) {
-		for hookID, hook := range wc.hooks {
-			if !hook.HealthStatus {
-				return fmt.Errorf("hook %d is not healthy", hookID)
+	if wc.cfg.GitProviderConfig.FullHealthCheck {
+		wc.setAllHooksHealth(false)
+		err := wc.pingHooks(ctx)
+		if err != nil {
+			return err
+		}
+		if !wc.checkHooksHealth(5 * time.Second) {
+			for hookID, hook := range wc.hooks {
+				if !hook.HealthStatus {
+					return fmt.Errorf("hook %d is not healthy", hookID)
+				}
 			}
+		}
+	} else {
+		err := wc.pingHooks(ctx)
+		if err != nil {
+			return err
 		}
 	}
 
