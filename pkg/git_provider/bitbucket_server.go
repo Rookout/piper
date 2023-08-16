@@ -128,6 +128,12 @@ func (b BitbucketServerClientImpl) UnsetWebhook(ctx *context.Context, hook *Hook
 func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *http.Request, secret []byte) (*WebhookPayload, error) {
 	var webhookPayload *WebhookPayload
 
+	eventType := request.Header.Get("X-Event-Key")
+	if eventType == "diagnostics:ping" {
+		return &WebhookPayload{
+			Event: "ping",
+		}, nil
+	}
 	_, err := b.validatRequest(request, secret)
 	if err != nil {
 		return nil, err

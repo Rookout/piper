@@ -31,6 +31,7 @@ ENV GIN_MODE=release
 
 USER 1001
 
+CMD echo "somethoing "
 COPY .git /.git
 
 COPY --chown=1001 --from=builder /piper/piper /bin
