@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"regexp"
 	"strings"
 
@@ -137,4 +138,37 @@ func TrimString(s string, maxLength int) string {
 		return s
 	}
 	return s[:maxLength]
+}
+
+func StringToInt64(input string) int64 {
+	h := fnv.New64a()
+	h.Write([]byte(input))
+	hashValue := h.Sum64()
+
+	// Convert the hash value to int64
+	int64Value := int64(hashValue)
+	// Make sure the value is positive (int64 can represent only non-negative values)
+	if int64Value < 0 {
+		int64Value = int64Value * -1
+	}
+
+	return int64Value
+}
+
+func RemoveBraces(input string) string {
+	output := strings.ReplaceAll(input, "{", "")
+	output = strings.ReplaceAll(output, "}", "")
+	return output
+}
+
+func ExtractStringsBetweenTags(input string) []string {
+	re := regexp.MustCompile(`<([^>]+)>`)
+	matches := re.FindAllStringSubmatch(input, -1)
+
+	var result []string
+	for _, match := range matches {
+		result = append(result, match[1])
+	}
+
+	return result
 }

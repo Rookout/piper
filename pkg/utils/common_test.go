@@ -325,3 +325,63 @@ func TestTrimString(t *testing.T) {
 		assert.Equal(tc.expected, result)
 	}
 }
+
+func TestStringToInt64(t *testing.T) {
+	assert := assertion.New(t)
+
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"example", 4830977581527752769},
+		{"hello", 6615550055289275125},
+		{"world", 5717881983045765875},
+		{"504c3b62-8120-4f0c-a7bc-87800b9d6f70", 576307397598494980},
+	}
+
+	for _, test := range tests {
+		result := StringToInt64(test.input)
+		assert.Equal(test.expected, result)
+	}
+}
+
+func TestRemoveBraces(t *testing.T) {
+	assert := assertion.New(t)
+
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"Hello {World}!", "Hello World!"},
+		{"{Test} string with {braces}", "Test string with braces"},
+		{"No braces", "No braces"},
+		{"{}", ""},
+		{"", ""},
+	}
+
+	for _, test := range tests {
+		t.Run(test.input, func(t *testing.T) {
+			result := RemoveBraces(test.input)
+			assert.Equal(test.expected, result)
+		})
+	}
+}
+
+func TestExtractStringsBetweenTags(t *testing.T) {
+	assert := assertion.New(t)
+
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{"Hello <world>! <This> is a <test> string.", []string{"world", "This", "test"}},
+		{"<tag1> <tag2>", []string{"tag1", "tag2"}},
+		{"No tags here.", []string(nil)},
+		{"<single>", []string{"single"}},
+	}
+
+	for _, test := range tests {
+		result := ExtractStringsBetweenTags(test.input)
+		assert.Equal(test.expected, result)
+	}
+}
