@@ -168,23 +168,23 @@ func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *
 	case "repo:push":
 		webhookPayload = &WebhookPayload{
 			Event:     "push",
-			Repo:      fmt.Sprintf("%s", body["repository"].(map[string]interface{})["name"].(string)),
-			Branch:    fmt.Sprintf("%s", body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["new"].(map[string]interface{})["name"].(string)),
-			Commit:    fmt.Sprintf("%s", body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["hash"].(string)),
-			UserEmail: utils.ExtractStringsBetweenTags(fmt.Sprintf("%s", body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["author"].(map[string]interface{})["raw"].(string)))[0],
-			User:      fmt.Sprintf("%s", body["actor"].(map[string]interface{})["display_name"].(string)),
+			Repo:      body["repository"].(map[string]interface{})["name"].(string),
+			Branch:    body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["new"].(map[string]interface{})["name"].(string),
+			Commit:    body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["hash"].(string),
+			UserEmail: utils.ExtractStringsBetweenTags(body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["author"].(map[string]interface{})["raw"].(string))[0],
+			User:      body["actor"].(map[string]interface{})["display_name"].(string),
 			HookID:    hookID,
 		}
 	case "pullrequest:created", "pullrequest:updated":
 		webhookPayload = &WebhookPayload{
 			Event:            "pull_request",
-			Repo:             fmt.Sprintf("%s", body["repository"].(map[string]interface{})["name"].(string)),
-			Branch:           fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string)),
-			Commit:           fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["commit"].(map[string]interface{})["hash"].(string)),
-			User:             fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["author"].(map[string]interface{})["display_name"].(string)),
-			PullRequestURL:   fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["links"].(map[string]interface{})["html"].(map[string]interface{})["href"].(string)),
-			PullRequestTitle: fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["title"].(string)),
-			DestBranch:       fmt.Sprintf("%s", body["pullrequest"].(map[string]interface{})["destination"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string)),
+			Repo:             body["repository"].(map[string]interface{})["name"].(string),
+			Branch:           body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string),
+			Commit:           body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["commit"].(map[string]interface{})["hash"].(string),
+			User:             body["pullrequest"].(map[string]interface{})["author"].(map[string]interface{})["display_name"].(string),
+			PullRequestURL:   body["pullrequest"].(map[string]interface{})["links"].(map[string]interface{})["html"].(map[string]interface{})["href"].(string),
+			PullRequestTitle: body["pullrequest"].(map[string]interface{})["title"].(string),
+			DestBranch:       body["pullrequest"].(map[string]interface{})["destination"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string),
 			HookID:           hookID,
 		}
 	}

@@ -77,13 +77,3 @@ func getHookByUUID(hookUuid string, hookHashTable map[string]int64) (int64, erro
 	}
 	return res, nil
 }
-
-func getHookByInt64(hookID int64, hookHashTable map[string]int64) (string, error) {
-	for hookUUID, hookInt64 := range hookHashTable {
-		if hookInt64 == hookID {
-			return hookUUID, nil
-		}
-	}
-
-	return "", fmt.Errorf("hookID %d not found", hookID)
-}
