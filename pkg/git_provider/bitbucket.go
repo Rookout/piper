@@ -169,7 +169,7 @@ func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *
 	case "repo:push":
 		webhookPayload = &WebhookPayload{
 			Event:     "push",
-			Repo:      gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string),
+			Repo:      strings.ReplaceAll(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string), " ", "-"),
 			Branch:    gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
 			Commit:    gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.hash").Value().(string),
 			UserEmail: utils.ExtractStringsBetweenTags(gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.author.raw").Value().(string))[0],
@@ -179,7 +179,7 @@ func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *
 	case "pullrequest:created", "pullrequest:updated":
 		webhookPayload = &WebhookPayload{
 			Event:            "pull_request",
-			Repo:             gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string),
+			Repo:             strings.ReplaceAll(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string), " ", "-"),
 			Branch:           gjson.GetBytes(buf.Bytes(), "pullrequest.source.branch.name").Value().(string),
 			Commit:           gjson.GetBytes(buf.Bytes(), "pullrequest.source.commit.hash").Value().(string),
 			User:             gjson.GetBytes(buf.Bytes(), "pullrequest.author.display_name").Value().(string),

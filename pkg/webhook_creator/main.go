@@ -86,7 +86,7 @@ func (wc *WebhookCreatorImpl) initWebhooks() error {
 	if wc.cfg.GitProviderConfig.OrgLevelWebhook && len(wc.cfg.GitProviderConfig.RepoList) != 0 {
 		return fmt.Errorf("org level webhook wanted but provided repositories list")
 	}
-	for _, repo := range strings.Split(wc.cfg.GitProviderConfig.RepoList, ",") {
+	for _, repo := range strings.Split(strings.ReplaceAll(wc.cfg.GitProviderConfig.RepoList, " ", "-"), ",") {
 		hook, err := wc.clients.GitProvider.SetWebhook(&ctx, &repo)
 		if err != nil {
 			return err
