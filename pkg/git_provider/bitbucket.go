@@ -7,6 +7,7 @@ import (
 	"github.com/ktrysmt/go-bitbucket"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/utils"
+	"github.com/tidwall/gjson"
 	"golang.org/x/net/context"
 	"io"
 	"log"
@@ -168,23 +169,23 @@ func (b BitbucketServerClientImpl) HandlePayload(ctx *context.Context, request *
 	case "repo:push":
 		webhookPayload = &WebhookPayload{
 			Event:     "push",
-			Repo:      body["repository"].(map[string]interface{})["name"].(string),
-			Branch:    body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["new"].(map[string]interface{})["name"].(string),
-			Commit:    body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["hash"].(string),
-			UserEmail: utils.ExtractStringsBetweenTags(body["push"].(map[string]interface{})["changes"].([]interface{})[0].(map[string]interface{})["commits"].([]interface{})[0].(map[string]interface{})["author"].(map[string]interface{})["raw"].(string))[0],
-			User:      body["actor"].(map[string]interface{})["display_name"].(string),
+			Repo:      gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string),
+			Branch:    gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
+			Commit:    gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.hash").Value().(string),
+			UserEmail: utils.ExtractStringsBetweenTags(gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.author.raw").Value().(string))[0],
+			User:      gjson.GetBytes(buf.Bytes(), "actor.display_name").Value().(string),
 			HookID:    hookID,
 		}
 	case "pullrequest:created", "pullrequest:updated":
 		webhookPayload = &WebhookPayload{
 			Event:            "pull_request",
-			Repo:             body["repository"].(map[string]interface{})["name"].(string),
-			Branch:           body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string),
-			Commit:           body["pullrequest"].(map[string]interface{})["source"].(map[string]interface{})["commit"].(map[string]interface{})["hash"].(string),
-			User:             body["pullrequest"].(map[string]interface{})["author"].(map[string]interface{})["display_name"].(string),
-			PullRequestURL:   body["pullrequest"].(map[string]interface{})["links"].(map[string]interface{})["html"].(map[string]interface{})["href"].(string),
-			PullRequestTitle: body["pullrequest"].(map[string]interface{})["title"].(string),
-			DestBranch:       body["pullrequest"].(map[string]interface{})["destination"].(map[string]interface{})["branch"].(map[string]interface{})["name"].(string),
+			Repo:             gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string),
+			Branch:           gjson.GetBytes(buf.Bytes(), "pullrequest.source.branch.name").Value().(string),
+			Commit:           gjson.GetBytes(buf.Bytes(), "pullrequest.source.commit.hash").Value().(string),
+			User:             gjson.GetBytes(buf.Bytes(), "pullrequest.author.display_name").Value().(string),
+			PullRequestURL:   gjson.GetBytes(buf.Bytes(), "pullrequest.links.html.href").Value().(string),
+			PullRequestTitle: gjson.GetBytes(buf.Bytes(), "pullrequest.title").Value().(string),
+			DestBranch:       gjson.GetBytes(buf.Bytes(), "pullrequest.destination.branch.name").Value().(string),
 			HookID:           hookID,
 		}
 	}
@@ -203,12 +204,11 @@ func (b BitbucketServerClientImpl) SetStatus(ctx *context.Context, repo *string,
 		State:       *status,
 		Description: *message,
 	}
-	resp, err := b.client.Repositories.Commits.CreateCommitStatus(&commitOptions, &commitStatusOptions)
-	log.Printf("%s", resp)
+	_, err := b.client.Repositories.Commits.CreateCommitStatus(&commitOptions, &commitStatusOptions)
 	if err != nil {
 		return err
 	}
-
+	log.Printf("set status of commit %s in repo %s to %s", *commit, *repo, *status)
 	return nil
 }
 
