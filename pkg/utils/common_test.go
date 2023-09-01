@@ -385,3 +385,31 @@ func TestExtractStringsBetweenTags(t *testing.T) {
 		assert.Equal(test.expected, result)
 	}
 }
+
+func TestSanitizeString(t *testing.T) {
+	assert := assertion.New(t)
+
+	testCases := []struct {
+		input    string
+		expected string
+	}{
+		// Test case 1: Basic test with spaces and invalid characters
+		{"Hello, World! This is a _sample string with 123 and some spaces.", "Hello-World-This-is-a-_sample-string-with-123-and-some-spaces."},
+
+		// Test case 2: No spaces or invalid characters
+		{"ThisIsAValidString_WithDots.", "ThisIsAValidString_WithDots."},
+
+		// Test case 3: Empty string
+		{"", ""},
+
+		// Test case 4: Symbols and special characters
+		{"$%#@_SymbolTest!.", "_SymbolTest."},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.input, func(t *testing.T) {
+			result := SanitizeString(tc.input)
+			assert.Equal(tc.expected, result)
+		})
+	}
+}

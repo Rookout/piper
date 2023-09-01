@@ -6,6 +6,7 @@ import (
 	"github.com/rookout/piper/pkg/clients"
 	"github.com/rookout/piper/pkg/conf"
 	"github.com/rookout/piper/pkg/git_provider"
+	"github.com/rookout/piper/pkg/utils"
 	"golang.org/x/net/context"
 	"strconv"
 	"strings"
@@ -86,7 +87,10 @@ func (wc *WebhookCreatorImpl) initWebhooks() error {
 	if wc.cfg.GitProviderConfig.OrgLevelWebhook && len(wc.cfg.GitProviderConfig.RepoList) != 0 {
 		return fmt.Errorf("org level webhook wanted but provided repositories list")
 	}
-	for _, repo := range strings.Split(strings.ReplaceAll(wc.cfg.GitProviderConfig.RepoList, " ", "-"), ",") {
+	for _, repo := range strings.Split(wc.cfg.GitProviderConfig.RepoList, ",") {
+		if wc.cfg.GitProviderConfig.Provider == "bitbucket" {
+			repo = utils.SanitizeString(repo)
+		}
 		hook, err := wc.clients.GitProvider.SetWebhook(&ctx, &repo)
 		if err != nil {
 			return err

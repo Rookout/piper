@@ -172,3 +172,17 @@ func ExtractStringsBetweenTags(input string) []string {
 
 	return result
 }
+
+func SanitizeString(input string) string {
+	// Replace whitespace with "-"
+	input = strings.ReplaceAll(input, " ", "-")
+
+	// Define a regular expression pattern to match characters that are not a-z, A-Z, _, or .
+	// Use a negated character class to allow a-z, A-Z, _, and .
+	pattern := regexp.MustCompile(`[^a-zA-Z_1-9\.-]+`)
+
+	// Remove characters that don't match the pattern
+	sanitized := pattern.ReplaceAllString(input, "")
+
+	return sanitized
+}
