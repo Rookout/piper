@@ -36,8 +36,7 @@ func ValidateBitbucketPermissions(client *bitbucket.Client, cfg *conf.GlobalConf
 
 func GetBitbucketTokenScopes(client *bitbucket.Client, cfg *conf.GlobalConfig) ([]string, error) {
 
-	client.GetApiBaseURL()
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.bitbucket.org/2.0/repositories/%s", cfg.GitProviderConfig.OrgName), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/repositories/%s", client.GetApiBaseURL(), cfg.GitProviderConfig.OrgName), nil)
 	if err != nil {
 		log.Println("Error creating request:", err)
 		return nil, err
