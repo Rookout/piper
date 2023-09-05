@@ -168,8 +168,7 @@ func (b BitbucketClientImpl) HandlePayload(ctx *context.Context, request *http.R
 	// https://support.atlassian.com/bitbucket-cloud/docs/event-payloads
 	switch request.Header.Get("X-Event-Key") {
 	case "repo:push":
-		switch gjson.GetBytes(buf.Bytes(), "push.changes.0.new.type").Value().(string) {
-		case "tag":
+		if gjson.GetBytes(buf.Bytes(), "push.changes.0.new.type").Value().(string) == "tag" {
 			webhookPayload = &WebhookPayload{
 				Event:  "tag",
 				Repo:   utils.SanitizeString(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string)),
@@ -178,7 +177,7 @@ func (b BitbucketClientImpl) HandlePayload(ctx *context.Context, request *http.R
 				User:   gjson.GetBytes(buf.Bytes(), "actor.display_name").Value().(string),
 				HookID: hookID,
 			}
-		default:
+		} else {
 			webhookPayload = &WebhookPayload{
 				Event:     "push",
 				Repo:      utils.SanitizeString(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string)),
