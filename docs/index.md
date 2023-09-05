@@ -3,10 +3,10 @@
 <p align="center">
   <img src="https://www.rookout.com/wp-content/uploads/2022/10/ArgoPipeline_1.0_Hero.png.webp?raw=true" />
 </p>
-
+    
 Welcome to Piper! 
 
-Piper is an open source project that aimed at providing multibranch pipeline functionality to Argo Workflows, allows users to create distinct Workflows based on Git branches.
+Piper is an open source project that aimed at providing multibranch pipeline functionality to Argo Workflows, allows users to create distinct Workflows based on Git branches. Supports GitHub and Bitbucket.
 
 ## General explanation
 
