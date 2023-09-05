@@ -168,15 +168,28 @@ func (b BitbucketClientImpl) HandlePayload(ctx *context.Context, request *http.R
 	// https://support.atlassian.com/bitbucket-cloud/docs/event-payloads
 	switch request.Header.Get("X-Event-Key") {
 	case "repo:push":
-		webhookPayload = &WebhookPayload{
-			Event:     "push",
-			Repo:      utils.SanitizeString(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string)),
-			Branch:    gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
-			Commit:    gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.hash").Value().(string),
-			UserEmail: utils.ExtractStringsBetweenTags(gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.author.raw").Value().(string))[0],
-			User:      gjson.GetBytes(buf.Bytes(), "actor.display_name").Value().(string),
-			HookID:    hookID,
+		switch gjson.GetBytes(buf.Bytes(), "push.changes.0.new.type").Value().(string) {
+		case "tag":
+			webhookPayload = &WebhookPayload{
+				Event:  "tag",
+				Repo:   utils.SanitizeString(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string)),
+				Branch: gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
+				Commit: gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
+				User:   gjson.GetBytes(buf.Bytes(), "actor.display_name").Value().(string),
+				HookID: hookID,
+			}
+		default:
+			webhookPayload = &WebhookPayload{
+				Event:     "push",
+				Repo:      utils.SanitizeString(gjson.GetBytes(buf.Bytes(), "repository.name").Value().(string)),
+				Branch:    gjson.GetBytes(buf.Bytes(), "push.changes.0.new.name").Value().(string),
+				Commit:    gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.hash").Value().(string),
+				UserEmail: utils.ExtractStringsBetweenTags(gjson.GetBytes(buf.Bytes(), "push.changes.0.commits.0.author.raw").Value().(string))[0],
+				User:      gjson.GetBytes(buf.Bytes(), "actor.display_name").Value().(string),
+				HookID:    hookID,
+			}
 		}
+
 	case "pullrequest:created", "pullrequest:updated":
 		webhookPayload = &WebhookPayload{
 			Event:            "pull_request",
