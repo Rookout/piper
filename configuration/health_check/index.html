@@ -559,11 +559,21 @@
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">successThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
-<p>The mechanism for checking the health of Piper is:
-1. Piper set health status of all webhooks to not-healthy.
-2. Piper requests ping from all the webhooks configured. 
-3. Git Provider send ping to <code>/webhook</code> endpoint, this will set the health status to <code>healthy</code> with timeout of 5 seconds.
-4. Piper check the status of all webhooks configured.</p>
+<p>The mechanism for checking the health of Piper is:</p>
+<ol>
+<li>
+<p>Piper set health status of all webhooks to not-healthy.</p>
+</li>
+<li>
+<p>Piper requests ping from all the webhooks configured. </p>
+</li>
+<li>
+<p>Git Provider send ping to <code>/webhook</code> endpoint, this will set the health status to <code>healthy</code> with timeout of 5 seconds.</p>
+</li>
+<li>
+<p>Piper check the status of all webhooks configured.</p>
+</li>
+</ol>
 <p>Therefore, the criteria for health checking are:
 1. The registered webhook exists. 
 2. The webhook send a ping in 5 seconds.</p></div>
