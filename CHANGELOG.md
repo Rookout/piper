@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/Rookout/piper/compare/v1.4.0...v1.5.0) (2023-09-06)
+
+
+### Features
+
+* bitbucket cloud support - RK-19712  ([#120](https://github.com/Rookout/piper/issues/120)) ([df662d0](https://github.com/Rookout/piper/commit/df662d0fcb7ac533c0c31158261d5d265fa2a2c0))
+* org belonging enforcment - RK-19484  ([#110](https://github.com/Rookout/piper/issues/110)) ([ff9e957](https://github.com/Rookout/piper/commit/ff9e957d92e6c5083dd9041ed3ddd3feb979eca6))
+
+
+### Bug Fixes
+
+* trim github notifiction massge ([#113](https://github.com/Rookout/piper/issues/113)) ([75464e3](https://github.com/Rookout/piper/commit/75464e3de9ffa90a417bb9e3d16527e24c9d4693))
+* watcher sudden closing ([#114](https://github.com/Rookout/piper/issues/114)) ([4cc3f0f](https://github.com/Rookout/piper/commit/4cc3f0f032c0b42d8a392b3b636a54847112859d))
+
 ## [1.4.0](https://github.com/Rookout/piper/compare/v1.3.0...v1.4.0) (2023-07-20)
 
 
