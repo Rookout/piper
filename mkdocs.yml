@@ -37,6 +37,7 @@ nav:
   - Getting Started: getting_started/installation.md
   - Configuration:
       - configuration/environment_variables.md
+      - configuration/health_check.md
   - Use piper:
       - usage/workflows_folder.md
       - usage/global_variables.md

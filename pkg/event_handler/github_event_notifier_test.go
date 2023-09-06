@@ -183,6 +183,7 @@ func TestNotify(t *testing.T) {
 
 	// Create a mock configuration and clients
 	cfg := &conf.GlobalConfig{
+		GitProviderConfig: conf.GitProviderConfig{Provider: "github"},
 		WorkflowServerConfig: conf.WorkflowServerConfig{
 			ArgoAddress: "http://workflow-server",
 			Namespace:   "test-namespace",

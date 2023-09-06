@@ -18,6 +18,15 @@ var workflowTranslationToGithubMap = map[string]string{
 	"Error":     "error",
 }
 
+var workflowTranslationToBitbucketMap = map[string]string{
+	"":          "INPROGRESS",
+	"Pending":   "INPROGRESS",
+	"Running":   "INPROGRESS",
+	"Succeeded": "SUCCESSFUL",
+	"Failed":    "FAILED",
+	"Error":     "STOPPED",
+}
+
 type githubNotifier struct {
 	cfg     *conf.GlobalConfig
 	clients *clients.Clients
@@ -44,16 +53,34 @@ func (gn *githubNotifier) Notify(ctx *context.Context, workflow *v1alpha1.Workfl
 
 	workflowLink := fmt.Sprintf("%s/workflows/%s/%s", gn.cfg.WorkflowServerConfig.ArgoAddress, gn.cfg.Namespace, workflow.GetName())
 
-	status, ok := workflowTranslationToGithubMap[string(workflow.Status.Phase)]
-	if !ok {
-		return fmt.Errorf("failed to translate workflow status to github stasuts for %s status: %s", workflow.GetName(), workflow.Status.Phase)
+	status, err := gn.translateWorkflowStatus(string(workflow.Status.Phase), workflow.GetName())
+	if err != nil {
+		return err
 	}
 
 	message := utils.TrimString(workflow.Status.Message, 140) // Max length of message is 140 characters
-	err := gn.clients.GitProvider.SetStatus(ctx, &repo, &commit, &workflowLink, &status, &message)
+	err = gn.clients.GitProvider.SetStatus(ctx, &repo, &commit, &workflowLink, &status, &message)
 	if err != nil {
 		return fmt.Errorf("failed to set status for workflow %s: %s", workflow.GetName(), err)
 	}
 
 	return nil
+}
+
+func (gn *githubNotifier) translateWorkflowStatus(status string, workflowName string) (string, error) {
+	switch gn.cfg.GitProviderConfig.Provider {
+	case "github":
+		result, ok := workflowTranslationToGithubMap[status]
+		if !ok {
+			return "", fmt.Errorf("failed to translate workflow status to github stasuts for %s status: %s", workflowName, status)
+		}
+		return result, nil
+	case "bitbucket":
+		result, ok := workflowTranslationToBitbucketMap[status]
+		if !ok {
+			return "", fmt.Errorf("failed to translate workflow status to bitbucket stasuts for %s status: %s", workflowName, status)
+		}
+		return result, nil
+	}
+	return "", fmt.Errorf("failed to translate workflow status")
 }

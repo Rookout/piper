@@ -4,7 +4,7 @@
 # Map of Piper configurations.
 piper:
   gitProvider:
-    # -- Name of your git provider (github/gitlab/bitbucket). for now, only github supported.
+    # -- Name of your git provider (github/bitbucket).
     name: github
     # -- The token for authentication with the Git provider.
     # -- This will create a secret named <RELEASE_NAME>-git-token and with the key 'token'
@@ -15,7 +15,7 @@ piper:
     existingSecret: #piper-git-token
     # Map of organization configurations.
     organization:
-      # -- Name of your Git Organization
+      # -- Name of your Git Organization (GitHub) or Workspace (Bitbucket)
       name: ""
     # Map of webhook configurations.
     webhook:
@@ -29,9 +29,9 @@ piper:
       existingSecret: #piper-webhook-secret
       # -- The url in which piper listens for webhook, the path should be /webhook
       url: "" #https://piper.example.local/webhook
-      # -- Whether config webhook on org level
+      # -- Whether config webhook on org level (GitHub) or at workspace level (Bitbucket - not supported yet)
       orgLevel: false
-      # -- Used of orgLevel=false, to configure webhook for each of the repos provided.
+      # -- (Github) Used of orgLevel=false, to configure webhook for each of the repos provided.
       repoList: []
 
   # Map of Argo Workflows configurations.
