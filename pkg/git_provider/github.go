@@ -27,6 +27,19 @@ func NewGithubClient(cfg *conf.GlobalConfig) (Client, error) {
 		return nil, fmt.Errorf("failed to validate permissions: %v", err)
 	}
 
+	user, resp, err := client.Users.Get(context.Background(), cfg.OrgName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get org id: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get organization id %s", resp.Status)
+	}
+
+	cfg.OrgID = user.GetID()
+
+	log.Printf("Org ID is: %d\n", cfg.OrgID)
+
 	return &GithubClientImpl{
 		client: client,
 		cfg:    cfg,
@@ -227,9 +240,10 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 	switch e := event.(type) {
 	case *github.PingEvent:
 		webhookPayload = &WebhookPayload{
-			Event:  "ping",
-			Repo:   e.GetRepo().GetFullName(),
-			HookID: e.GetHookID(),
+			Event:   "ping",
+			Repo:    e.GetRepo().GetFullName(),
+			HookID:  e.GetHookID(),
+			OwnerID: e.GetSender().GetID(),
 		}
 	case *github.PushEvent:
 		webhookPayload = &WebhookPayload{
@@ -240,6 +254,7 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 			Commit:    e.GetHeadCommit().GetID(),
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetHeadCommit().GetAuthor().GetEmail(),
+			OwnerID:   e.GetSender().GetID(),
 		}
 	case *github.PullRequestEvent:
 		webhookPayload = &WebhookPayload{
@@ -254,6 +269,7 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 			PullRequestURL:   e.GetPullRequest().GetHTMLURL(),
 			DestBranch:       e.GetPullRequest().GetBase().GetRef(),
 			Labels:           c.extractLabelNames(e.GetPullRequest().Labels),
+			OwnerID:          e.GetSender().GetID(),
 		}
 	case *github.CreateEvent:
 		webhookPayload = &WebhookPayload{
@@ -264,6 +280,7 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 			Commit:    e.GetRef(),
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetSender().GetEmail(),
+			OwnerID:   e.GetSender().GetID(),
 		}
 	case *github.ReleaseEvent:
 		commitSHA, _err := c.refToSHA(ctx, e.GetRelease().GetName(), e.GetRepo().GetName())
@@ -278,9 +295,13 @@ func (c *GithubClientImpl) HandlePayload(ctx *context.Context, request *http.Req
 			Commit:    *commitSHA,
 			User:      e.GetSender().GetLogin(),
 			UserEmail: e.GetSender().GetEmail(),
+			OwnerID:   e.GetSender().GetID(),
 		}
 	}
 
+	if c.cfg.EnforceOrgBelonging && (webhookPayload.OwnerID == 0 || webhookPayload.OwnerID != c.cfg.OrgID) {
+		return nil, fmt.Errorf("webhook send from non organizational member")
+	}
 	return webhookPayload, nil
 
 }

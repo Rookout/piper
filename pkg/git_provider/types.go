@@ -30,6 +30,7 @@ type WebhookPayload struct {
 	DestBranch       string   `json:"dest_branch"`
 	Labels           []string `json:"labels"`
 	HookID           int64    `json:"hookID"`
+	OwnerID          int64    `json:"ownerID"`
 }
 
 type Client interface {

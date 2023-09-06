@@ -15,6 +15,8 @@ type GitProviderConfig struct {
 	WebhookURL         string `envconfig:"GIT_WEBHOOK_URL" required:"false"`
 	WebhookSecret      string `envconfig:"GIT_WEBHOOK_SECRET" required:"false"`
 	WebhookAutoCleanup bool   `envconfig:"GIT_WEBHOOK_AUTO_CLEANUP" default:"false" required:"false"`
+  EnforceOrgBelonging bool   `envconfig:"GIT_ENFORCE_ORG_BELONGING" default:"false" required:"false"`
+	OrgID               int64
 	FullHealthCheck    bool   `envconfig:"GIT_FULL_HEALTH_CHECK" default:"false" required:"false"`
 }
 

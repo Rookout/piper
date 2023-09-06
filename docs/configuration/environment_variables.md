@@ -27,6 +27,9 @@ The helm chart populate them using [values.yaml](https://github.com/Rookout/pipe
   Will cleanup all webhook that were created with piper. 
   Notice that there will be a race conditions between pod that being terminated and the new one. 
 
+* GIT_ENFORCE_ORG_BELONGING
+  Boolean variable, whether to enforce organizational belonging of git event creator. default `false`
+
 * GIT_FULL_HEALTH_CHECK
   Enables full health check of webhook. Full health check contains expecting and validating ping event from a webhook.
   Doesn't work for bitbucket, because the API call don't
