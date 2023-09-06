@@ -30,6 +30,11 @@ The helm chart populate them using [values.yaml](https://github.com/Rookout/pipe
 * GIT_ENFORCE_ORG_BELONGING
   Boolean variable, whether to enforce organizational belonging of git event creator. default `false`
 
+* GIT_FULL_HEALTH_CHECK
+  Enables full health check of webhook. Full health check contains expecting and validating ping event from a webhook.
+  Doesn't work for bitbucket, because the API call don't
+
+
 ### Argo Workflows Server
 * ARGO_WORKFLOWS_TOKEN
   The token of Argo Workflows server.

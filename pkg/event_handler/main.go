@@ -28,9 +28,9 @@ func Start(ctx context.Context, stop context.CancelFunc, cfg *conf.GlobalConfig,
 	}
 	go func() {
 		for event := range watcher.ResultChan() {
-			err = handler.Handle(ctx, &event)
-			if err != nil {
-				log.Printf("[event handler] failed to Handle workflow event %s", err) // ERROR
+			err2 := handler.Handle(ctx, &event)
+			if err2 != nil {
+				log.Printf("[event handler] failed to Handle workflow event %s", err2) // ERROR
 			}
 		}
 		log.Print("[event handler] stopped work, closing watcher")

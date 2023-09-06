@@ -42,7 +42,7 @@ func (weh *workflowEventHandler) Handle(ctx context.Context, event *watch.Event)
 
 	err := weh.Notifier.Notify(&ctx, workflow)
 	if err != nil {
-		return fmt.Errorf("failed to Notify workflow to github, error:%s\n", err)
+		return fmt.Errorf("failed to Notify workflow to git provider, error:%s\n", err)
 	}
 
 	err = weh.Clients.Workflows.UpdatePiperWorkflowLabel(&ctx, workflow.GetName(), "notified", string(workflow.Status.Phase))
