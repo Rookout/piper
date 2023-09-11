@@ -44,14 +44,14 @@ func NewWorkflowsClient(cfg *conf.GlobalConfig) (WorkflowsClient, error) {
 	clientSet := wfClientSet.NewForConfigOrDie(restClientConfig) //.ArgoprojV1alpha1().Workflows(namespace)
 	opts := workflowapliclient.Opts{
 		ArgoServerOpts: workflowapliclient.ArgoServerOpts{
-			URL:                "",
+			URL:                cfg.ArgoAddress,
 			Path:               "",
 			Secure:             false,
 			InsecureSkipVerify: false,
-			HTTP1:              false,
+			HTTP1:              true,
 			Headers:            nil,
 		},
-		InstanceID: cfg.ArgoAddress,
+		InstanceID: "",
 		AuthSupplier: func() string {
 			return GetArgoAuthString(cfg)
 		},
@@ -193,9 +193,16 @@ func (wfc *WorkflowsClientImpl) SelectConfig(workflowsBatch *common.WorkflowsBat
 }
 
 func (wfc *WorkflowsClientImpl) Lint(wf *v1alpha1.Workflow) error {
-	//TODO implement me
-	wfc.workflowAPIClient.LintWorkflow(context.Background(), wf)
-	panic("implement me")
+	wfLintRequest := &workflowpkg.WorkflowLintRequest{
+		Namespace: wfc.cfg.Namespace,
+		Workflow:  wf,
+	}
+	_, err := wfc.workflowAPIClient.LintWorkflow(context.Background(), wfLintRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workflow) error {
@@ -204,7 +211,7 @@ func (wfc *WorkflowsClientImpl) Submit(ctx *context.Context, wf *v1alpha1.Workfl
 	if err != nil {
 		return err
 	}
-
+	log.Printf("linting of workflow %s succedded", wf.Name)
 	return nil
 }
 
@@ -250,6 +257,11 @@ func (wfc *WorkflowsClientImpl) HandleWorkflowBatch(ctx *context.Context, workfl
 	}
 
 	workflow, err := wfc.CreateWorkflow(spec, workflowsBatch)
+	if err != nil {
+		return err
+	}
+
+	err = wfc.Lint(workflow)
 	if err != nil {
 		return err
 	}
