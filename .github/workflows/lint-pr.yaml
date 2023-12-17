@@ -32,6 +32,7 @@ jobs:
             ci
           # Configure which scopes are allowed (newline delimited).
           scopes: |
+            deps
             core
             RK-\d+
           # Configure that a scope must always be provided.
