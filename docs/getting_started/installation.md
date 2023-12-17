@@ -40,7 +40,7 @@ Also configure you organization (Github) or workspace (Bitbucket) name using `gi
 
 The token should have access for creating webhooks and read repositories content.
 For GitHub configure `admin:org` and `write:org` permissions in Classic Token.
-For Bitbucket configure `Repositories:read` and `Webhooks:read and write` permissions (for multiple repos use workspace token).
+For Bitbucket configure `Repositories:read`, `Webhooks:read and write` and `Pull requests:read` permissions (for multiple repos use workspace token).
 
 #### Token
 
