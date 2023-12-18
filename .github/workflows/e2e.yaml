@@ -124,10 +124,10 @@ jobs:
         run: |
           kubectl logs deployment/piper
           kubectl get workflows.argoproj.io -n workflows
-          BRANCH_VALID_STRING =$(echo ${{ github.head_ref }}-test | tr '[:upper:]' '[:lower:]' | tr '_' '-' | tr -cd 'a-z0-9.\-')
+          BRANCH_VALID_STRING=$(echo ${{ github.head_ref }}-test | tr '[:upper:]' '[:lower:]' | tr '_' '-' | tr -cd 'a-z0-9.\-')
           
           ## check if created
-          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=BRANCH_VALID_STRING --no-headers | grep piper-e2e-test)
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=$BRANCH_VALID_STRING --no-headers | grep piper-e2e-test)
           [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || { echo "Workflow not exists, existing..."; exit 1; }
 
           ## check if status phase not Failed, if yes, show message
