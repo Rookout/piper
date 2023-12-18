@@ -123,12 +123,13 @@ jobs:
       - name: Check Result
         run: |
           kubectl logs deployment/piper
+          BRANCH_VALID_STRING =$(echo ${{ github.head_ref }}-test | tr '[:upper:]' '[:lower:]' | tr '_' '-' | tr -cd 'a-z0-9.\-')
+          
           ## check if created
-          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=${{ github.head_ref }}-test --no-headers | grep piper-e2e-test)
+          RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=BRANCH_VALID_STRING --no-headers | grep piper-e2e-test)
           [ ! -z "$RESULT" ] && echo "CRD created $RESULT" || { echo "Workflow not exists, existing..."; exit 1; }
 
           ## check if status phase not Failed, if yes, show message
-          BRANCH_VALID_STRING =$(echo ${{ github.head_ref }}-test | tr '[:upper:]' '[:lower:]' | tr '_' '-' | tr -cd 'a-z0-9.\-')
           RESULT=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=$BRANCH_VALID_STRING  --no-headers -o custom-columns="Status:status.phase")
           MESSAGE=$(kubectl get workflows.argoproj.io -n workflows --selector=branch=$BRANCH_VALID_STRING --no-headers -o custom-columns="Status:status.message")
           [ ! "$RESULT" == "Failed"  ] && echo "CRD created $MESSAGE" || { echo "Workflow Failed $MESSAGE, existing..."; exit 1; }
