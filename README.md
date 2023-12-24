@@ -1,8 +1,18 @@
-# Piper
-![alt text](https://www.rookout.com/wp-content/uploads/2022/10/ArgoPipeline_1.0_Hero.png.webp?raw=true)
+# Piper - Deprecated
 
-Welcome to Piper! Piper is open source project that aimed at providing multibranch pipeline functionality to Argo Workflows, allows users to create distinct Workflows based on Git branches.
+⚠️ **Important Notice:** This project (Piper) is no longer actively maintained. We have moved to a new and improved repository for Piper. Please visit the following link for the latest updates and contributions:
 
+[New repository](https://github.com/quickube/piper)
+
+## Support and Contributions
+
+As we focus our efforts on the new repository, we won't be actively addressing issues or accepting pull requests here. Feel free to reach out to us on the new repository for any questions, issues, or contributions.
+
+Thank you for your support and understanding.
+
+Happy coding!
+
+[New Piper Repository](https://github.com/quickube/piper)
 ## Table of Contents
 
 - [Getting Started](#getting-started)
