@@ -91,6 +91,7 @@ jobs:
           --for=condition=ready pod \
           --selector=app=piper \
           --timeout=60s
+
       - uses: actions/checkout@v3
         with:
           repository: 'rookout/piper-e2e-test'
@@ -109,8 +110,8 @@ jobs:
         with:
           token: ${{ secrets.GIT_TOKEN }}
           path: piper-e2e-test
-          branch: ${{ github.head_ref }}-test
-          title: ${{ github.head_ref }}-test
+          branch: ${{ github.ref_name }}-test
+          title: ${{ github.ref_name }}-test
           delete-branch: true
       - name: Close Pull Request
         uses: peter-evans/close-pull@v3
