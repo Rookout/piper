@@ -1,6 +1,6 @@
-# Piper - Deprecated
+# Piper - MOVED
 
-⚠️ **Important Notice:** This project (Piper) is no longer actively maintained. We have moved to a new and improved repository for Piper. Please visit the following link for the latest updates and contributions:
+⚠️ **Important Notice:** Piper has moved to a new and improved repository. Please visit the following link for the latest updates and contributions:
 
 [New repository](https://github.com/quickube/piper)
 
