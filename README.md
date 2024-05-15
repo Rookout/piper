@@ -1,6 +1,6 @@
-# Piper - Deprecated
+# Piper - MOVED
 
-⚠️ **Important Notice:** This project (Piper) is no longer actively maintained. We have moved to a new and improved repository for Piper. Please visit the following link for the latest updates and contributions:
+⚠️ **Important Notice:** Piper has moved to a new and improved repository. Please visit the following link for the latest updates and contributions:
 
 [New repository](https://github.com/quickube/piper)
 
@@ -13,6 +13,7 @@ Thank you for your support and understanding.
 Happy coding!
 
 [New Piper Repository](https://github.com/quickube/piper)
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
@@ -22,9 +23,9 @@ Happy coding!
 
 ## Getting Started
 
-Piper configures a webhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder. 
-This folder should contain declarations of the templates and main DAG that will be running. 
-Finally, it will submit the Workflow as a K8s resource in the cluster. 
+Piper configures a webhook in git provider and listens to the webhooks sends. It will create a Workflow CRD out of branches that contains `.workflows` folder.
+This folder should contain declarations of the templates and main DAG that will be running.
+Finally, it will submit the Workflow as a K8s resource in the cluster.
 To access more detailed explanations, please navigate to the [Documentation site](https://piper.rookout.com).
 
 https://github.com/Rookout/piper/assets/106976988/09b3a5d8-3428-4bdc-9146-3034d81164bf
@@ -39,7 +40,6 @@ If you encounter any issues or bugs while using Piper, please help us improve by
 4. Add appropriate labels to categorize the issue (e.g., bug, enhancement, question).
 5. Submit the issue, and our team will review and address it as soon as possible.
 
-
 ## How to Contribute
 
 If you're interested in contributing to this project, please feel free to submit a pull request. We welcome all contributions and feedback.
@@ -48,6 +48,3 @@ Please check out our [Contribution guidelines for this project](docs/CONTRIBUTIN
 ## License
 
 This project is licensed under the Apache License. Please see the [LICENSE](LICENSE) file for details.
-
-
-
